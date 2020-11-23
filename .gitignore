@@ -2,5 +2,3 @@
 *.iml
 target/
 *.log
-src/main/resources/application-dev.properties
-src/main/resources/tokens.properties
