@@ -1,7 +1,6 @@
 package by.kobyzau.tg.bot.pbot.model;
 
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.util.StringUtil;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -92,13 +91,7 @@ public class Pidor{
   }
 
   public String getSticker() {
-    if (StringUtil.isNotBlank(sticker)) {
-      return sticker;
-    }
-    return EggsPidor.parseById(getTgId())
-        .map(EggsPidor::getStickerType)
-        .map(Enum::name)
-        .orElse(null);
+    return sticker;
   }
 
   public void setSticker(String sticker) {

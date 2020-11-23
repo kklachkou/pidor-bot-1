@@ -7,13 +7,20 @@ import java.time.LocalDate;
 
 public enum Version {
   VERSION_1_10(
-      LocalDate.of(2020, 11, 19),
+      LocalDate.of(2020, 11, 22),
       new TextBuilder(new SimpleText("- Изменен процесс игры Отссассин"))
           .append(new NewLineText())
           .append(new SimpleText("Следи за тем какая будет игра через команду /schedule"))
           .append(new NewLineText())
           .append(new NewLineText())
-          .append(new SimpleText("- Исправлены некоторые баги"))),
+          .append(
+              new ParametizedText(
+                  "- Добавлена новая команда /{0}", new SimpleText(Command.REG_PIDOR.name())))
+          .append(
+              new SimpleText(
+                  "Отправь эту команду в ответ на сообщение человека, который сам никак не зарегистритуеться в игре"))
+          .append(new NewLineText())
+          .append(new SimpleText("Зарегистрируй тихоню:)"))),
   VERSION_1_9(
       LocalDate.of(2020, 11, 5),
       new TextBuilder(new ParametizedText("- Футбол! Новая игра - {0}", new SimpleText("⚽")))
