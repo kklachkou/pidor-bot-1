@@ -1,1 +1,1 @@
-# pidor-bot
+# Telegram Pidor bot
