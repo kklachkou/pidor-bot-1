@@ -15,7 +15,7 @@ public enum Version {
           .append(new NewLineText())
           .append(
               new ParametizedText(
-                  "- Добавлена новая команда /{0}", new SimpleText(Command.REG_PIDOR.name())))
+                  "- Добавлена новая команда /{0}", new SimpleText(Command.REG_PIDOR.getName())))
           .append(
               new SimpleText(
                   "Отправь эту команду в ответ на сообщение человека, который сам никак не зарегистритуеться в игре"))

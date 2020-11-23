@@ -13,15 +13,21 @@ import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 public class RegPidorCommandHandler implements CommandHandler {
+
+  @Value("${bot.username}")
+  private String botUserName;
 
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
@@ -29,35 +35,45 @@ public class RegPidorCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
-    Message replyToMessage = message.getReplyToMessage();
-    if (replyToMessage == null) {
+    long chatId = message.getChatId();
+    Optional<User> user = getUser(message);
+    if (!user.isPresent()) {
       botActionCollector.text(
-          message.getChatId(),
-          new SimpleText("Ты должен указать эту команду в ответе на чье-то сообщение"),
+          chatId,
+          new ParametizedText(
+              "Ты не указал цель или я не могу найти этого пользователя.\n"
+                  + " Укажи юзера через @ сразу после комманды. Пример:\n /{0} @{1}",
+              new SimpleText(Command.REG_PIDOR.getName()), new SimpleText(botUserName)),
           message.getMessageId());
       return;
     }
-    User user = replyToMessage.getFrom();
-    if (user.getIsBot() != null && user.getIsBot()) {
+    if (user.get().getIsBot() != null && user.get().getIsBot()) {
       botActionCollector.text(
-          message.getChatId(),
-          new SimpleText("Это сообщение какого-то бота..."),
-          message.getMessageId());
+          chatId, new SimpleText("Это сообщение какого-то бота..."), message.getMessageId());
       return;
     }
-    Optional<ChatMember> chatMember =
-        telegramService.getChatMember(message.getChatId(), user.getId());
+    Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.get().getId());
     if (!TGUtil.isChatMember(chatMember)) {
       botActionCollector.text(
-          message.getChatId(),
-          new SimpleText("Не вижу его в этом чате..."),
-          message.getMessageId());
+          chatId, new SimpleText("Не вижу его в этом чате..."), message.getMessageId());
       return;
     }
-    regPidor(message.getChatId(), user);
+    regPidor(chatId, user.get());
   }
 
-  public void regPidor(long chatId, User user) {
+  private Optional<User> getUser(Message message) {
+    List<MessageEntity> entities = message.getEntities();
+    if (entities != null) {
+      for (MessageEntity entity : entities) {
+        if (entity.getUser() != null) {
+          return Optional.of(entity.getUser());
+        }
+      }
+    }
+    return Optional.empty();
+  }
+
+  private void regPidor(long chatId, User user) {
     int userId = user.getId();
     Optional<Pidor> existingPidor = pidorService.getPidor(chatId, userId);
     if (existingPidor.isPresent()) {
