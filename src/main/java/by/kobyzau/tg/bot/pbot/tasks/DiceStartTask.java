@@ -52,7 +52,7 @@ public class DiceStartTask implements Task {
       game.printIntro(chatId);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new DicePostActionWrapperBotAction(chatId, game, value -> {}),
+              new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
               botService.canPinMessage(chatId)));
       botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
     } catch (Exception e) {

@@ -2,30 +2,40 @@ package by.kobyzau.tg.bot.pbot.model.dto;
 
 public class AssassinInlineMessageDto {
 
+  private String id;
+  private Integer tId;
+  private Integer cId;
+
   public AssassinInlineMessageDto() {
   }
 
-  public AssassinInlineMessageDto(Integer targetUserId, Integer calledUserId) {
-    this.targetUserId = targetUserId;
-    this.calledUserId = calledUserId;
+  public AssassinInlineMessageDto(String id, Integer targetUserId, Integer calledUserId) {
+    this.tId = targetUserId;
+    this.cId = calledUserId;
+    this.id = id;
   }
 
-  private Integer targetUserId;
-  private Integer calledUserId;
-
-  public Integer getTargetUserId() {
-    return targetUserId;
+  public String getId() {
+    return id;
   }
 
-  public void setTargetUserId(Integer targetUserId) {
-    this.targetUserId = targetUserId;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public Integer getCalledUserId() {
-    return calledUserId;
+  public Integer gettId() {
+    return tId;
   }
 
-  public void setCalledUserId(Integer calledUserId) {
-    this.calledUserId = calledUserId;
+  public void settId(Integer tId) {
+    this.tId = tId;
+  }
+
+  public Integer getcId() {
+    return cId;
+  }
+
+  public void setcId(Integer cId) {
+    this.cId = cId;
   }
 }

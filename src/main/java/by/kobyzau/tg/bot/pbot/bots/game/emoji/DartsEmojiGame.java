@@ -24,11 +24,6 @@ public class DartsEmojiGame implements EmojiGame {
   @Autowired private DiceService diceService;
 
   @Override
-  public String getEmoji() {
-    return "\ud83c\udfaf";
-  }
-
-  @Override
   public EmojiGameType getType() {
     return EmojiGameType.DARTS;
   }

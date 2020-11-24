@@ -23,11 +23,6 @@ public class DiceEmojiGame implements EmojiGame {
   @Autowired private DiceService diceService;
 
   @Override
-  public String getEmoji() {
-    return "\ud83c\udfb2";
-  }
-
-  @Override
   public EmojiGameType getType() {
     return EmojiGameType.DICE;
   }

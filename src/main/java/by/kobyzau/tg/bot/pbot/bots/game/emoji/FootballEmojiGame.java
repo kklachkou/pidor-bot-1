@@ -23,11 +23,6 @@ public class FootballEmojiGame implements EmojiGame {
   private DiceService diceService;
 
   @Override
-  public String getEmoji() {
-    return "⚽";
-  }
-
-  @Override
   public EmojiGameType getType() {
     return EmojiGameType.FOOTBALL;
   }

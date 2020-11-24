@@ -30,6 +30,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class PidorCommandHandler implements CommandHandler {
@@ -79,7 +80,7 @@ public class PidorCommandHandler implements CommandHandler {
 
     InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
         InlineKeyboardMarkup.builder();
-
+    String requestId = UUID.randomUUID().toString().substring(19);
     pidors.stream()
         .limit(10)
         .map(
@@ -88,7 +89,8 @@ public class PidorCommandHandler implements CommandHandler {
                     .text(new ShortNamePidorText(p).text())
                     .callbackData(
                         StringUtil.serialize(
-                            new AssassinInlineMessageDto(p.getTgId(), callerPidor.get().getTgId())))
+                            new AssassinInlineMessageDto(
+                                requestId, p.getTgId(), callerPidor.get().getTgId())))
                     .build())
         .map(Collections::singletonList)
         .forEach(keyboardMarkupBuilder::keyboardRow);
@@ -99,7 +101,9 @@ public class PidorCommandHandler implements CommandHandler {
             new ParametizedText(
                 new RandomText(
                     "{0}, ну что, кого ты выберешь пидором?",
-                    "{0}, кого ты выберешь пидором?", "{0}, ну что, кого ты выберешь пидором?"),
+                    "{0}, выберешь пидора дня?",
+                    "{0}, кого ты выберешь пидором?",
+                    "{0}, ну что, кого ты выберешь пидором?"),
                 new ShortNamePidorText(callerPidor.get())),
             keyboardMarkupBuilder.build(),
             message.getMessageId()));

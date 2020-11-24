@@ -21,10 +21,6 @@ public class BasketballEmojiGame implements EmojiGame {
   @Autowired
   private DiceService diceService;
 
-  @Override
-  public String getEmoji() {
-    return "\ud83c\udfc0";
-  }
 
   @Override
   public EmojiGameType getType() {

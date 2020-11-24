@@ -21,12 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -85,16 +85,20 @@ public class RegPidorUpdateHandler implements UpdateHandler {
       return;
     }
     long chatId = message.getChatId();
-    User user = message.getFrom();
+    List<User> users = getUsersFromMessage(message);
+    users.forEach(u -> updateUser(chatId, u));
+  }
+
+  private void updateUser(long chatId, User user) {
     if (user == null) {
-      return;
-    }
-    Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.getId());
-    if (!chatMember.isPresent() || !TGUtil.isChatMember(chatMember)) {
       return;
     }
     Boolean bot = user.getIsBot();
     if (bot != null && bot) {
+      return;
+    }
+    Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.getId());
+    if (!chatMember.isPresent() || !TGUtil.isChatMember(chatMember)) {
       return;
     }
     Optional<Pidor> existingPidor = pidorService.getPidor(chatId, user.getId());
@@ -115,5 +119,31 @@ public class RegPidorUpdateHandler implements UpdateHandler {
         chatId, new ParametizedText(catchedPidorMessage.next(), new FullNamePidorText(pidor)));
     botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     botActionCollector.sticker(chatId, StickerType.LOL.getRandom());
+  }
+
+  private List<User> getUsersFromMessage(Message message) {
+    List<User> users = new ArrayList<>();
+    users.add(message.getFrom());
+    users.add(message.getForwardFrom());
+    if (message.getReplyToMessage() != null) {
+      users.addAll(getUsersFromMessage(message.getReplyToMessage()));
+    }
+    if (message.getEntities() != null) {
+      message.getEntities().stream()
+              .map(MessageEntity::getUser)
+              .filter(Objects::nonNull)
+              .forEach(users::add);
+    }
+    if (message.getCaptionEntities() != null) {
+      message.getCaptionEntities().stream()
+              .map(MessageEntity::getUser)
+              .filter(Objects::nonNull)
+              .forEach(users::add);
+    }
+    if (message.getPinnedMessage() != null) {
+      users.addAll(getUsersFromMessage(message.getPinnedMessage()));
+    }
+    users.addAll(message.getNewChatMembers());
+    return users;
   }
 }

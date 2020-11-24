@@ -5,6 +5,7 @@ import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,6 +16,10 @@ import java.util.Comparator;
 @Component
 @Profile("prod")
 public class HelpCommandHandler implements CommandHandler {
+
+  @Value("${app.version}")
+  private String version;
+
   @Autowired private BotActionCollector botActionCollector;
 
   @Override
@@ -31,7 +36,9 @@ public class HelpCommandHandler implements CommandHandler {
         .append(buildCommandsMessage(Command.Category.INFO))
         .append(new NewLineText())
         .append(new NewLineText())
-        .append(new SimpleText("Автор - @NKRB2020"));
+        .append(new SimpleText("Автор - @NKRB2020"))
+        .append(new NewLineText())
+        .append(new ItalicText(new ParametizedText("Версия {0}", new SimpleText(version))));
   }
 
   private Text buildCommandsMessage(Command.Category category) {

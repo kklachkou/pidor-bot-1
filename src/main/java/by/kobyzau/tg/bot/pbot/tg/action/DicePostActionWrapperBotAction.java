@@ -1,7 +1,7 @@
 package by.kobyzau.tg.bot.pbot.tg.action;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
-import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
+import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameType;
 import org.telegram.telegrambots.meta.api.objects.Dice;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -16,7 +16,7 @@ public class DicePostActionWrapperBotAction implements BotAction<Message> {
   private final Consumer<Integer> dicePostAction;
 
   public DicePostActionWrapperBotAction(
-          long chatId, EmojiGame game, Consumer<Integer> dicePostAction) {
+          long chatId, EmojiGameType game, Consumer<Integer> dicePostAction) {
     this.diceAction = new DiceBotAction(chatId, game);
     this.dicePostAction = dicePostAction;
   }

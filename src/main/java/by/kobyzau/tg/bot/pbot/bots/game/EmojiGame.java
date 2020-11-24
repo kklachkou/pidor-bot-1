@@ -4,7 +4,9 @@ import java.time.LocalDate;
 
 public interface EmojiGame {
 
-  String getEmoji();
+  default String getEmoji(){
+    return getType().getEmoji();
+  }
 
   EmojiGameType getType();
 
