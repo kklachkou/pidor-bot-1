@@ -15,7 +15,7 @@ public class AssassinScheduledRule implements ScheduledRule {
 
   @Override
   public boolean isMatch(LocalDate localDate) {
-    return localDate.getDayOfWeek() == DayOfWeek.WEDNESDAY && localDate.getDayOfYear() % 2 == 0;
+    return localDate.getDayOfWeek() == DayOfWeek.WEDNESDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY;
   }
 
   @Override

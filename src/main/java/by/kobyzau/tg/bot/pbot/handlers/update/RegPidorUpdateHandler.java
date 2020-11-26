@@ -146,4 +146,5 @@ public class RegPidorUpdateHandler implements UpdateHandler {
     users.addAll(message.getNewChatMembers());
     return users;
   }
+
 }

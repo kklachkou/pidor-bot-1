@@ -27,10 +27,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 public class PidorCommandHandler implements CommandHandler {
@@ -44,6 +42,8 @@ public class PidorCommandHandler implements CommandHandler {
   @Autowired private PidorService pidorService;
 
   @Autowired private BotActionCollector botActionCollector;
+
+  private final Map<Integer, LocalDateTime> assassinLastCall = new HashMap<>();
 
   @Override
   public void processCommand(Message message, String text) {
@@ -64,7 +64,17 @@ public class PidorCommandHandler implements CommandHandler {
 
   public void processAssassinCommand(Message message) {
     long chatId = message.getChatId();
-    Optional<Pidor> callerPidor = pidorService.getPidor(chatId, message.getFrom().getId());
+    int callerId = message.getFrom().getId();
+    LocalDateTime lastCall = assassinLastCall.get(callerId);
+    if (lastCall != null && lastCall.plusSeconds(20).isAfter(DateUtil.currentTime())) {
+      botActionCollector.text(
+          chatId,
+          new SimpleText("Не так часто, подожди пару секунд, дай шанс другим:)"),
+          message.getMessageId());
+      return;
+    }
+    assassinLastCall.put(callerId, DateUtil.currentTime());
+    Optional<Pidor> callerPidor = pidorService.getPidor(chatId, callerId);
     if (!callerPidor.isPresent()) {
       botActionCollector.text(
           chatId, new SimpleText("Сначала зарегестрируйся"), message.getMessageId());
@@ -82,6 +92,7 @@ public class PidorCommandHandler implements CommandHandler {
         InlineKeyboardMarkup.builder();
     String requestId = UUID.randomUUID().toString().substring(19);
     pidors.stream()
+        .filter(p -> StringUtil.isNotBlank(new ShortNamePidorText(p).text()))
         .limit(10)
         .map(
             p ->
