@@ -2,8 +2,11 @@ package by.kobyzau.tg.bot.pbot.program.logger;
 
 import by.kobyzau.tg.bot.pbot.tg.TelegramSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Executor;
 
 @Component("TGLogger")
 public class TelegramLogger implements Logger {
@@ -18,39 +21,43 @@ public class TelegramLogger implements Logger {
 
   @Autowired private TelegramSender telegramSender;
 
+  @Autowired
+  @Qualifier("cachedExecutor")
+  private Executor executor;
+
   @Override
   public void debug(String message) {
     if (loggerLevel.getLevel().matchLevel(LoggerLevel.DEBUG)) {
-      telegramSender.sendMessage(botToken, backupChat, "<pre>[DEBUG]</pre>\n" + message, true);
+      executor.execute(() -> sendMessage("<pre>[DEBUG]</pre>\n" + message));
     }
   }
 
   @Override
   public void info(String message) {
     if (loggerLevel.getLevel().matchLevel(LoggerLevel.INFO)) {
-      telegramSender.sendMessage(botToken, backupChat, "<pre>[INFO]</pre>\n" + message);
+      executor.execute(() -> sendMessage("<pre>[INFO]</pre>\n" + message));
     }
   }
 
   @Override
   public void warn(String message) {
     if (loggerLevel.getLevel().matchLevel(LoggerLevel.WARN)) {
-      telegramSender.sendMessage(botToken, backupChat, "[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message);
+      executor.execute(() -> sendMessage("[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message));
     }
   }
 
   @Override
   public void error(String s, Exception e) {
     if (loggerLevel.getLevel().matchLevel(LoggerLevel.ERROR)) {
-      telegramSender.sendMessage(
-          botToken,
-          backupChat,
-          "[ #ERROR ]\n❗️❗️❗️❗️❗️\n"
-              + s
-              + "\n"
-              + e.getMessage()
-              + "\nStacktrace:\n"
-              + getStacktrace(e));
+      executor.execute(
+          () ->
+              sendMessage(
+                  "[ #ERROR ]\n❗️❗️❗️❗️❗️\n"
+                      + s
+                      + "\n"
+                      + e.getMessage()
+                      + "\nStacktrace:\n"
+                      + getStacktrace(e)));
     }
   }
 
@@ -81,6 +88,14 @@ public class TelegramLogger implements Logger {
       return sb.toString();
     } catch (Exception stExc) {
       return "{not available}";
+    }
+  }
+
+  private void sendMessage(String message) {
+    try {
+      telegramSender.sendMessage(botToken, backupChat, message);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }

@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 @RestController
-@Profile("dev")
+@Profile("with-db")
 public class DBController {
 
   @Autowired private DataSource dataSource;

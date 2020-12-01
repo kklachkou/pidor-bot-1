@@ -9,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 @Component
+@Profile("prod")
 public class SqlCommandHandler implements CommandHandler {
 
   @Autowired private DataSource dataSource;
