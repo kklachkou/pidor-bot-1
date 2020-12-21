@@ -19,7 +19,8 @@ public class ScheduleAppConfig {
   @Autowired private Task notifyNoPidors;
   @Autowired private Task notifyPidorOfTheMonthTask;
   @Autowired private Task diceStart;
-  @Autowired private Task assassinTask;
+  @Autowired private Task electionStartTask;
+  @Autowired private Task electionEndTask;
   @Autowired private Task diceEnd;
 
   @Autowired private Task excludeUserGameStartTask;
@@ -59,12 +60,13 @@ public class ScheduleAppConfig {
   public void gameStart() {
     executor.execute(diceStart::processTask);
     executor.execute(excludeUserGameStartTask::processTask);
-    executor.execute(assassinTask::processTask);
+    executor.execute(electionStartTask::processTask);
   }
 
   @Scheduled(cron = "${task.gameEnd.cron}", zone = "GMT+3.00")
   public void gameEnd() {
     executor.execute(diceEnd::processTask);
     executor.execute(excludeUserGameEndTask::processTask);
+    executor.execute(electionEndTask::processTask);
   }
 }

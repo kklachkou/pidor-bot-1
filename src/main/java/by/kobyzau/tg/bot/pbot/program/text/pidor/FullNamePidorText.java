@@ -29,6 +29,9 @@ public class FullNamePidorText implements Text {
       sb.append("@").append(username);
       sb.append(" (").append(new NotBlankText(nickname, fullName)).append(")");
     }
+    if (pidor.isPidorOfYear()) {
+      sb.append(" \uD83D\uDC51");
+    }
     return sb.toString();
   }
 

@@ -22,12 +22,23 @@ public class Pidor{
   private LocalDate usernameLastUpdated;
   private String sticker;
 
+  @Transient
+  private boolean isPidorOfYear;
+
+
   public Pidor() {}
 
   public Pidor(int tgId, long chatId, String fullname) {
     this.tgId = tgId;
     this.chatId = chatId;
     this.fullname = fullname;
+  }
+
+  public Pidor(int tgId, long chatId, String fullname, boolean isPidorOfYear) {
+    this.tgId = tgId;
+    this.chatId = chatId;
+    this.fullname = fullname;
+    this.isPidorOfYear = isPidorOfYear;
   }
 
   public static Pidor unknown(long chatId) {
@@ -96,6 +107,14 @@ public class Pidor{
 
   public void setSticker(String sticker) {
     this.sticker = sticker;
+  }
+
+  public boolean isPidorOfYear() {
+    return isPidorOfYear;
+  }
+
+  public void setPidorOfYear(boolean pidorOfYear) {
+    isPidorOfYear = pidorOfYear;
   }
 
   @Override

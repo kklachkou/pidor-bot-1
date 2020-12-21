@@ -4,7 +4,10 @@ import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameType;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.ItalicText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +39,8 @@ public class CalendarScheduleDayTextItem implements ScheduleDayTextItem {
                 "Игра {0}", new ItalicText(excludeGameService.getWordOfTheDay(localDate))));
       case EDITED_MESSAGE:
         return Optional.of(new SimpleText("Проверка на внимательность"));
-      case ASSASSIN:
-        return Optional.of(new ParametizedText("День от{0}на", new BoldText("саси")));
-      case POLL:
-        return Optional.of(new SimpleText("Пидр-викторина"));
+      case ELECTION:
+        return Optional.of(new SimpleText("Пидор-выборы"));
       default:
         return Optional.empty();
     }

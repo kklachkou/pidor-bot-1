@@ -61,7 +61,7 @@ public class FootballEmojiGame implements EmojiGame {
     botActionCollector.text(
         chatId,
         new SimpleText(
-            "Если не сможешь затолкнуть мяч в <b>очко</b><i>вый</i> - то ты участвуешь в вечерней рулетке"));
+            "Если не сможешь забить мяч в ворота - то ты участвуешь в вечерней рулетке"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
         chatId, new SimpleText("Однако если вы все забъёте гол - от меня вам всем не спастись:)"));

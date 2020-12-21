@@ -1,11 +1,10 @@
 package by.kobyzau.tg.bot.pbot.service;
 
-import java.util.List;
-import java.util.Optional;
-
+import by.kobyzau.tg.bot.pbot.model.Pidor;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import by.kobyzau.tg.bot.pbot.model.Pidor;
+import java.util.List;
+import java.util.Optional;
 
 public interface PidorService {
 
@@ -14,6 +13,8 @@ public interface PidorService {
   Pidor createPidor(long chatId, User user);
 
   void updatePidor(Pidor pidor);
+
+  Optional<Pidor> getPidorOfLastYear(long chatId);
 
   List<Pidor> getByChat(long chatId);
 }

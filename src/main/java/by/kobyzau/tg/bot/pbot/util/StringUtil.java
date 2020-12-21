@@ -3,7 +3,6 @@ package by.kobyzau.tg.bot.pbot.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.Optional;
 
 public class StringUtil {
@@ -55,22 +54,7 @@ public class StringUtil {
     if (s == null) {
       return true;
     }
-    int len = s.length();
-    int start = 0;
-    for (; start < len; start++) {
-      char c = s.charAt(start);
-      if (c < '!') {
-        continue;
-      }
-      if (c <= '~') {
-        return false;
-      }
-      if (Character.isWhitespace(c) || Character.isSpaceChar(c)) {
-        continue;
-      }
-      return false;
-    }
-    return true;
+    return s.trim().length() == 0;
   }
 
   public static boolean equals(String s1, String s2) {
@@ -118,7 +102,7 @@ public class StringUtil {
   public static <T> Optional<T> deserialize(String json, Class<T> c) {
     try {
       return Optional.ofNullable(new ObjectMapper().readValue(json, c));
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Optional.empty();
     }
   }

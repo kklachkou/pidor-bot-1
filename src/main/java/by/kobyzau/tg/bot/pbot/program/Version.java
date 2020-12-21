@@ -6,6 +6,24 @@ import by.kobyzau.tg.bot.pbot.program.text.*;
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_2(
+      LocalDate.of(2020, 12, 20),
+      new TextBuilder(
+              new ParametizedText(
+                  "- День выборов! День отсасина и пидор-викторина были объеденены в одно большое событие - {0}",
+                  new BoldText("Выборы Пидора Дня")))
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "Голосуй за потенциального кандидата. Чем больше у кого-либо голосов, тем выше шанс, что он станет пидором дня!"))
+          .append(new NewLineText())
+          .append(new SimpleText("Следи за событиями через команду /schedule"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "- Команда /game была перенесена в команду /pidor. Если сегодня проходит игра, следить за результатами можно будет через команду /pidor"))),
+
   VERSION_1_10(
       LocalDate.of(2020, 11, 22),
       new TextBuilder(new SimpleText("- Изменен процесс игры Отссассин"))

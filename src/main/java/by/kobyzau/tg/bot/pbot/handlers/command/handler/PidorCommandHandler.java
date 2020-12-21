@@ -7,28 +7,17 @@ import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.NewPidorProcessor;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
-import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.model.dto.AssassinInlineMessageDto;
-import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.RandomText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
-import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
-import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
-import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class PidorCommandHandler implements CommandHandler {
@@ -42,8 +31,9 @@ public class PidorCommandHandler implements CommandHandler {
   @Autowired private PidorService pidorService;
 
   @Autowired private BotActionCollector botActionCollector;
+  @Autowired private CommandHandlerFactory commandHandlerFactory;
 
-  private final Map<Integer, LocalDateTime> assassinLastCall = new HashMap<>();
+  private final Map<String, LocalDateTime> lastCallsCache = new HashMap<>();
 
   @Override
   public void processCommand(Message message, String text) {
@@ -51,73 +41,22 @@ public class PidorCommandHandler implements CommandHandler {
         dailyPidorRepository.getByChatAndDate(message.getChatId(), DateUtil.now());
     if (dailyPidor.isPresent()) {
       alreadyFoundPidorProcessor.processAlreadyFound(message, dailyPidor.get());
-    } else if (isAssassinDay()) {
-      processAssassinCommand(message);
+    } else if (isGameDay()) {
+      commandHandlerFactory.getHandler(Command.GAME).processCommand(message, text);
+    } else if (isElectionDay()) {
+      commandHandlerFactory.getHandler(Command.ELECTION).processCommand(message, text);
     } else {
       newPidorProcessor.processNewDailyPidor(message);
     }
   }
 
-  private boolean isAssassinDay() {
-    return calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.ASSASSIN;
+  private boolean isElectionDay() {
+    return calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.ELECTION;
   }
 
-  public void processAssassinCommand(Message message) {
-    long chatId = message.getChatId();
-    int callerId = message.getFrom().getId();
-    LocalDateTime lastCall = assassinLastCall.get(callerId);
-    if (lastCall != null && lastCall.plusSeconds(20).isAfter(DateUtil.currentTime())) {
-      botActionCollector.text(
-          chatId,
-          new SimpleText("Не так часто, подожди пару секунд, дай шанс другим:)"),
-          message.getMessageId());
-      return;
-    }
-    assassinLastCall.put(callerId, DateUtil.currentTime());
-    Optional<Pidor> callerPidor = pidorService.getPidor(chatId, callerId);
-    if (!callerPidor.isPresent()) {
-      botActionCollector.text(
-          chatId, new SimpleText("Сначала зарегестрируйся"), message.getMessageId());
-      return;
-    }
-    List<Pidor> pidors = CollectionUtil.getRandomList(pidorService.getByChat(chatId));
-    if (pidors.size() < 2) {
-      botActionCollector.text(chatId, new SimpleText("В чате слишком мало людей для этой игры"));
-      botActionCollector.wait(chatId, 1, ChatAction.TYPING);
-      botActionCollector.sticker(chatId, StickerType.SAD.getRandom());
-      return;
-    }
-
-    InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
-        InlineKeyboardMarkup.builder();
-    String requestId = UUID.randomUUID().toString().substring(19);
-    pidors.stream()
-        .filter(p -> StringUtil.isNotBlank(new ShortNamePidorText(p).text()))
-        .limit(10)
-        .map(
-            p ->
-                InlineKeyboardButton.builder()
-                    .text(new ShortNamePidorText(p).text())
-                    .callbackData(
-                        StringUtil.serialize(
-                            new AssassinInlineMessageDto(
-                                requestId, p.getTgId(), callerPidor.get().getTgId())))
-                    .build())
-        .map(Collections::singletonList)
-        .forEach(keyboardMarkupBuilder::keyboardRow);
-
-    botActionCollector.add(
-        new ReplyKeyboardBotAction(
-            chatId,
-            new ParametizedText(
-                new RandomText(
-                    "{0}, ну что, кого ты выберешь пидором?",
-                    "{0}, выберешь пидора дня?",
-                    "{0}, кого ты выберешь пидором?",
-                    "{0}, ну что, кого ты выберешь пидором?"),
-                new ShortNamePidorText(callerPidor.get())),
-            keyboardMarkupBuilder.build(),
-            message.getMessageId()));
+  private boolean isGameDay() {
+    return calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.EMOJI_GAME
+        || calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.EXCLUDE_GAME;
   }
 
   @Override

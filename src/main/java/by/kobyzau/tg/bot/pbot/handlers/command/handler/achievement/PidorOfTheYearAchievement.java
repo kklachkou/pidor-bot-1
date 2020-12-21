@@ -1,52 +1,40 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler.achievement;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.Collectors;
-
+import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.model.PidorOfYear;
+import by.kobyzau.tg.bot.pbot.program.selection.Selection;
+import by.kobyzau.tg.bot.pbot.program.selection.SimpleSelection;
+import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
+import by.kobyzau.tg.bot.pbot.repository.pidorofyear.PidorOfYearRepository;
+import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import by.kobyzau.tg.bot.pbot.model.DailyPidor;
-import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.selection.Selection;
-import by.kobyzau.tg.bot.pbot.program.selection.SimpleSelection;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
-import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.Text;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
-import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
-import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
-import by.kobyzau.tg.bot.pbot.service.PidorService;
-import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.PidorUtil;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Component
 public class PidorOfTheYearAchievement implements Achievement {
 
   private final PidorService pidorService;
 
-  private final DailyPidorRepository dailyPidorRepository;
+  private final PidorOfYearRepository pidorOfYearRepository;
 
   @Autowired
   public PidorOfTheYearAchievement(
-      PidorService pidorService, DailyPidorRepository dailyPidorRepository) {
+      PidorService pidorService, PidorOfYearRepository pidorOfYearRepository) {
     this.pidorService = pidorService;
-    this.dailyPidorRepository = dailyPidorRepository;
+    this.pidorOfYearRepository = pidorOfYearRepository;
   }
 
   @Override
   public Optional<Text> getAchievementInfo(long chatId) {
-    List<DailyPidor> dailyPidors = dailyPidorRepository.getByChat(chatId);
     OptionalInt minYear =
-        dailyPidors.stream()
-            .map(DailyPidor::getLocalDate)
-            .filter(Objects::nonNull)
-            .mapToInt(LocalDate::getYear)
+        pidorOfYearRepository.getAll().stream()
+            .filter(p -> p.getChatId() == chatId)
+            .mapToInt(PidorOfYear::getYear)
             .min();
     if (!minYear.isPresent()) {
       return Optional.empty();
@@ -66,7 +54,7 @@ public class PidorOfTheYearAchievement implements Achievement {
     text.append(new SimpleText("Были пидором года:")).append(new NewLineText());
     while (yearFrom <= yearTo) {
       final int currentYear = yearTo;
-      getPidorOfTheYear(chatId, currentYear, dailyPidors)
+      getPidorOfTheYear(chatId, currentYear)
           .ifPresent(
               p ->
                   text.append(new NewLineText())
@@ -82,13 +70,12 @@ public class PidorOfTheYearAchievement implements Achievement {
     return Optional.of(text);
   }
 
-  private Optional<Pidor> getPidorOfTheYear(long chatId, int year, List<DailyPidor> dailyPidors) {
-    List<DailyPidor> dailyOfTheYear =
-        dailyPidors.stream()
-            .filter(dp -> dp.getLocalDate() != null)
-            .filter(dp -> dp.getLocalDate().getYear() == year)
-            .collect(Collectors.toList());
-    return PidorUtil.getTopPidorTgId(dailyOfTheYear)
+  private Optional<Pidor> getPidorOfTheYear(long chatId, int year) {
+    return pidorOfYearRepository.getAll().stream()
+        .filter(p -> p.getYear() == year)
+        .filter(p -> p.getChatId() == chatId)
+        .findFirst()
+        .map(PidorOfYear::getPlayerTgId)
         .flatMap(id -> pidorService.getPidor(chatId, id));
   }
 }

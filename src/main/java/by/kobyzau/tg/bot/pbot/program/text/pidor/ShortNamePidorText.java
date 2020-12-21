@@ -24,6 +24,9 @@ public class ShortNamePidorText implements Text {
     if (!nickname.text().isEmpty()) {
       sb.append(" (").append(nickname).append(")");
     }
+    if (pidor.isPidorOfYear()) {
+      sb.append(" \uD83D\uDC51");
+    }
     return sb.toString();
   }
 

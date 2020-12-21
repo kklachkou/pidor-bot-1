@@ -4,9 +4,6 @@ import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameResult;
 import by.kobyzau.tg.bot.pbot.bots.game.dice.DiceFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
-import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
-import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
 import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
@@ -42,7 +39,6 @@ public class DiceDayUpdateHandler implements UpdateHandler {
 
   @Autowired private DiceService diceService;
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private CommandParser commandParser;
   @Autowired private PidorService pidorService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private DiceFinalizer diceFinalizer;
@@ -65,12 +61,6 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     boolean hasPidorOfTheDay = hasPidorOfTheDay(update.getMessage().getChatId());
     Optional<Message> message = getMessageWithDice(update);
     if (!message.isPresent()) {
-      Optional<Command> command = getCommand(update);
-      if (command.isPresent() && command.get() == Command.PIDOR && !hasPidorOfTheDay) {
-        botActionCollector.text(
-            update.getMessage().getChatId(), new SimpleText("Сегодня проходит игра /game"));
-        return true;
-      }
       return false;
     }
     if (hasPidorOfTheDay) {
@@ -158,21 +148,6 @@ public class DiceDayUpdateHandler implements UpdateHandler {
         .getUserDice(pidor.getChatId(), pidor.getTgId(), DateUtil.now())
         .map(PidorDice::getValue)
         .orElse(0);
-  }
-
-  private Optional<Command> getCommand(Update update) {
-    if (!update.hasMessage()) {
-      return Optional.empty();
-    }
-    Message message = update.getMessage();
-    if (message == null) {
-      return Optional.empty();
-    }
-    if (!message.hasText()) {
-      return Optional.empty();
-    }
-    ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
-    return Optional.ofNullable(parsedCommand).map(ParsedCommand::getCommand);
   }
 
   private Optional<Message> getMessageWithDice(Update update) {

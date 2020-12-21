@@ -1,10 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
-import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
-import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.ExcludeGameUserValue;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
@@ -43,7 +40,6 @@ import static by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler.EXCLUDE_ORDER
 public class ExcludeGameUpdateHandler implements UpdateHandler {
 
   @Autowired private ExcludeGameService excludeGameService;
-  @Autowired private CommandParser commandParser;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private PidorService pidorService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
@@ -74,11 +70,6 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
     }
     long chatId = update.getMessage().getChatId();
     if (!isExcludeWord(update)) {
-      Optional<Command> command = getCommand(update);
-      if (command.isPresent() && command.get() == Command.PIDOR && !hasPidorOfTheDay(chatId)) {
-        botActionCollector.text(chatId, new SimpleText("Сегодня проходит игра 'Чур не я' /game"));
-        return true;
-      }
       return false;
     }
     if (hasPidorOfTheDay(chatId)) {
@@ -169,20 +160,6 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
         .isPresent();
   }
 
-  private Optional<Command> getCommand(Update update) {
-    if (!update.hasMessage()) {
-      return Optional.empty();
-    }
-    Message message = update.getMessage();
-    if (message == null) {
-      return Optional.empty();
-    }
-    if (!message.hasText()) {
-      return Optional.empty();
-    }
-    ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
-    return Optional.ofNullable(parsedCommand).map(ParsedCommand::getCommand);
-  }
 
   private void saveDailyPidor(Pidor pidor) {
     DailyPidor dailyPidor = new DailyPidor();

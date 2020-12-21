@@ -12,9 +12,8 @@ public interface ScheduledRule {
   ScheduledItem getItem();
 
   int SIMPLE_DAY_ORDER = Ordered.HIGHEST_PRECEDENCE;
-  int POLL_ORDER = 0;
+  int ELECTION_ORDER = 0;
   int EDIT_MESSAGE_ORDER = 10;
-  int ASSASSIN_ORDER = 20;
   int EMOJI_ORDER = 40;
   int EXCLUDE_ORDER = 60;
 }

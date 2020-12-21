@@ -41,7 +41,7 @@ public class SimpleMonth implements Text {
       case 10:
         return "Октябрь";
       case 11:
-        return "Норябрь";
+        return "Ноябрь";
       case 12:
         return "Декабрь";
       default:

@@ -49,4 +49,19 @@ CREATE TABLE exclude_game(
     local_date TIMESTAMP NOT NULL
 );
 
+CREATE TABLE pidor_of_year(
+    id serial PRIMARY KEY,
+    player_tg_id int NOT NULL,
+    chat_id bigint NOT NULL,
+    year int NOT NULL
+);
 
+
+CREATE TABLE custom_daily_user_data(
+    id serial PRIMARY KEY,
+    chat_id bigint NOT NULL,
+    player_tg_id int NOT NULL,
+    local_date TIMESTAMP NOT NULL,
+    type VARCHAR (100) NOT NULL,
+    data VARCHAR (1000) NOT NULL
+);

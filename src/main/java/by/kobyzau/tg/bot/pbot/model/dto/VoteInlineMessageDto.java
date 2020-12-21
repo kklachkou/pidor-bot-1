@@ -1,15 +1,15 @@
 package by.kobyzau.tg.bot.pbot.model.dto;
 
-public class AssassinInlineMessageDto {
+public class VoteInlineMessageDto {
 
   private String id;
   private Integer tId;
   private Integer cId;
 
-  public AssassinInlineMessageDto() {
+  public VoteInlineMessageDto() {
   }
 
-  public AssassinInlineMessageDto(String id, Integer targetUserId, Integer calledUserId) {
+  public VoteInlineMessageDto(String id, Integer targetUserId, Integer calledUserId) {
     this.tId = targetUserId;
     this.cId = calledUserId;
     this.id = id;

@@ -50,4 +50,50 @@ public class ShortNamePidorTextTest {
     // then
     Assert.assertEquals("Bob Jones", result);
   }
+
+
+
+  @Test
+  public void textToString_crown() {
+    // given
+    Text text = new ShortNamePidorText(new Pidor(1, 1, "FullName", true));
+
+    // then
+    assertEquals(text.text(), text.toString());
+  }
+
+  @Test
+  public void text_withNickname_crown() {
+    // given
+    Pidor pidor = new Pidor();
+    pidor.setFullName("Bob Jones");
+    pidor.setUsername("username");
+    pidor.setNickname("Nickname");
+    pidor.setPidorOfYear(true);
+
+    Text text = new ShortNamePidorText(pidor);
+
+    // when
+    String result = text.text();
+
+    // then
+    Assert.assertEquals("Bob Jones (Nickname) \uD83D\uDC51", result);
+  }
+
+  @Test
+  public void text_withoutNickname_crown() {
+    // given
+    Pidor pidor = new Pidor();
+    pidor.setFullName("Bob Jones");
+    pidor.setUsername("username");
+    pidor.setPidorOfYear(true);
+
+    Text text = new ShortNamePidorText(pidor);
+
+    // when
+    String result = text.text();
+
+    // then
+    Assert.assertEquals("Bob Jones \uD83D\uDC51", result);
+  }
 }

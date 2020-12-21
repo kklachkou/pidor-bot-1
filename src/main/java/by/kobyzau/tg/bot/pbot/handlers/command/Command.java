@@ -25,12 +25,6 @@ public enum Command {
       "Расчитывает вероятность стать пидором года",
       Category.INFO,
       3),
-  GAME(
-      "game",
-      "Информация по сегодняшней игре",
-      "Показывает информацию по сегодняшней игре",
-      Category.INFO,
-      4),
   HELP("help", "Помощь по боту", "Выводит список комманд бота", Category.INFO, 5),
   MY_STATUS(
       "my_status",
@@ -69,12 +63,8 @@ public enum Command {
       "Регистрация в игре в качестве пидора",
       Category.ACTION,
       11),
-  CALLER(
-      "callers",
-      "Число вызовов бота",
-      "Показывает кто как часто призывал пидор-бота",
-      Category.INFO,
-      12),
+  GAME("game"),
+  ELECTION("election"),
   INLINE("inline"),
   CURRENT_TIME("time"),
   STICKERS("stickers"),

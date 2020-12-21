@@ -20,10 +20,17 @@ public class ProdScheduleAppConfig {
   @Autowired private Task updateUsernameTask;
   @Autowired private Task backupTask;
   @Autowired private Task cleanupChatTask;
+  @Autowired private Task pidorOfYearTask;
 
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
+
+
+  @Scheduled(cron = "${task.pidorOfYear.cron}", zone = "GMT+3.00")
+  public void pidorOfYearTask() {
+    executor.execute(pidorOfYearTask::processTask);
+  }
 
   @Scheduled(fixedRateString = "${task.pingHeroku.delay:60000}")
   public void processUpdates() {
