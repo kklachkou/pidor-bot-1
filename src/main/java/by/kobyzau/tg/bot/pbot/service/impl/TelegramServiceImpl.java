@@ -3,6 +3,7 @@ package by.kobyzau.tg.bot.pbot.service.impl;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
+import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.TelegramSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class TelegramServiceImpl implements TelegramService {
   @Autowired private TelegramSender telegramSender;
+  @Autowired private BotService botService;
 
   @Autowired private PidorRepository pidorRepository;
 
@@ -37,6 +39,7 @@ public class TelegramServiceImpl implements TelegramService {
     return pidorRepository.getAll().stream()
         .map(Pidor::getChatId)
         .distinct()
+        .filter(botService::isBotPartOfChat)
         .collect(Collectors.toList());
   }
 

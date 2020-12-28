@@ -1,21 +1,21 @@
 package by.kobyzau.tg.bot.pbot.handlers.update;
 
+import by.kobyzau.tg.bot.pbot.bots.game.exclude.ExcludeFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
-import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
-import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.ExcludeGameUserValue;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.Selection;
-import by.kobyzau.tg.bot.pbot.program.text.*;
-import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNameLinkedPidorText;
+import by.kobyzau.tg.bot.pbot.program.text.IntText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.RandomText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
   @Autowired private PidorService pidorService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private BotService botService;
-  @Autowired private List<PidorFunnyAction> pidorFunnyActions;
+  @Autowired private ExcludeFinalizer excludeFinalizer;
 
   @Autowired
   @Qualifier("cachedExecutor")
@@ -73,72 +73,52 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       return false;
     }
     if (hasPidorOfTheDay(chatId)) {
-      return true;
+      return false;
     }
-    botActionCollector.typing(update.getMessage().getChatId());
     int userId = update.getMessage().getFrom().getId();
-    Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
-    if (!pidor.isPresent()) {
-      return true;
-    }
+    Pidor pidor = pidorService.getPidor(chatId, userId).orElseThrow(IllegalStateException::new);
+    botActionCollector.typing(update.getMessage().getChatId());
     Optional<ExcludeGameUserValue> userValue =
         excludeGameService.getExcludeGameUserValue(chatId, userId, DateUtil.now());
     if (userValue.isPresent()) {
       botActionCollector.wait(chatId, 1, ChatAction.TYPING);
       botActionCollector.text(
           chatId,
-          new ParametizedText("{0}, не нужно повторяться", new ShortNamePidorText(pidor.get())),
+          new ParametizedText("{0}, не нужно повторяться", new ShortNamePidorText(pidor)),
           update.getMessage().getMessageId());
     } else {
-      processExcludeWord(pidor.get(), update.getMessage());
+      processExcludeWord(pidor, update.getMessage());
     }
     return true;
   }
 
   private void processExcludeWord(Pidor pidor, Message message) {
     long chatId = pidor.getChatId();
-    int numPidorsToExclude = excludeGameService.getNumPidorsToExclude(chatId);
-    List<Pidor> pidors = pidorService.getByChat(chatId);
     saveValue(pidor);
-    Set<Integer> playedIds =
-        excludeGameService.getExcludeGameUserValues(chatId, DateUtil.now()).stream()
-            .map(ExcludeGameUserValue::getPlayerTgId)
-            .collect(Collectors.toSet());
     botActionCollector.text(
         chatId,
         new ParametizedText(happyWords.next(), new ShortNamePidorText(pidor)),
         message.getMessageId());
-    List<Pidor> notPlayedPidors =
-        pidors.stream().filter(p -> !playedIds.contains(p.getTgId())).collect(Collectors.toList());
-    if (playedIds.size() >= numPidorsToExclude || notPlayedPidors.size() == 1) {
+    if (excludeGameService.needToFinalize(chatId)) {
+      botActionCollector.wait(chatId, ChatAction.TYPING);
+      botActionCollector.text(chatId, new SimpleText("Кто не успел, тот пидор!"));
       botActionCollector.typing(chatId);
-      Pidor pidorOfTheDay = CollectionUtil.getRandomValue(notPlayedPidors);
-      saveDailyPidor(pidorOfTheDay);
-      executor.execute(() -> processLastPidor(pidorOfTheDay, notPlayedPidors));
+      executor.execute(() -> excludeFinalizer.finalize(chatId));
     } else {
+      List<Pidor> pidors = pidorService.getByChat(chatId);
+      Set<Integer> playedIds =
+          excludeGameService.getExcludeGameUserValues(chatId, DateUtil.now()).stream()
+              .map(ExcludeGameUserValue::getPlayerTgId)
+              .collect(Collectors.toSet());
+      List<Pidor> notPlayedPidors =
+          pidors.stream()
+              .filter(p -> !playedIds.contains(p.getTgId()))
+              .collect(Collectors.toList());
       botActionCollector.wait(chatId, 1, ChatAction.TYPING);
       botActionCollector.text(
           chatId,
           new ParametizedText(new RandomText(NUM_LEFT_TEXT), new IntText(notPlayedPidors.size())));
     }
-  }
-
-  private void processLastPidor(Pidor pidorOfTheDay, List<Pidor> nonPlayedPidors) {
-    long chatId = pidorOfTheDay.getChatId();
-    botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.text(chatId, new SimpleText("Кто не успел, тот пидор!"));
-    botActionCollector.wait(chatId, ChatAction.TYPING);
-    TextBuilder message =
-        new TextBuilder(new SimpleText("Кто-то из этих ребят сейчас будет пидором:"))
-            .append(new NewLineText())
-            .append(new NewLineText());
-    CollectionUtil.getRandomList(nonPlayedPidors).stream()
-        .map(ShortNameLinkedPidorText::new)
-        .forEach(p -> message.append(new NewLineText()).append(p));
-    botActionCollector.text(chatId, message);
-    botActionCollector.wait(chatId, 5, ChatAction.TYPING);
-    botService.unpinLastBotMessage(chatId);
-    CollectionUtil.getRandomValue(pidorFunnyActions).processFunnyAction(chatId, pidorOfTheDay);
   }
 
   private void saveValue(Pidor pidor) {
@@ -160,15 +140,6 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
         .isPresent();
   }
 
-
-  private void saveDailyPidor(Pidor pidor) {
-    DailyPidor dailyPidor = new DailyPidor();
-    dailyPidor.setChatId(pidor.getChatId());
-    dailyPidor.setPlayerTgId(pidor.getTgId());
-    dailyPidor.setLocalDate(DateUtil.now());
-    dailyPidorRepository.create(dailyPidor);
-  }
-
   private boolean hasPidorOfTheDay(long chatId) {
     return dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent();
   }
@@ -178,8 +149,11 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       return false;
     }
     Message message = update.getMessage();
+    if (!message.hasText()) {
+      return false;
+    }
     return botService.isChatValid(message.getChatId())
-            && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
+        && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
   }
 
   @Override

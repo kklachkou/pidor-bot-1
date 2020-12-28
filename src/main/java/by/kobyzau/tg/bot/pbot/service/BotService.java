@@ -6,5 +6,7 @@ public interface BotService {
 
     boolean isChatValid(long chatId);
 
+    boolean isBotPartOfChat(long chatId);
+
     void unpinLastBotMessage(long chatId);
 }

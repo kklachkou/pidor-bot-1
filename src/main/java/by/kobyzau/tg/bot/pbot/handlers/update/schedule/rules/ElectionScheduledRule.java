@@ -14,8 +14,7 @@ public class ElectionScheduledRule implements ScheduledRule {
   @Override
   public boolean isMatch(LocalDate localDate) {
     return localDate.getDayOfWeek() == DayOfWeek.WEDNESDAY
-        || localDate.getDayOfYear() % 13 == 0
-        || localDate.isEqual(LocalDate.of(2020, 12, 18));
+        || localDate.getDayOfYear() % 13 == 0;
   }
 
   @Override

@@ -4,6 +4,7 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,7 +24,7 @@ public class Pidor{
   private String sticker;
 
   @Transient
-  private boolean isPidorOfYear;
+  private List<PidorMark> pidorMarks;
 
 
   public Pidor() {}
@@ -34,11 +35,11 @@ public class Pidor{
     this.fullname = fullname;
   }
 
-  public Pidor(int tgId, long chatId, String fullname, boolean isPidorOfYear) {
+  public Pidor(int tgId, long chatId, String fullname, List<PidorMark> pidorMarks) {
     this.tgId = tgId;
     this.chatId = chatId;
     this.fullname = fullname;
-    this.isPidorOfYear = isPidorOfYear;
+    this.pidorMarks = pidorMarks;
   }
 
   public static Pidor unknown(long chatId) {
@@ -109,12 +110,12 @@ public class Pidor{
     this.sticker = sticker;
   }
 
-  public boolean isPidorOfYear() {
-    return isPidorOfYear;
+  public List<PidorMark> getPidorMarks() {
+    return pidorMarks;
   }
 
-  public void setPidorOfYear(boolean pidorOfYear) {
-    isPidorOfYear = pidorOfYear;
+  public void setPidorMarks(List<PidorMark> pidorMarks) {
+    this.pidorMarks = pidorMarks;
   }
 
   @Override

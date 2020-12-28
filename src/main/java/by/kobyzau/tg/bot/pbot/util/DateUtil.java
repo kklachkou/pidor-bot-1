@@ -37,6 +37,10 @@ public class DateUtil {
     return hour < 7 || hour == 23;
   }
 
+  public static boolean isNewYearTime() {
+    LocalDate now = now();
+    return now.getDayOfYear() < 30 || now.getDayOfYear() > 330;
+  }
   public static ZoneId minskZone() {
     return ZoneId.of("UTC+3");
   }

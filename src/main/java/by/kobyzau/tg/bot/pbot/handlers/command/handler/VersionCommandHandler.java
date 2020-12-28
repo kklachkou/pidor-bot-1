@@ -6,7 +6,6 @@ import by.kobyzau.tg.bot.pbot.program.Version;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,7 +44,7 @@ public class VersionCommandHandler implements CommandHandler {
   private void sendVersion(long chatId) {
     botActionCollector.text(chatId, versionDescription);
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.sticker(chatId, StickerType.LOVE.getRandom());
+    botActionCollector.sticker(chatId, Version.getLast().getSticker().getRandom());
   }
 
   @Override

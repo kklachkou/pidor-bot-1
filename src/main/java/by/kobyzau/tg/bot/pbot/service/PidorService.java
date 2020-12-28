@@ -14,7 +14,5 @@ public interface PidorService {
 
   void updatePidor(Pidor pidor);
 
-  Optional<Pidor> getPidorOfLastYear(long chatId);
-
   List<Pidor> getByChat(long chatId);
 }

@@ -2,10 +2,9 @@ package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
 import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
-import by.kobyzau.tg.bot.pbot.checker.BotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
-import by.kobyzau.tg.bot.pbot.collectors.CollectionBotActionCollector;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
@@ -17,7 +16,10 @@ import by.kobyzau.tg.bot.pbot.tg.action.EditMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,16 +31,15 @@ import org.telegram.telegrambots.meta.api.objects.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ElectionUpdateHandlerTest {
+public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
 
   @Rule public TestName testName = new TestName();
 
@@ -50,7 +51,6 @@ public class ElectionUpdateHandlerTest {
   @InjectMocks private ElectionUpdateHandler handler;
 
   @Mock private ElectionService electionService;
-  @Spy private CollectionBotActionCollector botActionCollector = new CollectionBotActionCollector();
   @Mock private PidorService pidorService;
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private ElectionFinalizer electionFinalizer;
@@ -118,7 +118,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(Collections.emptyList());
+    checkNoAnyActions();
     assertNotFinalized();
     assertNotPrinter();
     assertNotSavedVote();
@@ -143,7 +143,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(Collections.emptyList());
+    checkNoAnyActions();
     assertNotFinalized();
     assertNotSavedVote();
     assertNotPrinter();
@@ -169,7 +169,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(Collections.emptyList());
+    checkNoAnyActions();
     assertNotFinalized();
     assertNotPrinter();
     assertNotSavedVote();
@@ -195,8 +195,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(
-        Collections.singletonList(new BotTypeBotActionChecker(EditMessageBotAction.class)));
+    checkActions(new BotTypeBotActionChecker(EditMessageBotAction.class));
     assertNotFinalized();
     assertNotPrinter();
     assertNotSavedVote();
@@ -222,8 +221,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(
-        Collections.singletonList(new BotTypeBotActionChecker(EditMessageBotAction.class)));
+    checkActions(new BotTypeBotActionChecker(EditMessageBotAction.class));
     assertNotFinalized();
     assertNotPrinter();
     assertNotSavedVote();
@@ -249,8 +247,7 @@ public class ElectionUpdateHandlerTest {
     boolean result = handler.handleUpdate(update);
 
     // then
-    checkActions(
-        Collections.singletonList(new BotTypeBotActionChecker(EditMessageBotAction.class)));
+    checkActions(new BotTypeBotActionChecker(EditMessageBotAction.class));
     assertNotFinalized();
     assertNotPrinter();
     assertNotSavedVote();
@@ -277,9 +274,8 @@ public class ElectionUpdateHandlerTest {
 
     // then
     checkActions(
-        Arrays.asList(
-            new BotTypeBotActionChecker(EditMessageBotAction.class),
-            new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан"))));
+        new BotTypeBotActionChecker(EditMessageBotAction.class),
+        new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан")));
     assertNotFinalized();
     assertPrinted();
     assertSavedVote();
@@ -305,24 +301,12 @@ public class ElectionUpdateHandlerTest {
 
     // then
     checkActions(
-        Arrays.asList(
-            new BotTypeBotActionChecker(EditMessageBotAction.class),
-            new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан"))));
+        new BotTypeBotActionChecker(EditMessageBotAction.class),
+        new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан")));
     assertFinalized();
     assertNotPrinter();
     assertSavedVote();
     assertTrue(result);
-  }
-
-  private void checkActions(List<BotActionChecker> checkerList) {
-    for (int i = 0; i < checkerList.size(); i++) {
-      if (i >= botActionCollector.getActionList().size()) {
-        Assert.fail("No " + (i + 1) + " bot action");
-      }
-      checkerList.get(i).check(botActionCollector.getActionList().get(i));
-    }
-    assertEquals(
-        "Invalid bot action count", checkerList.size(), botActionCollector.getActionList().size());
   }
 
   private void setupPidorOfTheDay() {

@@ -45,6 +45,9 @@ public class DiceFinalizerImpl implements DiceFinalizer {
   @Override
   public void finalize(long chatId) {
     LocalDate now = DateUtil.now();
+    if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
+      return;
+    }
     EmojiGame game =
         diceService
             .getGame(now)
@@ -72,7 +75,9 @@ public class DiceFinalizerImpl implements DiceFinalizer {
     botActionCollector.text(chatId, new SimpleText("Время подводить итоги!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     if (pidorsToPlay.isEmpty()) {
-      botActionCollector.text(chatId, new SimpleText("Сегодня нет проигравших, так что в пидор-рулетке участвуют все!"));
+      botActionCollector.text(
+          chatId,
+          new SimpleText("Сегодня нет проигравших, так что в пидор-рулетке участвуют все!"));
       pidorsToPlay.addAll(pidors);
     }
     Pidor pidorOfTheDay = CollectionUtil.getRandomValue(pidorsToPlay);

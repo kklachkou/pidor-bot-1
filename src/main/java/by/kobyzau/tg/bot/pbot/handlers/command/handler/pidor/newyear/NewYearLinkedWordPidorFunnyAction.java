@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor;
+package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.newyear;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
+import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
 import by.kobyzau.tg.bot.pbot.handlers.update.fun.Intro;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
@@ -22,9 +24,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Profile("!new-year")
+@Profile("new-year")
 @Component
-public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
+public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
 
   @Autowired
   @Qualifier("PidorOfTheDayIntro")
@@ -37,36 +39,33 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
 
-  public LinkedWordPidorFunnyAction() {
+  public NewYearLinkedWordPidorFunnyAction() {
     this.finalMessage =
         new ConsistentSelection<>(
-            "Кажется, пидор дня - {0}",
-            "Думаю, что {0} пидор дня",
-            "Зачем что-то утаивать, ведь {0} пидор дня",
-            "{0} - не нужно быть пидор-ботом, чтобы догадаться, что ты сегодня пидор дня",
-            "Если кто-то спросит меня, кто сегодня пидор дня, я отвечу {0}",
-            "И прекрасный человек дня сегодня... а нет, ошибка, всего-лишь пидор - {0}",
-            "Ого, вы посмотрите только! А пидор дня то - {0}",
-            "А сегодня наш пидор это {0}",
-            "Думаешь скрыться от судьбы? {0} - она тебя настигнет и сделает пидором дня",
-            "Думаю всё очевидно, {0} - ты пидор дня!",
-            "Лол, кек, чебурек, а {0} - пидор дня!",
-            "Согласно гороскопу, {0} сегодня пидор дня",
+            "Согласно спискам, {0} - ты сегодня пидор дня!",
+            "{0} - не нужно быть дедушкой Пидор-Ботом, чтобы догадаться, что ты сегодня пидор дня",
+            "Если кто-нибудь отправит мне открытку с вопросом кто сегодня пидор дня, я отвечу {0}",
+            "Если кто-нибудь загадает желание сделать кого-нибудь пидором дня, я отвечу {0} - станет пидором дня",
+            "И снегурочка этого дня сегодня... а нет, ошибка, всего-лишь пидор - {0}",
+            "Ого, вы посмотрите только! А румяный пидор дня то - {0}",
+            "А сегодня наш зимний пидор это {0}",
+            "Думаешь скрыться от новогоднего чуда? {0} - оно тебя настигнет и сделает пидором дня",
+            "Думаю всё очевидно, {0} - ты пидор этого прекрасного зимнего дня!",
+            "Мистер пукинштейн, {0} - выглядишь педиковато, ты пидор дня!",
+            "Согласно новогодним пожеланиям, {0} сегодня пидор дня",
             "Если не секрет, {0} - скажи, почему ты пидор дня?",
-            "Ну ты и пидор, {0}",
-            "А любитель ронять мыло - {0}",
-            "Думаю пидор сегодняшнего дня - {0}");
+            "Доставайте феерверк, у нас сегодня пидор - {0}",
+            "А любитель ронять мандаринки - {0}");
     this.pidorName =
         new ConsistentSelection<>(
-            "крэпкий хозяйственник из элитного колхоза",
-            "крепкий орешек с автоматом без магазина",
-            "русский кукловод из украинской Чехии",
-            "любитель ронять мыло при свидетелях Иеговы",
-            "легитимный заднеприводный проститут",
-            "звезда вульгарного кино",
-            "пешка Навального",
-            "звезда по имени Солнышко",
-            "наркоман, алкоголик, проститутка, продавший страну за 20 евро");
+            "пьяный эльф",
+            "снеговик, с неправильной морковкой",
+            "любитель ронять мандаринки при свидетелях Иеговы",
+            "снегурка со щетиной и диким перегаром",
+            "человек с холодным сердцем и горячим задом",
+            "Дедушка Пидор",
+            "пешка Санта Клауса",
+            "звезда по имени Солнышко");
   }
 
   @Override
@@ -79,6 +78,8 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
 
     botActionCollector.sticker(chatId, StickerType.LOOKING_PIDOR.getRandom());
     intro.sendIntro(chatId);
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    botActionCollector.sticker(chatId, StickerType.NEW_YEAR.getRandom());
     botActionCollector.wait(chatId, ChatAction.TYPING);
 
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());

@@ -46,6 +46,10 @@ public class SendMessageBotAction implements BotAction<Message> {
     return chatId;
   }
 
+  public Text getText() {
+    return text;
+  }
+
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + text;

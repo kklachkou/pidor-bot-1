@@ -4,9 +4,11 @@ import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
+import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.dice.DiceRepository;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ public class DiceServiceImpl implements DiceService {
   @Autowired private List<EmojiGame> games;
 
   @Autowired private PidorService pidorService;
+  @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private CalendarSchedule calendarSchedule;
 
   @Override
@@ -69,6 +72,19 @@ public class DiceServiceImpl implements DiceService {
     if (numPidors <= 5) {
       return numPidors;
     }
-    return (int)(numPidors * 0.8);
+    return (int) (numPidors * 0.8);
+  }
+
+  @Override
+  public boolean needToFinalize(long chatId) {
+    LocalDate now = DateUtil.now();
+    int numPidorsToPlay = getNumPidorsToPlay(chatId);
+    long diceNumber =
+        getDices().stream()
+            .filter(d -> d.getChatId() == chatId)
+            .filter(d -> d.getLocalDate().isEqual(now))
+            .count();
+    return (diceNumber >= numPidorsToPlay)
+        && !dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent();
   }
 }

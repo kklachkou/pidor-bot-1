@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor;
+package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.newyear;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
+import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
 import by.kobyzau.tg.bot.pbot.handlers.update.fun.Intro;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
@@ -21,39 +23,37 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Profile("!new-year")
+@Profile("new-year")
 @Component
-public class CombinedPidorFunnyAction implements PidorFunnyAction {
+public class NewYearCombinedPidorFunnyAction implements PidorFunnyAction {
 
   @Autowired
-  @Qualifier("PidorOfTheDayIntro")
+  @Qualifier("NewYearPidorOfTheDayIntro")
   private Intro intro;
 
   private final Selection<String> finalMessage;
-
 
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
 
-  public CombinedPidorFunnyAction() {
+  public NewYearCombinedPidorFunnyAction() {
     this.finalMessage =
         new ConsistentSelection<>(
-
-            "Зачем что-то утаивать, ведь {0} пидор дня",
-            "{0} - не нужно быть пидор-ботом, чтобы догадаться, что ты сегодня пидор дня",
-            "Если кто-то спросит меня, кто сегодня пидор дня, я отвечу {0}",
-            "И прекрасный человек дня сегодня... а нет, ошибка, всего-лишь пидор - {0}",
-            "Ого, вы посмотрите только! А пидор дня то - {0}",
-            "А сегодня наш пидор это {0}",
-            "Думаешь скрыться от судьбы? {0} - она тебя настигнет и сделает пидором дня",
-            "Думаю всё очевидно, {0} - ты пидор дня!",
+            "Согласно спискам, {0} - ты сегодня пидор дня!",
+            "{0} - не нужно быть дедушкой Пидор-Ботом, чтобы догадаться, что ты сегодня пидор дня",
+            "Если кто-нибудь отправит мне открытку с вопросом кто сегодня пидор дня, я отвечу {0}",
+            "Если кто-нибудь загадает желание сделать кого-нибудь пидором дня, я отвечу {0} - станет пидором дня",
+            "И снегурочка этого дня сегодня... а нет, ошибка, всего-лишь пидор - {0}",
+            "Ого, вы посмотрите только! А румяный пидор дня то - {0}",
+            "А сегодня наш зимний пидор это {0}",
+            "Думаешь скрыться от новогоднего чуда? {0} - оно тебя настигнет и сделает пидором дня",
+            "Думаю всё очевидно, {0} - ты пидор этого прекрасного зимнего дня!",
             "Мистер пукинштейн, {0} - выглядишь педиковато, ты пидор дня!",
-            "Согласно гороскопу, {0} сегодня пидор дня",
+            "Согласно новогодним пожеланиям, {0} сегодня пидор дня",
             "Если не секрет, {0} - скажи, почему ты пидор дня?",
-            "Ну ты и пидор, {0}",
-            "А любитель ронять мыло - {0}",
-            "Думаю пидор сегодняшнего дня - {0}");
+            "Доставайте феерверк, у нас сегодня пидор - {0}",
+            "А любитель ронять мандаринки - {0}");
   }
 
   @Override
@@ -66,6 +66,8 @@ public class CombinedPidorFunnyAction implements PidorFunnyAction {
 
     botActionCollector.sticker(chatId, StickerType.LOOKING_PIDOR.getRandom());
     intro.sendIntro(chatId);
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    botActionCollector.sticker(chatId, StickerType.NEW_YEAR.getRandom());
     botActionCollector.wait(chatId, ChatAction.TYPING);
 
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());

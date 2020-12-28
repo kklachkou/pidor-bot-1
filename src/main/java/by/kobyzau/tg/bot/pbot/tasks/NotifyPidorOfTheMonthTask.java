@@ -42,7 +42,7 @@ public class NotifyPidorOfTheMonthTask implements Task {
   @Override
   public void processTask() {
     LocalDate now = DateUtil.now();
-    if (now.getDayOfMonth() != 1) {
+    if (now.plusDays(1).getDayOfMonth() != 1) {
       return;
     }
     logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
@@ -55,18 +55,14 @@ public class NotifyPidorOfTheMonthTask implements Task {
   private void processForChat(long chatId) {
     botActionCollector.typing(chatId);
     LocalDate now = DateUtil.now();
-    final LocalDate endDate = now.minusDays(1);
-    final LocalDate startDate = LocalDate.of(endDate.getYear(), endDate.getMonth(), 1);
-    LocalDate date = startDate;
     Map<Integer, Integer> numWins = new HashMap<>();
-    while (!date.isEqual(now)) {
-      dailyPidorRepository
-          .getByChatAndDate(chatId, date)
-          .ifPresent(
-              d -> numWins.put(d.getPlayerTgId(), numWins.getOrDefault(d.getPlayerTgId(), 0) + 1));
-      date = date.plusDays(1);
-    }
-    printWinnerInfo(chatId, numWins, startDate.getMonthValue());
+
+    dailyPidorRepository.getByChat(chatId).stream()
+        .filter(d -> d.getLocalDate().getYear() == now.getYear())
+        .filter(d -> d.getLocalDate().getMonthValue() == now.getMonthValue())
+        .forEach(
+            d -> numWins.put(d.getPlayerTgId(), numWins.getOrDefault(d.getPlayerTgId(), 0) + 1));
+    printWinnerInfo(chatId, numWins, now.getMonthValue());
   }
 
   private void printWinnerInfo(long chatId, Map<Integer, Integer> numWins, int month) {
@@ -156,5 +152,4 @@ public class NotifyPidorOfTheMonthTask implements Task {
             new SimpleText(pidorNames),
             new PastMonth(month)));
   }
-
 }

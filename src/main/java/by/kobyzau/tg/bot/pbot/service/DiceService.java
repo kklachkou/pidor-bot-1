@@ -21,4 +21,6 @@ public interface DiceService {
 
 
   int getNumPidorsToPlay(long chatId);
+
+  boolean needToFinalize(long chatId);
 }

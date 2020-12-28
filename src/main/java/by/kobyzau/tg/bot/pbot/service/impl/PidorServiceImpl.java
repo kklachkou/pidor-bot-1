@@ -1,7 +1,10 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
+import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.model.PidorMark;
 import by.kobyzau.tg.bot.pbot.model.PidorOfYear;
+import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidorofyear.PidorOfYearRepository;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,7 @@ public class PidorServiceImpl implements PidorService {
 
   @Autowired private PidorRepository pidorRepository;
   @Autowired private PidorOfYearRepository pidorOfYearRepository;
+  @Autowired private DailyPidorRepository dailyPidorRepository;
 
   @Autowired private TelegramService telegramService;
 
@@ -30,7 +35,7 @@ public class PidorServiceImpl implements PidorService {
     return pidorRepository
         .getByChatAndPlayerTgId(chatId, userId)
         .filter(p -> TGUtil.isChatMember(telegramService.getChatMember(chatId, p.getTgId())))
-        .map(this::setPidorOfLastYearMark);
+        .map(this::setPidorMarks);
   }
 
   @Override
@@ -55,24 +60,19 @@ public class PidorServiceImpl implements PidorService {
     return pidorRepository.getByChat(chatId).stream()
         .filter(p -> TGUtil.isChatMember(telegramService.getChatMember(chatId, p.getTgId())))
         .sorted(Comparator.comparing(Pidor::getFullName))
-        .map(this::setPidorOfLastYearMark)
+        .map(this::setPidorMarks)
         .collect(Collectors.toList());
   }
 
-  @Override
-  public Optional<Pidor> getPidorOfLastYear(long chatId) {
-    int year = DateUtil.now().getYear() - 1;
-    return pidorOfYearRepository.getPidorOfYearByChat(chatId).stream()
-        .filter(p -> p.getYear() == year)
-        .findFirst()
-        .map(PidorOfYear::getPlayerTgId)
-        .flatMap(id -> getPidor(chatId, id));
-  }
-
-  private Pidor setPidorOfLastYearMark(Pidor pidor) {
+  private Pidor setPidorMarks(Pidor pidor) {
+    List<PidorMark> pidorMarks = new ArrayList<>();
     if (isPidorOfLastYear(pidor)) {
-      pidor.setPidorOfYear(true);
+      pidorMarks.add(PidorMark.PIDOR_OF_YEAR);
     }
+    if (isLastPidorOfDay(pidor)) {
+      pidorMarks.add(PidorMark.LAST_PIDOR_OF_DAY);
+    }
+    pidor.setPidorMarks(pidorMarks);
     return pidor;
   }
 
@@ -85,6 +85,17 @@ public class PidorServiceImpl implements PidorService {
         .filter(p -> p.getYear() == year)
         .findFirst()
         .map(PidorOfYear::getPlayerTgId)
+        .filter(id -> id == pidor.getTgId())
+        .isPresent();
+  }
+
+  private boolean isLastPidorOfDay(Pidor pidor) {
+    if (pidor == null) {
+      return false;
+    }
+    return dailyPidorRepository.getByChat(pidor.getChatId()).stream()
+        .max(Comparator.comparing(DailyPidor::getLocalDate))
+        .map(DailyPidor::getPlayerTgId)
         .filter(id -> id == pidor.getTgId())
         .isPresent();
   }

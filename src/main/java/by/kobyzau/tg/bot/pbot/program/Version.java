@@ -2,10 +2,22 @@ package by.kobyzau.tg.bot.pbot.program;
 
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_3(
+      LocalDate.of(2020, 12, 27),
+      new TextBuilder(new SimpleText("- Новый год рядом! Новогодняя тема Пидор-Бота"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(
+              new SimpleText("- Теперь всегда видно, кто был последним пидором дня. Ищи петуха:)"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("- Повышена точность определения шансов стать пидором года")), StickerType.NEW_YEAR),
+
   VERSION_2(
       LocalDate.of(2020, 12, 20),
       new TextBuilder(
@@ -77,10 +89,22 @@ public enum Version {
 
   private final LocalDate release;
   private final Text description;
+  private final StickerType sticker;
 
   Version(LocalDate release, Text description) {
     this.release = release;
     this.description = description;
+    this.sticker = StickerType.LOVE;
+  }
+
+  Version(LocalDate release, Text description, StickerType sticker) {
+    this.release = release;
+    this.description = description;
+    this.sticker = sticker;
+  }
+
+  public StickerType getSticker() {
+    return sticker;
   }
 
   public LocalDate getRelease() {

@@ -58,47 +58,42 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     if (!validateUpdate(update)) {
       return false;
     }
-    boolean hasPidorOfTheDay = hasPidorOfTheDay(update.getMessage().getChatId());
     Optional<Message> message = getMessageWithDice(update);
     if (!message.isPresent()) {
       return false;
     }
-    if (hasPidorOfTheDay) {
+    if (hasPidorOfTheDay(update.getMessage().getChatId())) {
       return false;
     }
     LocalDate now = DateUtil.now();
     EmojiGame game = diceService.getGame(now).orElseThrow(IllegalStateException::new);
     if (!isUserSendValidEmoji(game, message.get())) {
-      return true;
+      return false;
     }
     long chatId = message.get().getChatId();
 
     Optional<PidorDice> userDice =
         diceService.getUserDice(chatId, message.get().getFrom().getId(), now);
     if (userDice.isPresent()) {
-      return true;
+      return false;
     }
     botActionCollector.wait(chatId, ChatAction.TYPING);
     int newDiceUserValue = message.get().getDice().getValue();
     diceService.saveDice(
         new PidorDice(message.get().getFrom().getId(), chatId, now, newDiceUserValue));
+    RandomText thanksText =
+        new RandomText("Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!");
     if (newDiceUserValue == 1) {
-      botActionCollector.text(
-          chatId,
-          new RandomText("Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!"),
-          message.get().getMessageId());
+      botActionCollector.text(chatId, thanksText, message.get().getMessageId());
       botActionCollector.sticker(chatId, StickerType.LOL.getRandom());
     } else {
-      botActionCollector.text(
-          chatId,
-          new RandomText("Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!"),
-          message.get().getMessageId());
+      botActionCollector.text(chatId, thanksText, message.get().getMessageId());
     }
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
     printListOfPidors(chatId, game);
 
-    if (needToFinalize(chatId)) {
+    if (diceService.needToFinalize(chatId)) {
       executor.execute(() -> diceFinalizer.finalize(chatId));
     }
     return true;
@@ -158,22 +153,8 @@ public class DiceDayUpdateHandler implements UpdateHandler {
 
     return Optional.ofNullable(message)
         .filter(m -> m.getDice() != null)
-        .filter(m -> m.getDice() != null)
         .filter(m -> m.getDice().getValue() != null)
         .filter(m -> m.getFrom() != null);
-  }
-
-  private boolean needToFinalize(long chatId) {
-    LocalDate now = DateUtil.now();
-    long pidorNumber = pidorService.getByChat(chatId).size();
-    int numPidorsToPlay = diceService.getNumPidorsToPlay(chatId);
-    long diceNumber =
-        diceService.getDices().stream()
-            .filter(d -> d.getChatId() == chatId)
-            .filter(d -> d.getLocalDate().isEqual(now))
-            .count();
-    return (pidorNumber == diceNumber || diceNumber >= numPidorsToPlay)
-        && !hasPidorOfTheDay(chatId);
   }
 
   private boolean hasPidorOfTheDay(long chatId) {
@@ -185,6 +166,9 @@ public class DiceDayUpdateHandler implements UpdateHandler {
       return false;
     }
     Message message = update.getMessage();
+    if (!message.hasDice()) {
+      return false;
+    }
     return botService.isChatValid(message.getChatId())
         && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
   }

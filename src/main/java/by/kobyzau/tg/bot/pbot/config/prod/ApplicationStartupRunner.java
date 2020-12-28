@@ -8,11 +8,13 @@ import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.tokens.AccessTokenHolderFactory;
 import by.kobyzau.tg.bot.pbot.program.tokens.TokenType;
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -20,6 +22,9 @@ import java.util.Arrays;
 @Component
 @Profile("prod")
 public class ApplicationStartupRunner implements ApplicationRunner {
+
+  @Autowired
+  private Environment env;
 
   @Autowired private Bot bot;
 
@@ -78,5 +83,9 @@ public class ApplicationStartupRunner implements ApplicationRunner {
         .map(ParametizedText::text)
         .forEach(logger::info);
     botActionCollector.text(adminUserId, new SimpleText("App is ready"));
+    if (DateUtil.isNewYearTime() && Arrays.stream(env.getActiveProfiles()).noneMatch("new-year"::equals)){
+      botActionCollector.text(adminUserId, new SimpleText("!!!new-year profile need to be activated"));
+      logger.warn("!!!new-year profile need to be activated");
+    }
   }
 }

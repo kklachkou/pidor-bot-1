@@ -21,4 +21,6 @@ public interface ExcludeGameService {
 
   int getNumPidorsToExclude(long chatId);
 
+  boolean needToFinalize(long chatId);
+
 }

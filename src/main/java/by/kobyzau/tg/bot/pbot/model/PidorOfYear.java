@@ -15,6 +15,15 @@ public class PidorOfYear {
   private long chatId;
   private int year;
 
+  public PidorOfYear() {
+  }
+
+  public PidorOfYear(int playerTgId, long chatId, int year) {
+    this.playerTgId = playerTgId;
+    this.chatId = chatId;
+    this.year = year;
+  }
+
   public long getId() {
     return id;
   }

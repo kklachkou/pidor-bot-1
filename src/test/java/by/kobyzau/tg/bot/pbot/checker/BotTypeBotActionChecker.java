@@ -5,7 +5,7 @@ import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
 public class BotTypeBotActionChecker implements BotActionChecker {
   private final Class c;
 
-  public BotTypeBotActionChecker(Class c) {
+  public BotTypeBotActionChecker(Class<? extends BotAction<?>> c) {
     this.c = c;
   }
 

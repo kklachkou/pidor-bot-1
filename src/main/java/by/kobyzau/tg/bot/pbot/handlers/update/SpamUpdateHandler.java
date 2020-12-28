@@ -27,9 +27,8 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpamUpdateHandler implements UpdateHandler {
 
-  private static final int LIMIT_PER_FEW_MINUTES = 4;
-  private static final int LIMIT_PER_FEW_SECONDS = 2;
-  private static final int LIMIT_FOR_CHANCE = 3;
+  private static final int LIMIT_PER_FEW_MINUTES = 3;
+  private static final int LIMIT_PER_FEW_SECONDS = 1;
   @Autowired private Logger logger;
 
   @Autowired private CommandHandlerFactory commandHandlerFactory;
@@ -84,16 +83,11 @@ public class SpamUpdateHandler implements UpdateHandler {
   private boolean isSpam(Key key) {
     List<LocalDateTime> timeList = records.getOrDefault(key, Collections.emptyList());
 
-    LocalDateTime fromFewMinutes = DateUtil.currentTime().minusMinutes(2);
-    LocalDateTime fromFewSeconds = DateUtil.currentTime().minusSeconds(15);
+    LocalDateTime fromFewMinutes = DateUtil.currentTime().minusMinutes(1);
+    LocalDateTime fromFewSeconds = DateUtil.currentTime().minusSeconds(10);
 
     boolean spamInSeconds =
         timeList.stream().filter(fromFewSeconds::isBefore).count() > LIMIT_PER_FEW_SECONDS;
-    if (key.getCommand() == Command.CHANCES) {
-      return spamInSeconds
-          || timeList.stream().filter(fromFewMinutes::isBefore).count() > LIMIT_FOR_CHANCE;
-    }
-
     boolean spamInMinutes =
         timeList.stream().filter(fromFewMinutes::isBefore).count() > LIMIT_PER_FEW_MINUTES;
     return spamInMinutes || spamInSeconds;

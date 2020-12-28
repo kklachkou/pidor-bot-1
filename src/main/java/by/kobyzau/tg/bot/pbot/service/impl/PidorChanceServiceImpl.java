@@ -59,7 +59,7 @@ public class PidorChanceServiceImpl implements PidorChanceService {
   }
 
   @Override
-  public List<Pair<Pidor, Integer>> calcChances(long chatId, int year) {
+  public List<Pair<Pidor, Double>> calcChances(long chatId, int year) {
     List<Pidor> pidors = getPidors(chatId);
     List<DailyPidor> dailyPidors =
         dailyPidorRepository.getByChat(chatId).stream()
@@ -77,7 +77,7 @@ public class PidorChanceServiceImpl implements PidorChanceService {
       int wins = numWins.getOrDefault(pidorOfTheYear, 0);
       numWins.put(pidorOfTheYear, wins + 1);
     }
-    List<Pair<Pidor, Integer>> list = new ArrayList<>();
+    List<Pair<Pidor, Double>> list = new ArrayList<>();
     for (Pidor pidor : pidors) {
       list.add(new Pair<>(pidor, getPercent(numWins.getOrDefault(pidor, 0))));
     }
@@ -131,7 +131,7 @@ public class PidorChanceServiceImpl implements PidorChanceService {
         .collect(Collectors.toList());
   }
 
-  private int getPercent(int numWins) {
-    return numWins * 100 / totalYearsNum;
+  private double getPercent(int numWins) {
+    return (double)numWins * 100 / totalYearsNum;
   }
 }

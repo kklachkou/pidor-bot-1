@@ -68,9 +68,6 @@ public class CommandUpdateHandler implements UpdateHandler {
     if (message.getChatId() == null) {
       return false;
     }
-    if (!botService.isChatValid(message.getChatId())) {
-      return false;
-    }
     if (!message.hasText()) {
       return false;
     }
@@ -85,11 +82,6 @@ public class CommandUpdateHandler implements UpdateHandler {
     Message message = update.getMessage();
 
     ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
-    if (parsedCommand.getCommand() != Command.NONE) {
-      botActionCollector.typing(message.getChatId());
-      logger.debug(
-          "\uD83D\uDECE New Command: " + parsedCommand + "\nFrom Update: " + update.getUpdateId());
-    }
     if (isHiddenCommand(parsedCommand.getCommand())
         && !Objects.equals(message.getFrom().getId(), adminUserId)) {
       logger.warn(
@@ -99,6 +91,14 @@ public class CommandUpdateHandler implements UpdateHandler {
                   new SimpleText(parsedCommand.getCommand().name()))
               .text());
       return Command.NONE;
+    }
+    if (parsedCommand.getCommand() != Command.NONE) {
+      if (!botService.isChatValid(message.getChatId())) {
+        return Command.NONE;
+      }
+      botActionCollector.typing(message.getChatId());
+      logger.debug(
+              "\uD83D\uDECE New Command: " + parsedCommand + "\nFrom Update: " + update.getUpdateId());
     }
     CommandHandler commandHandler = commandHandlerFactory.getHandler(parsedCommand.getCommand());
     commandHandler.processCommand(message, parsedCommand.getText());

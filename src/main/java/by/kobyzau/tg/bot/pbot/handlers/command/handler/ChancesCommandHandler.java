@@ -4,8 +4,7 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.model.Pair;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.text.RandomText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.PidorChanceService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
@@ -45,19 +44,20 @@ public class ChancesCommandHandler implements CommandHandler {
     botActionCollector.animation(
         chatId, GifFile.CALCULATION.getRandom(StringUtil.substringBefore(botToken, ":")));
     botActionCollector.typing(chatId);
-    List<Pair<Pidor, Integer>> pairs =
+    List<Pair<Pidor, Double>> pairs =
         pidorChanceService.calcChances(chatId, DateUtil.now().getYear());
     botActionCollector.typing(chatId);
-    StringBuilder sb = new StringBuilder();
-    for (Pair<Pidor, Integer> pidorChance : pairs) {
-      int chance = pidorChance.getRight();
-      sb.append("\u26A1 ");
-      sb.append(new FullNamePidorText(pidorChance.getLeft()));
-      sb.append(" - ");
-      sb.append(chance);
-      sb.append("%\n");
+    TextBuilder textBuilder = new TextBuilder();
+    for (Pair<Pidor, Double> pidorChance : pairs) {
+      double chance = pidorChance.getRight();
+      textBuilder
+          .append(
+              new ParametizedText(
+                  "\u26A1 {0} - {1}%",
+                  new FullNamePidorText(pidorChance.getLeft()), new DoubleText(chance)))
+          .append(new NewLineText());
     }
-    botActionCollector.text(chatId, new SimpleText(sb.toString()));
+    botActionCollector.text(chatId, textBuilder);
   }
 
   @Override

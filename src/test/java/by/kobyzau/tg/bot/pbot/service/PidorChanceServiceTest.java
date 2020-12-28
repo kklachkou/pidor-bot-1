@@ -74,9 +74,9 @@ public class PidorChanceServiceTest {
         .when(pidorService)
         .getByChat(chatId);
 
-    List<Pair<Pidor, Integer>> pairs = service.calcChances(chatId, year);
+    List<Pair<Pidor, Double>> pairs = service.calcChances(chatId, year);
 
-    for (Pair<Pidor, Integer> pair : pairs) {
+    for (Pair<Pidor, Double> pair : pairs) {
       assertTrue(
           "calcChances_withoutDaily (20-30) - "
               + pair.getLeft().getFullName()
@@ -101,9 +101,9 @@ public class PidorChanceServiceTest {
         .when(pidorService)
         .getByChat(chatId);
 
-    List<Pair<Pidor, Integer>> pairs = service.calcChances(chatId, year);
+    List<Pair<Pidor, Double>> pairs = service.calcChances(chatId, year);
 
-    for (Pair<Pidor, Integer> pair : pairs) {
+    for (Pair<Pidor, Double> pair : pairs) {
       if (pair.getLeft().getTgId() == p2) {
         assertTrue(
             "calcChances_withDaily_past (30-60) - "
@@ -138,9 +138,9 @@ public class PidorChanceServiceTest {
         .when(pidorService)
         .getByChat(chatId);
 
-    List<Pair<Pidor, Integer>> pairs = service.calcChances(chatId, year);
+    List<Pair<Pidor, Double>> pairs = service.calcChances(chatId, year);
 
-    for (Pair<Pidor, Integer> pair : pairs) {
+    for (Pair<Pidor, Double> pair : pairs) {
       if (pair.getLeft().getTgId() == p2) {
         assertTrue(
             "calcChances_withDaily_past (30-60) - "

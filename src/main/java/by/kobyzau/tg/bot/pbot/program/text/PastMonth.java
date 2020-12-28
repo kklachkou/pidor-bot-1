@@ -41,7 +41,7 @@ public class PastMonth implements Text {
       case 10:
         return "Октября";
       case 11:
-        return "Норября";
+        return "Ноября";
       case 12:
         return "Декабря";
       default:

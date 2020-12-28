@@ -5,6 +5,7 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.action.UnpinBotAction;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,15 @@ public class BotServiceImpl implements BotService {
             .getChat(chatId)
             .map(c -> c.isGroupChat() || c.isSuperGroupChat())
             .orElse(false);
+  }
+
+  @Override
+  public boolean isBotPartOfChat(long chatId) {
+    return TGUtil.isChatMember(
+        telegramService
+            .getMe()
+            .map(User::getId)
+            .flatMap(botId -> telegramService.getChatMember(chatId, botId)));
   }
 
   @Override

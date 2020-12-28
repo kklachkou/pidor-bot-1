@@ -106,7 +106,7 @@ public class PidorOfTheYearTask implements Task {
         new ParametizedText("{0} - ты лучший из всех нас!", new ShortNameLinkedPidorText(pidor)));
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
-    botActionCollector.sticker(chatId, StickerType.CONGRATULATION.name());
+    botActionCollector.sticker(chatId, StickerType.NEW_YEAR.name());
 
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
@@ -124,7 +124,7 @@ public class PidorOfTheYearTask implements Task {
             "{0} - этот год посвящен лишь тебе !", new ShortNameLinkedPidorText(pidor)));
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
-    botActionCollector.sticker(chatId, StickerType.CONGRATULATION.name());
+    botActionCollector.sticker(chatId, StickerType.NEW_YEAR.name());
 
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.add(
@@ -151,7 +151,7 @@ public class PidorOfTheYearTask implements Task {
     botActionCollector.sticker(chatId, StickerType.LOVE.name());
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
-    botActionCollector.sticker(chatId, StickerType.CONGRATULATION.name());
+    botActionCollector.sticker(chatId, StickerType.NEW_YEAR.name());
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
     botActionCollector.sticker(chatId, StickerType.LOVE.name());

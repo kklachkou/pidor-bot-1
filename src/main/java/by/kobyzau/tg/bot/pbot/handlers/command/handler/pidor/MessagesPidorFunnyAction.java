@@ -18,12 +18,14 @@ import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Profile("!new-year")
 @Component
 public class MessagesPidorFunnyAction implements PidorFunnyAction {
 
