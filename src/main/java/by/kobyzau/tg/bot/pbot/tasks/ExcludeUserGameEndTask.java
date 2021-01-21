@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.concurrent.Executor;
 
 @Component("excludeUserGameEndTask")
@@ -29,12 +30,11 @@ public class ExcludeUserGameEndTask implements Task {
 
   @Override
   public void processTask() {
-
-    if (gameService.isExcludeGameDay(DateUtil.now())) {
-      logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-      telegramService.getChatIds().stream()
-          .filter(botService::isChatValid)
-          .forEach(chatId -> executor.execute(() -> excludeFinalizer.finalize(chatId)));
-    }
+    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    LocalDate now = DateUtil.now();
+    telegramService.getChatIds().stream()
+        .filter(botService::isChatValid)
+        .filter(chatId -> gameService.isExcludeGameDay(chatId, now))
+        .forEach(chatId -> executor.execute(() -> excludeFinalizer.finalize(chatId)));
   }
 }

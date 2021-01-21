@@ -1,7 +1,6 @@
 package by.kobyzau.tg.bot.pbot.repository.dailypidor;
 
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +33,7 @@ public class HashMapPidorOfDayRepository implements DailyPidorRepository {
   @Override
   public long create(DailyPidor obj) {
     long newId = getNewId();
+    obj.setId(newId);
     map.put(newId, obj);
     return newId;
   }

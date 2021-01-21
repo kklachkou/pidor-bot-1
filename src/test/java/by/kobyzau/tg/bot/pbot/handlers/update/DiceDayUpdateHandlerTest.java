@@ -61,7 +61,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
   public void init() {
     System.out.println("************ START " + testName.getMethodName() + " *************");
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(chatId, userId);
-    doReturn(Optional.of(emojiGame)).when(diceService).getGame(DateUtil.now());
+    doReturn(Optional.of(emojiGame)).when(diceService).getGame(chatId, DateUtil.now());
     doReturn(true).when(diceService).needToFinalize(chatId);
     doReturn(diceEmoji).when(emojiGame).getEmoji();
   }
@@ -234,7 +234,12 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     checkActions(
         new BotTypeBotActionChecker(WaitBotAction.class),
         new RandomTextBotActionChecker(
-            "Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!"),
+            "Окей, твоё очко задействовано!",
+            "Я тебя понял!",
+            "Спасибо!",
+            "Вижу!",
+            "Неплохо!",
+            "Отлично!"),
         new BotTypeBotActionChecker(WaitBotAction.class),
         new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
   }
@@ -259,7 +264,12 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     checkActions(
         new BotTypeBotActionChecker(WaitBotAction.class),
         new RandomTextBotActionChecker(
-            "Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!"),
+            "Окей, твоё очко задействовано!",
+            "Я тебя понял!",
+            "Спасибо!",
+            "Вижу!",
+            "Неплохо!",
+            "Отлично!"),
         new BotTypeBotActionChecker(SendStickerBotAction.class),
         new BotTypeBotActionChecker(WaitBotAction.class),
         new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
@@ -286,7 +296,12 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     checkActions(
         new BotTypeBotActionChecker(WaitBotAction.class),
         new RandomTextBotActionChecker(
-            "Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!"),
+            "Окей, твоё очко задействовано!",
+            "Я тебя понял!",
+            "Спасибо!",
+            "Вижу!",
+            "Неплохо!",
+            "Отлично!"),
         new BotTypeBotActionChecker(WaitBotAction.class),
         new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
   }

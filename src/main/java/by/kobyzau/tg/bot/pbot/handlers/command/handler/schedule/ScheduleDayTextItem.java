@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ScheduleDayTextItem {
 
-  Optional<Text> getTextItem(LocalDate localDate);
+  Optional<Text> getTextItem(long chatId, LocalDate localDate);
 }

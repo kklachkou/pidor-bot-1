@@ -17,7 +17,7 @@ public interface DiceService {
 
   Optional<PidorDice> getUserDice(long chatId, int userId, LocalDate date);
 
-  Optional<EmojiGame> getGame(LocalDate localDate);
+  Optional<EmojiGame> getGame(long chatId, LocalDate localDate);
 
 
   int getNumPidorsToPlay(long chatId);

@@ -11,7 +11,6 @@ import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
-import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Component
@@ -40,11 +38,6 @@ public class CommandUpdateHandler implements UpdateHandler {
 
   @Value("${app.admin.userId}")
   private int adminUserId;
-
-  @Override
-  public boolean test(LocalDate date) {
-    return DateUtil.now().isEqual(date);
-  }
 
   @Override
   public boolean handleUpdate(Update update) {

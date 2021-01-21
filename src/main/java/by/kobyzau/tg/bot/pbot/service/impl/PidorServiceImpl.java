@@ -66,7 +66,7 @@ public class PidorServiceImpl implements PidorService {
 
   private Pidor setPidorMarks(Pidor pidor) {
     List<PidorMark> pidorMarks = new ArrayList<>();
-    if (isPidorOfLastYear(pidor)) {
+    if (isLastPidorOfYear(pidor)) {
       pidorMarks.add(PidorMark.PIDOR_OF_YEAR);
     }
     if (isLastPidorOfDay(pidor)) {
@@ -76,14 +76,12 @@ public class PidorServiceImpl implements PidorService {
     return pidor;
   }
 
-  private boolean isPidorOfLastYear(Pidor pidor) {
+  private boolean isLastPidorOfYear(Pidor pidor) {
     if (pidor == null) {
       return false;
     }
-    int year = DateUtil.now().getYear() - 1;
     return pidorOfYearRepository.getPidorOfYearByChat(pidor.getChatId()).stream()
-        .filter(p -> p.getYear() == year)
-        .findFirst()
+        .max(Comparator.comparing(PidorOfYear::getYear))
         .map(PidorOfYear::getPlayerTgId)
         .filter(id -> id == pidor.getTgId())
         .isPresent();

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.concurrent.Executor;
 
 @Component("diceStart")
@@ -35,28 +36,24 @@ public class DiceStartTask implements Task {
 
   @Override
   public void processTask() {
-    if (diceService.getGame(DateUtil.now()).isPresent()) {
-      logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-      telegramService.getChatIds().stream()
-          .filter(botService::isChatValid)
-          .forEach(chatId -> executor.execute(() -> sendDice(chatId)));
-    }
+    LocalDate now = DateUtil.now();
+    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    telegramService.getChatIds().stream()
+            .filter(botService::isChatValid)
+            .filter(chatId -> diceService.getGame(chatId, now).isPresent())
+            .forEach(chatId -> executor.execute(() -> sendDice(chatId)));
   }
 
   private void sendDice(long chatId) {
-    try {
-      EmojiGame game = diceService.getGame(DateUtil.now()).orElseThrow(IllegalStateException::new);
-      botActionCollector.wait(chatId, ChatAction.TYPING);
-      botActionCollector.text(chatId, new SimpleText("Всем здарова!"));
-      botActionCollector.wait(chatId, ChatAction.TYPING);
-      game.printIntro(chatId);
-      botActionCollector.add(
-          new PingMessageWrapperBotAction(
-              new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
-              botService.canPinMessage(chatId)));
-      botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
-    } catch (Exception e) {
-      logger.error("Cannot start dice for chat " + chatId, e);
-    }
+    EmojiGame game = diceService.getGame(chatId, DateUtil.now()).orElseThrow(IllegalStateException::new);
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    botActionCollector.text(chatId, new SimpleText("Всем здарова!"));
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    game.printIntro(chatId);
+    botActionCollector.add(
+            new PingMessageWrapperBotAction(
+                    new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
+                    botService.canPinMessage(chatId)));
+    botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
   }
 }

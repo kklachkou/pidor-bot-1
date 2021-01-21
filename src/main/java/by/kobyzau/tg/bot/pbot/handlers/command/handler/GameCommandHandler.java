@@ -41,7 +41,7 @@ public class GameCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
-    ScheduledItem item = calendarSchedule.getItem(DateUtil.now());
+    ScheduledItem item = calendarSchedule.getItem(message.getChatId(), DateUtil.now());
     switch (item) {
       case EMOJI_GAME:
         processEmojiGame(message.getChatId());
@@ -97,7 +97,7 @@ public class GameCommandHandler implements CommandHandler {
   }
 
   private void processEmojiGame(long chatId) {
-    Optional<EmojiGame> game = diceService.getGame(DateUtil.now());
+    Optional<EmojiGame> game = diceService.getGame(chatId, DateUtil.now());
     game.ifPresent(
         emojiGame ->
             botActionCollector.text(
@@ -150,7 +150,7 @@ public class GameCommandHandler implements CommandHandler {
   }
 
   private String getSymbol(long chatId, int userDice) {
-    EmojiGame game = diceService.getGame(DateUtil.now()).orElseThrow(IllegalStateException::new);
+    EmojiGame game = diceService.getGame(chatId, DateUtil.now()).orElseThrow(IllegalStateException::new);
     String emoji = game.getEmoji();
     EmojiGameResult gameResult = game.getResult(chatId, userDice);
     if (gameResult == EmojiGameResult.NONE) {

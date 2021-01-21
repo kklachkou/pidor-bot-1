@@ -4,17 +4,18 @@ import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
 import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
-import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
+import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.EditMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -29,11 +30,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.telegram.telegrambots.meta.api.objects.*;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.ELECTION_HIDDEN;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -54,7 +55,9 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private PidorService pidorService;
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private ElectionFinalizer electionFinalizer;
-  @Mock private ElectionStatPrinter electionStatPrinter;
+  @Mock private ChatSettingsService chatSettingsService;
+  @Mock private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
+  @Mock private ElectionStatPrinter hiddenElectionStatPrinter;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Before
@@ -74,38 +77,14 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
                 new Pidor(targetId, chatId, "target"), new Pidor(callerId, chatId, "caller")))
         .when(pidorService)
         .getByChat(chatId);
+    doReturn(true).when(electionService).canUserVote(chatId, callerId);
+    doReturn(true).when(electionService).isElectionDay(chatId, DateUtil.now());
     System.out.println("************ START " + testName.getMethodName() + " *************");
   }
 
   @After
   public void after() {
     System.out.println("************ END *************");
-  }
-
-  @Test
-  public void test_notToday() {
-    // given
-    LocalDate date = LocalDate.of(2020, 10, 15);
-    doReturn(false).when(electionService).isElectionDay(date);
-
-    // when
-    boolean result = handler.test(date);
-
-    // then
-    assertFalse(result);
-  }
-
-  @Test
-  public void test_today() {
-    // given
-    LocalDate date = LocalDate.of(2020, 10, 15);
-    doReturn(true).when(electionService).isElectionDay(date);
-
-    // when
-    boolean result = handler.test(date);
-
-    // then
-    assertTrue(result);
   }
 
   @Test
@@ -162,6 +141,34 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     User calledUser = new User(targetId, "caller", false);
     callbackQuery.setFrom(calledUser);
     callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setMessage(prevMessage);
+    update.setCallbackQuery(callbackQuery);
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    checkActions(new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
+    assertNotFinalized();
+    assertNotPrinter();
+    assertNotSavedVote();
+    assertTrue(result);
+  }
+
+  @Test
+  public void handleUpdate_anotherIndex() {
+    // given
+    setupPidorOfTheDay();
+    Update update = new Update();
+    CallbackQuery callbackQuery = new CallbackQuery();
+    Message prevMessage = new Message();
+    prevMessage.setChat(new Chat(chatId, "group"));
+    prevMessage.setFrom(bot);
+    User calledUser = new User(callerId, "caller", false);
+    callbackQuery.setFrom(calledUser);
+    VoteInlineMessageDto dto = new VoteInlineMessageDto("id", targetId, callerId);
+    dto.setIndex(SerializableInlineType.VOTE.getIndex() + 1);
+    callbackQuery.setData(StringUtil.serialize(dto));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
 
@@ -255,6 +262,36 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
   }
 
   @Test
+  public void handleUpdate_hiddenElection_notFinalized() {
+    // given
+    Update update = new Update();
+    CallbackQuery callbackQuery = new CallbackQuery();
+    Message prevMessage = new Message();
+    prevMessage.setChat(new Chat(chatId, "group"));
+    prevMessage.setFrom(bot);
+    User calledUser = new User(callerId, "caller", false);
+    callbackQuery.setFrom(calledUser);
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setMessage(prevMessage);
+    update.setCallbackQuery(callbackQuery);
+    doReturn(5).when(electionService).getNumToVote(chatId);
+    doReturn(true).when(chatSettingsService).isEnabled(ELECTION_HIDDEN, chatId );
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    checkActions(
+            new BotTypeBotActionChecker(EditMessageBotAction.class),
+            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
+    assertNotFinalized();
+    assertPrinted(true);
+    assertSavedVote();
+    assertTrue(result);
+  }
+
+
+  @Test
   public void handleUpdate_notFinalized() {
     // given
     Update update = new Update();
@@ -268,16 +305,17 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(5).when(electionService).getNumToVote(chatId);
+    doReturn(false).when(chatSettingsService).isEnabled(ELECTION_HIDDEN, chatId );
 
     // when
     boolean result = handler.handleUpdate(update);
 
     // then
     checkActions(
-        new BotTypeBotActionChecker(EditMessageBotAction.class),
-        new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан")));
+            new BotTypeBotActionChecker(EditMessageBotAction.class),
+            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
     assertNotFinalized();
-    assertPrinted();
+    assertPrinted(false);
     assertSavedVote();
     assertTrue(result);
   }
@@ -301,12 +339,39 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
 
     // then
     checkActions(
-        new BotTypeBotActionChecker(EditMessageBotAction.class),
-        new TextBotActionChecker(chatId, new SimpleText("Твой голос засчитан")));
+            new BotTypeBotActionChecker(EditMessageBotAction.class),
+            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
     assertFinalized();
     assertNotPrinter();
     assertSavedVote();
     assertTrue(result);
+  }
+
+
+  @Test
+  public void handleUpdate_notElectionDay() {
+    // given
+    Update update = new Update();
+    CallbackQuery callbackQuery = new CallbackQuery();
+    Message prevMessage = new Message();
+    prevMessage.setChat(new Chat(chatId, "group"));
+    prevMessage.setFrom(bot);
+    User calledUser = new User(callerId, "caller", false);
+    callbackQuery.setFrom(calledUser);
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setMessage(prevMessage);
+    update.setCallbackQuery(callbackQuery);
+    doReturn(false).when(electionService).isElectionDay(chatId, DateUtil.now());
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    checkNoAnyActions();
+    assertNotFinalized();
+    assertNotPrinter();
+    assertNotSavedVote();
+    assertFalse(result);
   }
 
   private void setupPidorOfTheDay() {
@@ -323,12 +388,14 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     verify(electionFinalizer, times(1)).finalize(chatId);
   }
 
-  private void assertPrinted() {
-    verify(electionStatPrinter, times(1)).printInfo(chatId, true);
+  private void assertPrinted(boolean isHidden) {
+    verify(fullWithNumLeftElectionStatPrinter, times(isHidden ? 0 : 1)).printInfo(chatId);
+    verify(hiddenElectionStatPrinter, times(isHidden ? 1 : 0)).printInfo(chatId);
   }
 
   private void assertNotPrinter() {
-    verify(electionStatPrinter, times(0)).printInfo(chatId, true);
+    verify(fullWithNumLeftElectionStatPrinter, times(0)).printInfo(chatId);
+    verify(hiddenElectionStatPrinter, times(0)).printInfo(chatId);
   }
 
   private void assertSavedVote() {

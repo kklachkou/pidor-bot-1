@@ -37,26 +37,27 @@ public class PidorCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
+    long chatId = message.getChatId();
     Optional<DailyPidor> dailyPidor =
-        dailyPidorRepository.getByChatAndDate(message.getChatId(), DateUtil.now());
+        dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now());
     if (dailyPidor.isPresent()) {
       alreadyFoundPidorProcessor.processAlreadyFound(message, dailyPidor.get());
-    } else if (isGameDay()) {
+    } else if (isGameDay(chatId)) {
       commandHandlerFactory.getHandler(Command.GAME).processCommand(message, text);
-    } else if (isElectionDay()) {
+    } else if (isElectionDay(chatId)) {
       commandHandlerFactory.getHandler(Command.ELECTION).processCommand(message, text);
     } else {
       newPidorProcessor.processNewDailyPidor(message);
     }
   }
 
-  private boolean isElectionDay() {
-    return calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.ELECTION;
+  private boolean isElectionDay(long chatId) {
+    return calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.ELECTION;
   }
 
-  private boolean isGameDay() {
-    return calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.EMOJI_GAME
-        || calendarSchedule.getItem(DateUtil.now()) == ScheduledItem.EXCLUDE_GAME;
+  private boolean isGameDay(long chatId) {
+    return calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.EMOJI_GAME
+        || calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.EXCLUDE_GAME;
   }
 
   @Override

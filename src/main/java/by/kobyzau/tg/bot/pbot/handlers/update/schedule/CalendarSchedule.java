@@ -12,11 +12,11 @@ public class CalendarSchedule {
 
   @Autowired private List<ScheduledRule> rules;
 
-  public ScheduledItem getItem(LocalDate date) {
+  public ScheduledItem getItem(long chatId, LocalDate date) {
     return rules.stream()
-        .filter(r -> r.isMatch(date))
-        .findFirst()
-        .map(ScheduledRule::getItem)
-        .orElse(ScheduledItem.NONE);
+            .filter(r -> r.isMatch(chatId, date))
+            .findFirst()
+            .map(ScheduledRule::getItem)
+            .orElse(ScheduledItem.NONE);
   }
 }

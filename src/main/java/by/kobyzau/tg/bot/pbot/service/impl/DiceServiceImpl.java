@@ -59,8 +59,8 @@ public class DiceServiceImpl implements DiceService {
   }
 
   @Override
-  public Optional<EmojiGame> getGame(LocalDate date) {
-    if (calendarSchedule.getItem(date) != ScheduledItem.EMOJI_GAME) {
+  public Optional<EmojiGame> getGame(long chatId, LocalDate date) {
+    if (calendarSchedule.getItem(chatId, date) != ScheduledItem.EMOJI_GAME) {
       return Optional.empty();
     }
     return games.stream().filter(g -> g.isDateToGame(date)).findFirst();

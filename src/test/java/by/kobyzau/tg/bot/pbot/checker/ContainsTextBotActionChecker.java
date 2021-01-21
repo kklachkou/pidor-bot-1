@@ -2,6 +2,7 @@ package by.kobyzau.tg.bot.pbot.checker;
 
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
+import org.junit.Assert;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,27 +19,27 @@ public class ContainsTextBotActionChecker implements BotActionChecker {
   }
 
   @Override
-  public boolean check(BotAction<?> botAction) {
-    if (botAction == null) {
-      return false;
-    }
+  public void check(BotAction<?> botAction) {
+    Assert.assertNotNull(botAction);
     if (botAction instanceof SendMessageBotAction) {
-      return check((SendMessageBotAction) botAction);
+      check((SendMessageBotAction) botAction);
+    } else {
+      Assert.fail("Bot action is not Send Message: " + botAction);
     }
-
-    return false;
   }
 
-  private boolean check(SendMessageBotAction botAction) {
+  private void check(SendMessageBotAction botAction) {
     String text = botAction.getText().text();
-    if (text == null) {
-      return false;
-    }
+    Assert.assertNotNull(text);
     for (String s : searchText) {
       if (text.contains(s)) {
-        return true;
+        return;
       }
     }
-    return false;
+    Assert.fail(
+        "No matched text with bot action\nThe Bot Action "
+            + botAction
+            + "\nshould contains at least one the following text:\n"
+            + String.join(",", searchText));
   }
 }

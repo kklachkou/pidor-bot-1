@@ -30,8 +30,8 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
       Arrays.asList("Чур не я", "Я не пидор", "Не пидор я", "Не тронь меня", "Боже упаси");
 
   @Override
-  public boolean isExcludeGameDay(LocalDate localDate) {
-    return calendarSchedule.getItem(localDate) == ScheduledItem.EXCLUDE_GAME;
+  public boolean isExcludeGameDay(long chatId, LocalDate localDate) {
+    return calendarSchedule.getItem(chatId, localDate) == ScheduledItem.EXCLUDE_GAME;
   }
 
   @Override

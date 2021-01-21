@@ -39,7 +39,7 @@ public class DateUtil {
 
   public static boolean isNewYearTime() {
     LocalDate now = now();
-    return now.getDayOfYear() < 30 || now.getDayOfYear() > 330;
+    return now.getDayOfYear() < 15 || now.getDayOfYear() > 330;
   }
   public static ZoneId minskZone() {
     return ZoneId.of("UTC+3");

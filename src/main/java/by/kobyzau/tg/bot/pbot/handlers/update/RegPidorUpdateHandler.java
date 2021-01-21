@@ -23,7 +23,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,11 +43,6 @@ public class RegPidorUpdateHandler implements UpdateHandler {
           "{0}, зря ты заговорил\nТеперь ты в игре",
           "Добавлю ка я {0} в игру",
           "Теперь {0} участвует в игре");
-
-  @Override
-  public boolean test(LocalDate date) {
-    return true;
-  }
 
   @Override
   public boolean handleUpdate(Update update) {

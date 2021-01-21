@@ -67,4 +67,13 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.empty();
     }
   }
+
+  @Override
+  public void deleteMessage(long chatId, int messageId) {
+    try {
+      telegramSender.deleteMessage(botToken, String.valueOf(chatId), messageId);
+    } catch (Exception e) {
+      logger.error("Cannot delete message " + messageId + " from chat " + chatId, e);
+    }
+  }
 }

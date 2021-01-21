@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ExcludeGameService {
 
-  boolean isExcludeGameDay(LocalDate localDate);
+  boolean isExcludeGameDay(long chatId, LocalDate localDate);
 
   Optional<ExcludeGameUserValue> getExcludeGameUserValue(
       long chatId, int userId, LocalDate localDate);

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
@@ -20,11 +19,6 @@ public class InvalidChatUpdateHandler implements UpdateHandler {
   @Autowired private BotService botService;
   @Autowired private CommandParser commandParser;
   @Autowired private BotActionCollector botActionCollector;
-
-  @Override
-  public boolean test(LocalDate date) {
-    return true;
-  }
 
   @Override
   public boolean handleUpdate(Update update) {

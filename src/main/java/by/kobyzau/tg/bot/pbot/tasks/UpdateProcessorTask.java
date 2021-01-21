@@ -33,13 +33,13 @@ public class UpdateProcessorTask implements Task {
     LocalDate now = DateUtil.now();
     for (UpdateHandler updateHandler : updateHandlers) {
       try {
-        if (updateHandler.test(now)) {
-          if (updateHandler.handleUpdate(update)) {
-            return;
-          }
+        if (updateHandler.handleUpdate(update)) {
+          return;
         }
       } catch (Exception e) {
-        logger.error("Error in UpdateProcessor for update:\n\n<pre>" + new UpdatePrinter(update)+ "</pre>", e) ;
+        logger.error(
+            "Error in UpdateProcessor for update:\n\n<pre>" + new UpdatePrinter(update) + "</pre>",
+            e);
       }
     }
   }

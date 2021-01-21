@@ -16,7 +16,7 @@ public class CollectionBotActionCollector extends AbstractBotActionCollector {
   @Override
   public void add(BotAction<?> botAction) {
     actionList.add(botAction);
-    System.out.println(botAction);
+    //System.out.println(botAction);
   }
 
   public List<BotAction<?>> getActionList() {

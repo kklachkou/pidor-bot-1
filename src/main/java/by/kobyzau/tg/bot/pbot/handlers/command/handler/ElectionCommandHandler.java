@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
@@ -8,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
+import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
@@ -15,7 +17,6 @@ import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.VOTE;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.ELECTION_HIDDEN;
+
 @Component
 public class ElectionCommandHandler implements CommandHandler {
 
@@ -35,7 +39,9 @@ public class ElectionCommandHandler implements CommandHandler {
 
   @Autowired private BotActionCollector botActionCollector;
 
-  @Autowired private ElectionStatPrinter electionStatPrinter;
+  @Autowired private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
+  @Autowired private ElectionStatPrinter hiddenElectionStatPrinter;
+  @Autowired private ChatSettingsService chatSettingsService;
 
   private final Map<String, LocalDateTime> lastCallsCache = new HashMap<>();
 
@@ -45,7 +51,11 @@ public class ElectionCommandHandler implements CommandHandler {
     int callerId = message.getFrom().getId();
     if (!electionService.canUserVote(chatId, callerId)) {
       botActionCollector.text(chatId, new SimpleText("Ты уже голосовал"), message.getMessageId());
-      electionStatPrinter.printInfo(chatId, true);
+      if (chatSettingsService.isEnabled(ELECTION_HIDDEN, chatId)) {
+        hiddenElectionStatPrinter.printInfo(chatId);
+      } else {
+        fullWithNumLeftElectionStatPrinter.printInfo(chatId);
+      }
       return;
     }
     String cacheKey = chatId + ":" + callerId;
@@ -72,7 +82,7 @@ public class ElectionCommandHandler implements CommandHandler {
 
     InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
         InlineKeyboardMarkup.builder();
-    String requestId = UUID.randomUUID().toString().substring(18);
+    String requestId = UUID.randomUUID().toString().substring(VOTE.getIdSize());
     pidors.stream()
         .filter(p -> p.getTgId() != callerId)
         .filter(p -> StringUtil.isNotBlank(new ShortNamePidorText(p).text()))

@@ -123,17 +123,44 @@ public class PidorServiceTest {
   public void getPidor_pidorOfYear() {
     // given
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
-        .when(pidorRepository)
-        .getByChatAndPlayerTgId(chatId, userId);
+            .when(pidorRepository)
+            .getByChatAndPlayerTgId(chatId, userId);
     ChatMember chatMember = new ChatMember();
     chatMember.setStatus("member");
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
     doReturn(
             Arrays.asList(
-                new PidorOfYear(userId, chatId, DateUtil.now().getYear() - 1),
-                new PidorOfYear(userId + 1, chatId, DateUtil.now().getYear() - 2)))
-        .when(pidorOfYearRepository)
-        .getPidorOfYearByChat(chatId);
+                    new PidorOfYear(userId, chatId, DateUtil.now().getYear() - 1),
+                    new PidorOfYear(userId + 1, chatId, DateUtil.now().getYear() - 2)))
+            .when(pidorOfYearRepository)
+            .getPidorOfYearByChat(chatId);
+
+    // when
+    Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
+
+    // then
+    assertTrue(pidor.isPresent());
+    assertEquals(userId, pidor.get().getTgId());
+    assertEquals(chatId, pidor.get().getChatId());
+    assertEquals(Collections.singletonList(PidorMark.PIDOR_OF_YEAR), pidor.get().getPidorMarks());
+  }
+
+
+  @Test
+  public void getPidor_pidorOfCurrentYear() {
+    // given
+    doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
+            .when(pidorRepository)
+            .getByChatAndPlayerTgId(chatId, userId);
+    ChatMember chatMember = new ChatMember();
+    chatMember.setStatus("member");
+    doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
+    doReturn(
+            Arrays.asList(
+                    new PidorOfYear(userId, chatId, DateUtil.now().getYear() ),
+                    new PidorOfYear(userId + 1, chatId, DateUtil.now().getYear() - 1)))
+            .when(pidorOfYearRepository)
+            .getPidorOfYearByChat(chatId);
 
     // when
     Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);

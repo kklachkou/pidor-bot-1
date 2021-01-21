@@ -17,6 +17,7 @@ public class HashMapPidorRepository implements PidorRepository {
   @Override
   public long create(Pidor obj) {
     long newId = getNewId();
+    obj.setId(newId);
     map.put(newId, obj);
     return newId;
   }

@@ -71,13 +71,12 @@ public class NotifyNoPidorsTask implements Task {
   private void processNotify(long chatId) {
     Optional<Pidor> pidor = getPidorOfTheDay(chatId);
     if (pidor.isPresent()) {
-      boolean notify =
-          CollectionUtil.getRandomValue(Arrays.asList(true, false, false, false, false));
+      boolean notify = CollectionUtil.getRandomValue(Arrays.asList(true, false, false));
       if (notify) {
         notifyPidor(pidor.get());
       }
     } else {
-      ScheduledItem scheduledItem = calendarSchedule.getItem(DateUtil.now());
+      ScheduledItem scheduledItem = calendarSchedule.getItem(chatId, DateUtil.now());
       if (chatId != adminUserId && scheduledItem.isRequireManualStart()) {
         botActionCollector.text(chatId, notifyMessage.next());
       }
@@ -102,6 +101,9 @@ public class NotifyNoPidorsTask implements Task {
                 "Хочу напомнить, что {0} сегодня пидор дня:)",
                 "Что-то тихо у вас. Ну давайте хотябы пообсуждаем почему {0} сегодня пидор дня",
                 "Что, что говорите? {0} сегодня был пидором дня? Круто!",
+                "Ведь никто же не сомневался, что {0} сегодня пидор?",
+                "{0} - как твои дела?",
+                "{0} - как твои делишки?",
                 "Не напомните почему {0} сегодня пидор дня?",
                 "Если кто-то спросит меня, кто сегодня пидор дня, я скажу - {0}",
                 "{0} - пидор дня. Люблю это повторять:)",

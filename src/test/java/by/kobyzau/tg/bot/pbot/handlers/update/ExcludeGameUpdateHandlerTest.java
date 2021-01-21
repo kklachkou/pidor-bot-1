@@ -75,6 +75,7 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
         .when(excludeGameService)
         .getExcludeGameUserValues(chatId, DateUtil.now());
     doReturn(true).when(excludeGameService).needToFinalize(chatId);
+    doReturn(true).when(excludeGameService).isExcludeGameDay(chatId, DateUtil.now());
   }
 
   @After
@@ -280,7 +281,30 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
     checkNoAnyActions();
   }
 
-  private Message getMessage(String text) {
+    @Test
+    public void handleUpdate_notGameDay_notProcessed_notFinalized() {
+        // given
+        Update update = new Update();
+        update.setMessage(getMessage(excludeWord));
+        doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+        doReturn(Optional.empty())
+                .when(excludeGameService)
+                .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+        doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
+        doReturn(false).when(excludeGameService).isExcludeGameDay(chatId, DateUtil.now());
+
+        // when
+        boolean result = handler.handleUpdate(update);
+
+        // then
+        assertFalse(result);
+        assertUserValueSaved(false);
+        assertFinalized(false);
+        checkNoAnyActions();
+    }
+
+
+    private Message getMessage(String text) {
     Message message = new Message();
     message.setChat(new Chat(chatId, "group"));
     message.setText(text);

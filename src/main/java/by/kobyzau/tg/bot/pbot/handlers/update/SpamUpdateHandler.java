@@ -17,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,11 +115,6 @@ public class SpamUpdateHandler implements UpdateHandler {
     Message message = update.getMessage();
     ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
     return parsedCommand.getCommand();
-  }
-
-  @Override
-  public boolean test(LocalDate localDate) {
-    return true;
   }
 
   private static class Key {

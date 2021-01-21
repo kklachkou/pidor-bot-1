@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -109,8 +108,4 @@ public class PidorWordUpdateHandler implements UpdateHandler {
         .filter(c -> c != Command.NONE);
   }
 
-  @Override
-  public boolean test(LocalDate localDate) {
-    return true;
-  }
 }

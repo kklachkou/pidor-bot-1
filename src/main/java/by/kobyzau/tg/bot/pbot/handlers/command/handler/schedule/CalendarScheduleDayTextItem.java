@@ -24,12 +24,12 @@ public class CalendarScheduleDayTextItem implements ScheduleDayTextItem {
   @Autowired private ExcludeGameService excludeGameService;
 
   @Override
-  public Optional<Text> getTextItem(LocalDate localDate) {
-    ScheduledItem item = calendarSchedule.getItem(localDate);
+  public Optional<Text> getTextItem(long chatId, LocalDate localDate) {
+    ScheduledItem item = calendarSchedule.getItem(chatId, localDate);
     switch (item) {
       case EMOJI_GAME:
         return diceService
-            .getGame(localDate)
+            .getGame(chatId,localDate)
             .map(EmojiGame::getType)
             .map(EmojiGameType::getGameName)
             .map(SimpleText::new);

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.concurrent.Executor;
 
 @Component("electionEndTask")
@@ -39,11 +40,11 @@ public class ElectionEndTask implements Task {
 
   @Override
   public void processTask() {
-    if (electionService.isElectionDay(DateUtil.now())) {
-      logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-      telegramService.getChatIds().stream()
-          .filter(botService::isChatValid)
-          .forEach(chatId -> executor.execute(() -> electionFinalizer.finalize(chatId)));
-    }
+    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    LocalDate now = DateUtil.now();
+    telegramService.getChatIds().stream()
+        .filter(botService::isChatValid)
+        .filter(chatId -> electionService.isElectionDay(chatId, now))
+        .forEach(chatId -> executor.execute(() -> electionFinalizer.finalize(chatId)));
   }
 }

@@ -29,7 +29,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -124,17 +123,15 @@ public class EditPidorMessageUpdateHandler implements UpdateHandler {
   }
 
   @Override
-  public boolean test(LocalDate localDate) {
-    return calendarSchedule.getItem(localDate) == ScheduledItem.EDITED_MESSAGE;
-  }
-
-  @Override
   public boolean handleUpdate(Update update) {
     if (!validateMessage(update)) {
       return false;
     }
     Message message = update.getMessage();
     long chatId = message.getChatId();
+    if (calendarSchedule.getItem(chatId, DateUtil.now()) != ScheduledItem.EDITED_MESSAGE) {
+      return false;
+    }
     ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
     Command command = parsedCommand.getCommand();
     if (command != Command.PIDOR) {

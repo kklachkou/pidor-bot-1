@@ -36,7 +36,7 @@ public class HelpCommandHandler implements CommandHandler {
         .append(buildCommandsMessage(Command.Category.INFO))
         .append(new NewLineText())
         .append(new NewLineText())
-        .append(new SimpleText("Автор - @NKRB2020"))
+        .append(new SimpleText("Автор - @NKRB2021"))
         .append(new NewLineText())
         .append(new ItalicText(new ParametizedText("Версия {0}", new SimpleText(version))));
   }

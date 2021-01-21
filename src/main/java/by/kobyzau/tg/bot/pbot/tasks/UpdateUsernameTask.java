@@ -5,7 +5,6 @@ import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
-import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,7 +49,6 @@ public class UpdateUsernameTask implements Task {
         User user = chatMember.get().getUser();
         pidor.setFullName(TGUtil.getFullName(user));
         pidor.setUsername(user.getUserName());
-        pidor.setUsernameLastUpdated(DateUtil.now());
         pidorService.updatePidor(pidor);
       }
     } catch (Exception e) {

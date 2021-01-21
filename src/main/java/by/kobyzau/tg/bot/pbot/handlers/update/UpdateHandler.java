@@ -2,10 +2,7 @@ package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
-import java.util.function.Predicate;
-
-public interface UpdateHandler extends Predicate<LocalDate> {
+public interface UpdateHandler {
 
   boolean handleUpdate(Update update);
 

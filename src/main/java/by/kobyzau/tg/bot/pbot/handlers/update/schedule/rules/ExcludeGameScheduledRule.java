@@ -19,7 +19,7 @@ public class ExcludeGameScheduledRule implements ScheduledRule {
   private final Set<DayOfWeek> weekDays = new HashSet<>(Collections.singletonList(DayOfWeek.SATURDAY));
 
   @Override
-  public boolean isMatch(LocalDate localDate) {
+  public boolean isMatch(long chatId, LocalDate localDate) {
     return weekDays.contains(localDate.getDayOfWeek());
   }
 

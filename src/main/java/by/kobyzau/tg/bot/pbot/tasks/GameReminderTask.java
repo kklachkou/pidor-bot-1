@@ -37,17 +37,15 @@ public class GameReminderTask implements Task {
       Arrays.asList(
           "Чё тупим, работаем",
           "Чёт вы сегодня тормозите...",
+          "Ещё не все сыграли...",
+          "Я думал вы тут все активы, а оказалось, что тут есть и пассивы...",
           "Давайте-давайте, поживее",
           "Мне вечность ждать?",
-          "Ну и сколько я вас буду дать?");
+          "Ну и сколько я вас буду ждать?");
 
   @Override
   public void processTask() {
-    switch (calendarSchedule.getItem(DateUtil.now())) {
-      case EXCLUDE_GAME:
-      case EMOJI_GAME:
-        sendInfo();
-    }
+    sendInfo();
   }
 
   private void sendInfo() {
@@ -58,13 +56,13 @@ public class GameReminderTask implements Task {
   }
 
   private void sendInfo(long chatId) {
-    try {
-      if (dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent()) {
-        return;
-      }
-      botActionCollector.text(chatId, new RandomText(messages));
-    } catch (Exception e) {
-      logger.error("Cannot remind game for chat " + chatId, e);
+    switch (calendarSchedule.getItem(chatId, DateUtil.now())) {
+      case EXCLUDE_GAME:
+      case EMOJI_GAME:
+        if (dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent()) {
+          return;
+        }
+        botActionCollector.text(chatId, new RandomText(messages));
     }
   }
 }

@@ -56,8 +56,9 @@ public class TelegramLogger implements Logger {
                       + s
                       + "\n"
                       + e.getMessage()
-                      + "\nStacktrace:\n"
-                      + getStacktrace(e)));
+                      + "\nStacktrace:\n<pre>"
+                      + getStacktrace(e)
+                      + "</pre>"));
     }
   }
 

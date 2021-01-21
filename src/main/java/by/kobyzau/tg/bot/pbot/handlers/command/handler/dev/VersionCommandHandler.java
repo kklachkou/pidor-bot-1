@@ -1,7 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.command.handler;
+package by.kobyzau.tg.bot.pbot.handlers.command.handler.dev;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
+import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandler;
 import by.kobyzau.tg.bot.pbot.program.Version;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;

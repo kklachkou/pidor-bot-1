@@ -39,6 +39,14 @@ public enum Command {
       Category.INFO,
       8),
 
+  SETTINGS(
+      "settings",
+      "Настройки бота",
+      "Управление тонкими настройками бота, включение и выключение функционала."
+          + " Изменения настроек может быть не моментальным (в течении 24х часов)",
+      Category.ACTION,
+      9),
+
   ACHIEVEMENT(
       "achievements", "Список достяжений", "Выводит список всех достижений", Category.INFO, 8),
 
@@ -69,9 +77,11 @@ public enum Command {
   CURRENT_TIME("time"),
   STICKERS("stickers"),
   GIF("gif"),
+  STAT("stat"),
   NOTIFY("notify"),
   TEST("test"),
   CLEANUP("cleanup"),
+  SYSTEM_CHECK("system_check"),
   VERSION("version"),
   SQL("sql"),
   LOGGER("logger"),

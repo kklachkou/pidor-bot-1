@@ -83,9 +83,13 @@ public class ApplicationStartupRunner implements ApplicationRunner {
         .map(ParametizedText::text)
         .forEach(logger::info);
     botActionCollector.text(adminUserId, new SimpleText("App is ready"));
-    if (DateUtil.isNewYearTime() && Arrays.stream(env.getActiveProfiles()).noneMatch("new-year"::equals)){
+    if (DateUtil.isNewYearTime() && Arrays.stream(env.getActiveProfiles()).noneMatch("new-year"::equals)) {
       botActionCollector.text(adminUserId, new SimpleText("!!!new-year profile need to be activated"));
       logger.warn("!!!new-year profile need to be activated");
+    }
+    if (!DateUtil.isNewYearTime() && Arrays.asList(env.getActiveProfiles()).contains("new-year")) {
+      botActionCollector.text(adminUserId, new SimpleText("!!!new-year profile need to be deactivated"));
+      logger.warn("!!!new-year profile need to be deactivated");
     }
   }
 }

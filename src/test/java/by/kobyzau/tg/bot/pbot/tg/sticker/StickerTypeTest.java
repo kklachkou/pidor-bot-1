@@ -12,9 +12,9 @@ public class StickerTypeTest {
 
   @Test
   public void assertDuplication() {
+    Set<String> uniqueStickers = new HashSet<>();
     for (StickerType stickerType : EnumSet.allOf(StickerType.class)) {
       List<String> stickers = stickerType.getStickers();
-      Set<String> uniqueStickers = new HashSet<>();
       for (String sticker : stickers) {
         if (!uniqueStickers.add(sticker)) {
           fail(

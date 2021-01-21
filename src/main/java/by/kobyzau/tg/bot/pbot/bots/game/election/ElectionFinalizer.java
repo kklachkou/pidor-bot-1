@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.bots.game.election;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pair;
@@ -18,7 +19,6 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.ElectionStatPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class ElectionFinalizer {
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
-  @Autowired private ElectionStatPrinter electionStatPrinter;
+  @Autowired private ElectionStatPrinter fullElectionStatPrinter;
 
   @Autowired private List<PidorFunnyAction> allPidorFunnyActions;
 
@@ -71,18 +71,17 @@ public class ElectionFinalizer {
       }
     }
     Pidor pidorOfDay = CollectionUtil.getRandomValue(pidorsToSelect);
-    saveDailyPidor(pidorOfDay);
     botActionCollector.text(chatId, new SimpleText("И ситуация следующая:"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    electionStatPrinter.printInfo(chatId, false);
-    botActionCollector.wait(chatId, ChatAction.TYPING);
+    fullElectionStatPrinter.printInfo(chatId);
+    botActionCollector.wait(chatId,5, ChatAction.TYPING);
+    saveDailyPidor(pidorOfDay);
     botActionCollector.text(chatId, new RandomText("Начнем выборы!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     processFunnyAction(pidorOfDay);
   }
 
   private void processFunnyAction(Pidor pidor) {
-    saveDailyPidor(pidor);
     botService.unpinLastBotMessage(pidor.getChatId());
     pidorFunnyActions.next().processFunnyAction(pidor.getChatId(), pidor);
   }
@@ -93,5 +92,9 @@ public class ElectionFinalizer {
     dailyPidor.setPlayerTgId(pidor.getTgId());
     dailyPidor.setLocalDate(DateUtil.now());
     dailyPidorRepository.create(dailyPidor);
+  }
+
+  public void setPidorFunnyActions(Selection<PidorFunnyAction> pidorFunnyActions) {
+    this.pidorFunnyActions = pidorFunnyActions;
   }
 }

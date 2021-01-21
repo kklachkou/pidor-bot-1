@@ -24,13 +24,14 @@ public class ElectionServiceImpl implements ElectionService {
   @Autowired private BotActionCollector botActionCollector;
 
   @Override
-  public boolean isElectionDay(LocalDate localDate) {
-    return calendarSchedule.getItem(localDate) == ScheduledItem.ELECTION;
+  public boolean isElectionDay(long chatId, LocalDate localDate) {
+    return calendarSchedule.getItem(chatId, localDate) == ScheduledItem.ELECTION;
   }
 
   @Override
   public boolean canUserVote(long chatId, int userId) {
     return dailyDataRepository.getByChatAndDate(chatId, DateUtil.now()).stream()
+        .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
         .noneMatch(p -> p.getPlayerTgId() == userId);
   }
 
@@ -45,13 +46,17 @@ public class ElectionServiceImpl implements ElectionService {
 
   @Override
   public int getNumVotes(long chatId, LocalDate date) {
-    return dailyDataRepository.getByChatAndDate(chatId, date).size();
+    return (int)
+        dailyDataRepository.getByChatAndDate(chatId, date).stream()
+            .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
+            .count();
   }
 
   @Override
   public int getNumVotes(long chatId, LocalDate date, int userId) {
     return (int)
         dailyDataRepository.getByChatAndDate(chatId, date).stream()
+            .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
             .map(CustomDailyUserData::getData)
             .map(id -> StringUtil.parseInt(id, 0))
             .filter(id -> id == userId)

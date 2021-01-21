@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +68,9 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       return false;
     }
     long chatId = update.getMessage().getChatId();
+    if (!excludeGameService.isExcludeGameDay(chatId, DateUtil.now())) {
+      return false;
+    }
     if (!isExcludeWord(update)) {
       return false;
     }
@@ -156,8 +158,4 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
         && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
   }
 
-  @Override
-  public boolean test(LocalDate localDate) {
-    return excludeGameService.isExcludeGameDay(localDate);
-  }
 }

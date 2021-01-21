@@ -50,7 +50,7 @@ public class DiceFinalizerImpl implements DiceFinalizer {
     }
     EmojiGame game =
         diceService
-            .getGame(now)
+            .getGame(chatId, now)
             .orElseThrow(() -> new IllegalStateException("Finalizing dice for non dice day"));
     botActionCollector.wait(chatId, 4, ChatAction.TYPING);
     List<Pidor> pidors = pidorService.getByChat(chatId);

@@ -20,17 +20,11 @@ public class ProdScheduleAppConfig {
   @Autowired private Task updateUsernameTask;
   @Autowired private Task backupTask;
   @Autowired private Task cleanupChatTask;
-  @Autowired private Task pidorOfYearTask;
+  @Autowired private Task systemCheckTask;
 
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
-
-
-  @Scheduled(cron = "${task.pidorOfYear.cron}", zone = "GMT+3.00")
-  public void pidorOfYearTask() {
-    executor.execute(pidorOfYearTask::processTask);
-  }
 
   @Scheduled(fixedRateString = "${task.pingHeroku.delay:60000}")
   public void processUpdates() {
@@ -39,13 +33,16 @@ public class ProdScheduleAppConfig {
 
   @Scheduled(cron = "${task.backup.cron}", zone = "GMT+3.00")
   public void backupTask() {
-    executor.execute(backupTask::processTask);
-    executor.execute(cleanupChatTask::processTask);
+    executor.execute(
+        () -> {
+          backupTask.processTask();
+          cleanupChatTask.processTask();
+          systemCheckTask.processTask();
+        });
   }
 
   @Scheduled(cron = "${task.updateUsername.cron}", zone = "GMT+3.00")
   public void updateUsernameTask() {
     executor.execute(updateUsernameTask::processTask);
   }
-
 }

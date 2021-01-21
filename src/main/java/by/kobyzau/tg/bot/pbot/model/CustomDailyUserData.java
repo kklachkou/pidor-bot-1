@@ -65,6 +65,6 @@ public class CustomDailyUserData {
   }
 
   public enum Type {
-    ELECTION_VOTE
+    ELECTION_VOTE,FUTURE_ACTION, CHAT_CHECKBOX_SETTING
   }
 }

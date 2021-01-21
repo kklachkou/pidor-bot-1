@@ -30,7 +30,7 @@ public class ScheduleCommandHandler implements CommandHandler {
       final LocalDate fixedDate = date;
       List<Text> items =
           dayTextItemList.stream()
-              .map(d -> d.getTextItem(fixedDate))
+              .map(d -> d.getTextItem(chatId, fixedDate))
               .filter(Optional::isPresent)
               .map(Optional::get)
               .collect(Collectors.toList());

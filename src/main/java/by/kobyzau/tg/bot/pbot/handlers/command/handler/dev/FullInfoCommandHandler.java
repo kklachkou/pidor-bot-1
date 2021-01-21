@@ -78,6 +78,8 @@ public class FullInfoCommandHandler implements CommandHandler {
       tx.append(new IntText(pidor.getTgId()))
           .append(new SimpleText(": "))
           .append(new FullNamePidorText(pidor))
+          .append(new SimpleText(" "))
+          .append(new DateText(pidor.getUsernameLastUpdated()))
           .append(new NewLineText());
       telegramService
           .getChatMember(chatId, pidor.getTgId())

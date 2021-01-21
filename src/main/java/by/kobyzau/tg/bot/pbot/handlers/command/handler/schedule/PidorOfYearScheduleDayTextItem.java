@@ -12,7 +12,7 @@ import java.util.Optional;
 public class PidorOfYearScheduleDayTextItem implements ScheduleDayTextItem {
 
   @Override
-  public Optional<Text> getTextItem(LocalDate localDate) {
+  public Optional<Text> getTextItem(long chatId, LocalDate localDate) {
     LocalDate nextDay = localDate.plusDays(1);
     if (nextDay.getDayOfYear() == 1) {
       return Optional.of(

@@ -12,7 +12,7 @@ import java.util.Optional;
 public class MonthPidorScheduleDayTextItem implements ScheduleDayTextItem {
 
   @Override
-  public Optional<Text> getTextItem(LocalDate localDate) {
+  public Optional<Text> getTextItem(long chatId, LocalDate localDate) {
     if (localDate.plusDays(1).getDayOfMonth() == 1) {
       return Optional.of(
           new ParametizedText(

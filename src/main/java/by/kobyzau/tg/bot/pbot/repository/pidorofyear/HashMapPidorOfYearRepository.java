@@ -19,6 +19,7 @@ public class HashMapPidorOfYearRepository implements PidorOfYearRepository {
   @Override
   public long create(PidorOfYear obj) {
     long newId = getNewId();
+    obj.setId(newId);
     map.put(newId, obj);
     return newId;
   }

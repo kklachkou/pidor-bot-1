@@ -19,7 +19,7 @@ public class SimpleDaysScheduledRule implements ScheduledRule {
   @Autowired private List<DateBasePidorFunnyAction> dateBasePidorFunnyActions;
 
   @Override
-  public boolean isMatch(LocalDate localDate) {
+  public boolean isMatch(long chatId, LocalDate localDate) {
     return isNewYear(localDate)
         || isDateBasedAction(localDate)
         || isBirthday(localDate);

@@ -33,6 +33,7 @@ public class HashMapDailyDataRepositoryCustom implements CustomDailyDataReposito
   @Override
   public long create(CustomDailyUserData obj) {
     long newId = getNewId();
+    obj.setId(newId);
     map.put(newId, obj);
     return newId;
   }

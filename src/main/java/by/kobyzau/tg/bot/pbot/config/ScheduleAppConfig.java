@@ -21,7 +21,9 @@ public class ScheduleAppConfig {
   @Autowired private Task diceStart;
   @Autowired private Task electionStartTask;
   @Autowired private Task electionEndTask;
+  @Autowired private Task futureActionTask;
   @Autowired private Task diceEnd;
+  @Autowired private Task pidorOfYearTask;
 
   @Autowired private Task excludeUserGameStartTask;
   @Autowired private Task excludeUserGameEndTask;
@@ -63,10 +65,21 @@ public class ScheduleAppConfig {
     executor.execute(electionStartTask::processTask);
   }
 
+  @Scheduled(cron = "${task.futureAction.cron}", zone = "GMT+3.00")
+  public void futureActionTask() {
+    executor.execute(futureActionTask::processTask);
+  }
+
   @Scheduled(cron = "${task.gameEnd.cron}", zone = "GMT+3.00")
   public void gameEnd() {
     executor.execute(diceEnd::processTask);
     executor.execute(excludeUserGameEndTask::processTask);
     executor.execute(electionEndTask::processTask);
   }
+
+  @Scheduled(cron = "${task.pidorOfYear.cron}", zone = "GMT+3.00")
+  public void pidorOfYearTask() {
+    executor.execute(pidorOfYearTask::processTask);
+  }
+
 }

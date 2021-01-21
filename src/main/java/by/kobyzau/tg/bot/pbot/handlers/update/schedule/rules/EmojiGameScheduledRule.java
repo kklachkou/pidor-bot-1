@@ -1,6 +1,8 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.schedule.rules;
 
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
+import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +18,17 @@ import static by.kobyzau.tg.bot.pbot.handlers.update.schedule.rules.ScheduledRul
 @Order(EMOJI_ORDER)
 public class EmojiGameScheduledRule implements ScheduledRule {
 
+  @Autowired private ChatSettingsService settingsService;
+
   private final Set<DayOfWeek> weekDays =
       new HashSet<>(Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.THURSDAY));
 
   @Override
-  public boolean isMatch(LocalDate localDate) {
-    return weekDays.contains(localDate.getDayOfWeek());
+  public boolean isMatch(long chatId, LocalDate localDate) {
+    return weekDays.contains(localDate.getDayOfWeek())
+        && (settingsService.isEnabled(
+                ChatSettingsService.ChatCheckboxSettingType.GAMES_FREQUENT, chatId)
+            || localDate.getDayOfYear() % 2 == 0);
   }
 
   @Override

@@ -1,41 +1,55 @@
 package by.kobyzau.tg.bot.pbot.model.dto;
 
-public class VoteInlineMessageDto {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-  private String id;
-  private Integer tId;
-  private Integer cId;
+import java.util.Objects;
+
+public class VoteInlineMessageDto extends SerializableInlineObject {
+
+
+  @JsonProperty("t")
+  private Integer targetId;
+  @JsonProperty("c")
+  private Integer callerId;
 
   public VoteInlineMessageDto() {
+    super(SerializableInlineType.VOTE);
   }
 
   public VoteInlineMessageDto(String id, Integer targetUserId, Integer calledUserId) {
-    this.tId = targetUserId;
-    this.cId = calledUserId;
-    this.id = id;
+    super(id, SerializableInlineType.VOTE);
+    this.targetId = targetUserId;
+    this.callerId = calledUserId;
   }
 
-  public String getId() {
-    return id;
+  public Integer getTargetId() {
+    return targetId;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setTargetId(Integer tId) {
+    this.targetId = tId;
   }
 
-  public Integer gettId() {
-    return tId;
+  public Integer getCallerId() {
+    return callerId;
   }
 
-  public void settId(Integer tId) {
-    this.tId = tId;
+  public void setCallerId(Integer cId) {
+    this.callerId = cId;
   }
 
-  public Integer getcId() {
-    return cId;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    VoteInlineMessageDto dto = (VoteInlineMessageDto) o;
+    return Objects.equals(targetId, dto.targetId) &&
+            Objects.equals(callerId, dto.callerId);
   }
 
-  public void setcId(Integer cId) {
-    this.cId = cId;
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), targetId, callerId);
   }
 }

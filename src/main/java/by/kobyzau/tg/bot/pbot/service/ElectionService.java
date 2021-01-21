@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public interface ElectionService {
 
-  boolean isElectionDay(LocalDate localDate);
+  boolean isElectionDay(long chatId, LocalDate localDate);
 
   int getNumToVote(long chatId);
 

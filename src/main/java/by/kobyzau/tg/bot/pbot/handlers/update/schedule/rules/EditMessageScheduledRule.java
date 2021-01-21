@@ -14,7 +14,7 @@ import static by.kobyzau.tg.bot.pbot.handlers.update.schedule.rules.ScheduledRul
 public class EditMessageScheduledRule implements ScheduledRule {
 
   @Override
-  public boolean isMatch(LocalDate localDate) {
+  public boolean isMatch(long chatId, LocalDate localDate) {
     return localDate.getDayOfWeek() == DayOfWeek.SUNDAY && localDate.getDayOfYear() % 2 == 0
         || localDate.isEqual(LocalDate.of(2020, 11, 4));
   }

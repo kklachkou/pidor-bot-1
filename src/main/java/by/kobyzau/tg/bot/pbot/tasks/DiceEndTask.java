@@ -35,12 +35,12 @@ public class DiceEndTask implements Task {
 
   @Override
   public void processTask() {
-    if (diceService.getGame(DateUtil.now()).isPresent()) {
-      logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-      telegramService.getChatIds().stream()
-          .filter(botService::isChatValid)
-          .forEach(chatId -> executor.execute(() -> doDice(chatId)));
-    }
+    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    LocalDate now = DateUtil.now();
+    telegramService.getChatIds().stream()
+            .filter(botService::isChatValid)
+            .filter(chatId -> diceService.getGame(chatId, now).isPresent())
+            .forEach(chatId -> executor.execute(() -> doDice(chatId)));
   }
 
   private void doDice(long chatId) {

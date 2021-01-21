@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public interface ScheduledRule {
 
-  boolean isMatch(LocalDate localDate);
+  boolean isMatch(long chatId, LocalDate localDate);
 
   ScheduledItem getItem();
 

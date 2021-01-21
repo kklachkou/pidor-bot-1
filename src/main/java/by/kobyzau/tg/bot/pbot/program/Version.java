@@ -7,6 +7,23 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_4(
+      LocalDate.of(2021, 1, 15),
+      new TextBuilder(new SimpleText("- GDPR"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "- Если кто-то не активничает в чате больше недели - я исключу его из игры до первой его активности."
+                      + " Весь его прогресс сохраниться"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("- Отключена новогодняя тема"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("- Добавлены настройки бота /" + Command.SETTINGS.getName())),
+      StickerType.NEW_YEAR),
+
   VERSION_3(
       LocalDate.of(2020, 12, 27),
       new TextBuilder(new SimpleText("- Новый год рядом! Новогодняя тема Пидор-Бота"))
@@ -16,7 +33,8 @@ public enum Version {
               new SimpleText("- Теперь всегда видно, кто был последним пидором дня. Ищи петуха:)"))
           .append(new NewLineText())
           .append(new NewLineText())
-          .append(new SimpleText("- Повышена точность определения шансов стать пидором года")), StickerType.NEW_YEAR),
+          .append(new SimpleText("- Повышена точность определения шансов стать пидором года")),
+      StickerType.NEW_YEAR),
 
   VERSION_2(
       LocalDate.of(2020, 12, 20),

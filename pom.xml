@@ -101,6 +101,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.3.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>0.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <outputFormats>
+                        <outputFormat>XML</outputFormat>
+                        <outputFormat>HTML</outputFormat>
+                    </outputFormats>
+                    <targetClasses>
+                        <param>by.kobyzau.tg.bot.pbot.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>by.kobyzau.tg.bot.pbot.*</param>
+                    </targetTests>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    &lt;!&ndash;We want each report to override the former one&ndash;&gt;
+                    <timestampedReports>false</timestampedReports>
+                </configuration>
+            </plugin>-->
         </plugins>
     </build>
 

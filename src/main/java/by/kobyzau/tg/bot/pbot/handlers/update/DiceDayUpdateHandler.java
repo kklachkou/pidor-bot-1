@@ -49,11 +49,6 @@ public class DiceDayUpdateHandler implements UpdateHandler {
   private Executor executor;
 
   @Override
-  public boolean test(LocalDate date) {
-    return diceService.getGame(date).isPresent();
-  }
-
-  @Override
   public boolean handleUpdate(Update update) {
     if (!validateUpdate(update)) {
       return false;
@@ -62,15 +57,19 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     if (!message.isPresent()) {
       return false;
     }
+    long chatId = message.get().getChatId();
+    LocalDate now = DateUtil.now();
+    if (!diceService.getGame(chatId, now).isPresent()) {
+      return false;
+    }
     if (hasPidorOfTheDay(update.getMessage().getChatId())) {
       return false;
     }
-    LocalDate now = DateUtil.now();
-    EmojiGame game = diceService.getGame(now).orElseThrow(IllegalStateException::new);
+
+    EmojiGame game = diceService.getGame(chatId, now).orElseThrow(IllegalStateException::new);
     if (!isUserSendValidEmoji(game, message.get())) {
       return false;
     }
-    long chatId = message.get().getChatId();
 
     Optional<PidorDice> userDice =
         diceService.getUserDice(chatId, message.get().getFrom().getId(), now);
@@ -82,7 +81,13 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     diceService.saveDice(
         new PidorDice(message.get().getFrom().getId(), chatId, now, newDiceUserValue));
     RandomText thanksText =
-        new RandomText("Окей, твоё очко задействовано!", "Я тебя понял!", "Спасибо!");
+        new RandomText(
+            "Окей, твоё очко задействовано!",
+            "Я тебя понял!",
+            "Спасибо!",
+            "Вижу!",
+            "Неплохо!",
+            "Отлично!");
     if (newDiceUserValue == 1) {
       botActionCollector.text(chatId, thanksText, message.get().getMessageId());
       botActionCollector.sticker(chatId, StickerType.LOL.getRandom());
