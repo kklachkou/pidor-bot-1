@@ -2,7 +2,9 @@ package by.kobyzau.tg.bot.pbot.tg.sticker;
 
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.internal.matchers.LessOrEqual;
 
 import java.util.*;
 
@@ -18,12 +20,20 @@ public class StickerTypeTest {
       for (String sticker : stickers) {
         if (!uniqueStickers.add(sticker)) {
           fail(
-              new ParametizedText(
-                      "Duplicate Sticker for Type {0} - {1}",
-                      new SimpleText(stickerType.name()), new SimpleText(sticker))
-                  .text());
+                  new ParametizedText(
+                          "Duplicate Sticker for Type {0} - {1}",
+                          new SimpleText(stickerType.name()), new SimpleText(sticker))
+                          .text());
         }
       }
+    }
+  }
+
+
+  @Test
+  public void assertStickerNameLength() {
+    for (StickerType sticker : StickerType.values()) {
+      Assert.assertThat(sticker.name().length(), new LessOrEqual<>(30));
     }
   }
 

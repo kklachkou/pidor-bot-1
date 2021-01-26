@@ -85,7 +85,6 @@ public enum Command {
   VERSION("version"),
   SQL("sql"),
   LOGGER("logger"),
-  FULL_INFO("full_info"),
   BACKUP("backup");
 
   private final String name;

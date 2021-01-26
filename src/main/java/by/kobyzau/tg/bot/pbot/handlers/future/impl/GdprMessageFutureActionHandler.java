@@ -2,6 +2,7 @@ package by.kobyzau.tg.bot.pbot.handlers.future.impl;
 
 import by.kobyzau.tg.bot.pbot.handlers.future.FutureActionHandler;
 import by.kobyzau.tg.bot.pbot.model.dto.GdprMessageDto;
+import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FutureActionService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class GdprMessageFutureActionHandler implements FutureActionHandler {
 
   @Autowired private TelegramService telegramService;
+  @Autowired private BotService botService;
 
   @Override
   public FutureActionService.FutureActionType getType() {
@@ -23,6 +25,8 @@ public class GdprMessageFutureActionHandler implements FutureActionHandler {
   @Override
   public void processAction(String data) {
     Optional<GdprMessageDto> messageDto = StringUtil.deserialize(data, GdprMessageDto.class);
-    messageDto.ifPresent(m -> telegramService.deleteMessage(m.getChatId(), m.getMessageId()));
+    messageDto
+        .filter(m -> botService.canDeleteMessage(m.getChatId()))
+        .ifPresent(m -> telegramService.deleteMessage(m.getChatId(), m.getMessageId()));
   }
 }

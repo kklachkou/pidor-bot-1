@@ -8,6 +8,7 @@ import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.TelegramSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
@@ -59,6 +60,7 @@ public class TelegramServiceImpl implements TelegramService {
   }
 
   @Override
+  @Cacheable("botUser")
   public Optional<User> getMe() {
     try {
       return Optional.of(telegramSender.getMe(botToken));

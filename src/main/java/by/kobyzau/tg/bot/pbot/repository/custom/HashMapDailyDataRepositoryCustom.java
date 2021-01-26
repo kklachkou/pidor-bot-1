@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapDailyDataRepositoryCustom implements CustomDailyDataRepository {
 
   private final Map<Long, CustomDailyUserData> map = new HashMap<>();

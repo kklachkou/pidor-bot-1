@@ -9,6 +9,8 @@ public interface ChatSettingsService {
 
   void setEnabled(ChatCheckboxSettingType type, long chatId, boolean enabled);
 
+  boolean willBeChanged(ChatCheckboxSettingType type, long chatId);
+
   enum ChatCheckboxSettingType {
     GDPR_MESSAGE_ENABLED(
         false,
@@ -29,14 +31,14 @@ public interface ChatSettingsService {
         true,
         "Частота игр",
         "Если часто - игры (кубик, дартс, баскетбол, чур не я) будут проходить 2-3 раза в неделю."
-            + " Если редко - 1-2 раза в неделю.",
+            + " Если редко - 1-2 раза в неделю. Настройка будет применена в течении 24х часов.",
         "(часто)",
         "(редко)",
         true),
     ELECTION_FREQUENT(
         true,
         "Частота выборов",
-        "если включено - выборы будут занимать каждую неделю. Если выключено - через неделю.",
+        "если включено - выборы будут занимать каждую неделю. Если выключено - через неделю. Настройка будет применена в течении 24х часов.",
         "(часто)",
         "(редко)",
         true);

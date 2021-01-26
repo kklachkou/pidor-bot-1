@@ -33,7 +33,6 @@ public class AskForPermissionTask implements Task {
     if (DateUtil.now().getDayOfMonth() != 10) {
       return;
     }
-    logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     telegramService
         .getChatIds()
         .forEach(chatId -> executor.execute(() -> askForPermission(chatId)));
@@ -41,6 +40,7 @@ public class AskForPermissionTask implements Task {
 
   private void askForPermission(long chatId) {
     if (!botService.canPinMessage(chatId)) {
+      logger.info("\uD83D\uDCC6 Asking permission of " + chatId);
       botActionCollector.text(
           chatId,
           new SimpleText(

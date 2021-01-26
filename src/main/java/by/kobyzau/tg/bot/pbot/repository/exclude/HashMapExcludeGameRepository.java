@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapExcludeGameRepository implements ExcludeGameRepository {
 
   private final Map<Long, ExcludeGameUserValue> map = new HashMap<>();

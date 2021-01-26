@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapPidorOfYearRepository implements PidorOfYearRepository {
 
   private final Map<Long, PidorOfYear> map = new HashMap<>();

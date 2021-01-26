@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapPidorOfDayRepository implements DailyPidorRepository {
 
   private final Map<Long, DailyPidor> map = new HashMap<>();

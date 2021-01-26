@@ -4,12 +4,10 @@ import by.kobyzau.tg.bot.pbot.collectors.ReceiveUpdateCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.printer.UpdatePrinter;
-import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Component("updateProcessorTask")
@@ -29,8 +27,7 @@ public class UpdateProcessorTask implements Task {
     }
   }
 
-  private void process(Update update) {
-    LocalDate now = DateUtil.now();
+  public void process(Update update) {
     for (UpdateHandler updateHandler : updateHandlers) {
       try {
         if (updateHandler.handleUpdate(update)) {

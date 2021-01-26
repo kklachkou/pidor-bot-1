@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.action.UnpinBotAction;
@@ -8,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
@@ -29,6 +31,8 @@ public class BotServiceImpl implements BotService {
 
   @Autowired private BotActionCollector botActionCollector;
 
+  @Autowired private Logger logger;
+
   @Override
   public boolean canPinMessage(long chatId) {
     return telegramService
@@ -42,7 +46,21 @@ public class BotServiceImpl implements BotService {
   }
 
   @Override
+  public boolean canDeleteMessage(long chatId) {
+    return telegramService
+            .getMe()
+            .map(User::getId)
+            .map(botId -> telegramService.getChatMember(chatId, botId))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(ChatMember::getCanDeleteMessages)
+            .orElse(false);
+  }
+
+  @Override
+  @Cacheable(value = "chatValid", key = "#chatId", unless = "!#result")
   public boolean isChatValid(long chatId) {
+    logger.debug("Checking is chat valid: " + chatId);
     return adminUserId == chatId
         || telegramService
             .getChat(chatId)
@@ -51,7 +69,9 @@ public class BotServiceImpl implements BotService {
   }
 
   @Override
+  @Cacheable(value = "botPartOfChat", key = "#chatId", unless = "!#result")
   public boolean isBotPartOfChat(long chatId) {
+    logger.debug("Checking bot is part of chat " + chatId);
     return TGUtil.isChatMember(
         telegramService
             .getMe()

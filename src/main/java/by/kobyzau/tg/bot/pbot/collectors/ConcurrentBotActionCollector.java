@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 @Component
-@Profile("!test")
+@Profile("!integration-test")
 public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
 
   private final Object lock = new Object();

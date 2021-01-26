@@ -1,19 +1,18 @@
 package by.kobyzau.tg.bot.pbot.repository.digestusage;
 
+import by.kobyzau.tg.bot.pbot.model.DigestUsage;
+import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
-import by.kobyzau.tg.bot.pbot.model.DigestUsage;
-import by.kobyzau.tg.bot.pbot.util.StringUtil;
-
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapDigestUsageRepository implements DigestUsageRepository {
   private final Map<Long, DigestUsage> map = new HashMap<>();
 

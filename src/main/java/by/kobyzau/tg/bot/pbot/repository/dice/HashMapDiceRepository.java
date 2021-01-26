@@ -1,17 +1,16 @@
 package by.kobyzau.tg.bot.pbot.repository.dice;
 
+import by.kobyzau.tg.bot.pbot.model.PidorDice;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
-import by.kobyzau.tg.bot.pbot.model.PidorDice;
-
 @Component
-@Profile("dev")
+@Profile({"dev", "integration-test"})
 public class HashMapDiceRepository implements DiceRepository {
 
   private final Map<Long, PidorDice> map = new HashMap<>();

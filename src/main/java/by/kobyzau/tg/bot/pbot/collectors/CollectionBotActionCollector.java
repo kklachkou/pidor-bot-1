@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Profile("test")
+@Profile("integration-test")
 public class CollectionBotActionCollector extends AbstractBotActionCollector {
 
   private List<BotAction<?>> actionList = new ArrayList<>();

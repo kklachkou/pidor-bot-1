@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -30,8 +31,10 @@ import static by.kobyzau.tg.bot.pbot.service.FutureActionService.FutureActionTyp
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GdprUpdateHandler implements UpdateHandler {
 
-  private Set<String> gdprKeywords =
+  private final Set<String> gdprKeywords =
       new HashSet<>(Arrays.asList("митинг", "лукаш", "ябацк", "флаг", "бчб"));
+  private final Set<Long> badChannels =
+      new HashSet<>(Arrays.asList(-1001413275904L, -1001243038268L));
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private ChatSettingsService chatSettingsService;
@@ -57,15 +60,22 @@ public class GdprUpdateHandler implements UpdateHandler {
   }
 
   private void checkFutureDeleteMessage(Message message) {
-    if (message.hasText()
-        && chatSettingsService.isEnabled(GDPR_MESSAGE_ENABLED, message.getChatId())) {
-      String text = message.getText().trim().toLowerCase();
-      if (gdprKeywords.stream().anyMatch(text::contains)) {
+    if (chatSettingsService.isEnabled(GDPR_MESSAGE_ENABLED, message.getChatId())) {
+      String text = Optional.ofNullable(message.getText()).orElse("").trim().toLowerCase();
+      if (gdprKeywords.stream().anyMatch(text::contains) || isForwardedFromBadChannel(message)) {
         GdprMessageDto dto = new GdprMessageDto(message.getChatId(), message.getMessageId());
         futureActionService.saveFutureActionData(
             GDPR_MESSAGE, DateUtil.now().plusDays(1), StringUtil.serialize(dto));
       }
     }
+  }
+
+  private boolean isForwardedFromBadChannel(Message message) {
+    return Optional.ofNullable(message)
+        .map(Message::getForwardFromChat)
+        .map(Chat::getId)
+        .filter(badChannels::contains)
+        .isPresent();
   }
 
   private void checkUser(Message message) {

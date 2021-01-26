@@ -4,6 +4,8 @@ public interface BotService {
 
     boolean canPinMessage(long chatId);
 
+    boolean canDeleteMessage(long chatId);
+
     boolean isChatValid(long chatId);
 
     boolean isBotPartOfChat(long chatId);

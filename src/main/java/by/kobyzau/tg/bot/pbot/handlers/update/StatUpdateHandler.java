@@ -60,10 +60,9 @@ public class StatUpdateHandler implements UpdateHandler {
 
   private void handle(String callbackId, Message prevMessage, StatInlineDto data) {
     long chatId = prevMessage.getChatId();
+    botActionCollector.add(
+        new AnswerCallbackBotAction(chatId, callbackId, new SimpleText("Вывод статистики...")));
     StatType statType = data.getType();
     statHandlerFactory.getHandler(statType).printStat(prevMessage.getChatId());
-    botActionCollector.add(
-        new AnswerCallbackBotAction(chatId, callbackId, new SimpleText("Статистика получена")));
   }
-
 }

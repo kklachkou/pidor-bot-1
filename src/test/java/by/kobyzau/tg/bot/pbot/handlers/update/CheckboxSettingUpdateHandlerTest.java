@@ -5,10 +5,10 @@ import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.model.dto.ChatCheckboxSettingCommandDto;
 import by.kobyzau.tg.bot.pbot.model.dto.CheckboxSettingCommandInlineDto;
+import by.kobyzau.tg.bot.pbot.program.printer.SettingsCommandPrinter;
 import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.FutureActionService;
 import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.EditMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.junit.Before;
@@ -46,6 +46,7 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
 
   @Mock private FutureActionService futureActionService;
   @Mock private ChatSettingsService chatSettingsService;
+  @Mock private SettingsCommandPrinter settingsCommandPrinter;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Before
@@ -80,7 +81,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     CallbackQuery callbackQuery = new CallbackQuery();
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
     update.setCallbackQuery(callbackQuery);
     doReturn(true).when(chatSettingsService).isEnabled(realTimeType, chatId);
 
@@ -158,7 +160,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setFrom(bot);
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(true).when(chatSettingsService).isEnabled(realTimeType, chatId);
@@ -171,9 +174,7 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     verify(chatSettingsService, times(1)).setEnabled(realTimeType, chatId, false);
     verify(chatSettingsService, times(0)).setEnabled(realTimeType, chatId, true);
     verifyFutureActionNotSaved();
-    checkActions(
-        new BotTypeBotActionChecker(AnswerCallbackBotAction.class),
-        new BotTypeBotActionChecker(EditMessageBotAction.class));
+    checkActions(new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
   }
 
   @Test
@@ -186,7 +187,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setFrom(bot);
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, realTimeType)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(false).when(chatSettingsService).isEnabled(realTimeType, chatId);
@@ -199,9 +201,7 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     verify(chatSettingsService, times(0)).setEnabled(realTimeType, chatId, false);
     verify(chatSettingsService, times(1)).setEnabled(realTimeType, chatId, true);
     verifyFutureActionNotSaved();
-    checkActions(
-        new BotTypeBotActionChecker(AnswerCallbackBotAction.class),
-        new BotTypeBotActionChecker(EditMessageBotAction.class));
+    checkActions(new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
   }
 
   @Test
@@ -228,7 +228,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     CallbackQuery callbackQuery = new CallbackQuery();
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
     update.setCallbackQuery(callbackQuery);
     doReturn(true).when(chatSettingsService).isEnabled(futureType, chatId);
 
@@ -306,7 +307,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setFrom(bot);
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(true).when(chatSettingsService).isEnabled(futureType, chatId);
@@ -332,7 +334,8 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setFrom(bot);
 
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
+    callbackQuery.setData(
+        StringUtil.serialize(new CheckboxSettingCommandInlineDto(id, futureType)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(false).when(chatSettingsService).isEnabled(futureType, chatId);
@@ -350,27 +353,29 @@ public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
 
   private void verifyFutureActionNotSaved() {
     verify(futureActionService, times(0))
-            .saveFutureActionData(
-                    ENABLE_SETTING,
-                    DateUtil.now().plusDays(1),
-                    StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, false)));
+        .saveFutureActionData(
+            ENABLE_SETTING,
+            DateUtil.now().plusDays(1),
+            StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, false)));
     verify(futureActionService, times(0))
-            .saveFutureActionData(
-                    ENABLE_SETTING,
-                    DateUtil.now().plusDays(1),
-                    StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, true)));
+        .saveFutureActionData(
+            ENABLE_SETTING,
+            DateUtil.now().plusDays(1),
+            StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, true)));
   }
 
   private void verifySavedFutureAction(boolean willBeEnabled) {
     verify(futureActionService, times(1))
-            .saveFutureActionData(
-                    ENABLE_SETTING,
-                    DateUtil.now().plusDays(1),
-                    StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, willBeEnabled)));
+        .saveFutureActionData(
+            ENABLE_SETTING,
+            DateUtil.now().plusDays(1),
+            StringUtil.serialize(
+                new ChatCheckboxSettingCommandDto(chatId, futureType, willBeEnabled)));
     verify(futureActionService, times(0))
-            .saveFutureActionData(
-                    ENABLE_SETTING,
-                    DateUtil.now().plusDays(1),
-                    StringUtil.serialize(new ChatCheckboxSettingCommandDto(chatId, futureType, !willBeEnabled)));
+        .saveFutureActionData(
+            ENABLE_SETTING,
+            DateUtil.now().plusDays(1),
+            StringUtil.serialize(
+                new ChatCheckboxSettingCommandDto(chatId, futureType, !willBeEnabled)));
   }
 }
