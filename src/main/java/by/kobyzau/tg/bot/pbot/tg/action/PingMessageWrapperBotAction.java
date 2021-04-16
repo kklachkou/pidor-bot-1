@@ -11,10 +11,6 @@ public class PingMessageWrapperBotAction implements BotAction<Message> {
   private final BotAction<Message> botAction;
   private final boolean pinMessage;
 
-  public PingMessageWrapperBotAction(BotAction<Message> botAction) {
-    this(botAction, true);
-  }
-
   public PingMessageWrapperBotAction(BotAction<Message> botAction, boolean pinMessage) {
     this.botAction = botAction;
     this.pinMessage = pinMessage;

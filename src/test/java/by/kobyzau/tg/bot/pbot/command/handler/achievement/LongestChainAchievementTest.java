@@ -155,11 +155,11 @@ public class LongestChainAchievementTest {
     doReturn(dailyPidors).when(dailyPidorRepository).getByChat(CHAT_ID);
     doAnswer(
             invocationOnMock -> {
-              int id = (Integer) invocationOnMock.getArguments()[1];
+              long id = (Long) invocationOnMock.getArguments()[1];
               return Optional.of(getPidor(id));
             })
         .when(pidorService)
-        .getPidor(anyLong(), anyInt());
+        .getPidor(anyLong(), anyLong());
     Achievement achievement = new LongestChainAchievement(pidorService, dailyPidorRepository);
 
     // when
@@ -173,7 +173,7 @@ public class LongestChainAchievementTest {
     }
   }
 
-  private static Pidor getPidor(int id) {
+  private static Pidor getPidor(long id) {
     Pidor pidor = new Pidor();
     pidor.setId(id);
     pidor.setTgId(id);
@@ -181,7 +181,7 @@ public class LongestChainAchievementTest {
     return pidor;
   }
 
-  private static DailyPidor getDailyPidor(int id, int day) {
+  private static DailyPidor getDailyPidor(long id, int day) {
     DailyPidor dailyPidor = new DailyPidor();
     dailyPidor.setChatId(CHAT_ID);
     dailyPidor.setPlayerTgId(id);

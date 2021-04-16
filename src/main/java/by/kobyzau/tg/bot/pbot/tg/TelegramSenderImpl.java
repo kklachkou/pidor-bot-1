@@ -32,7 +32,7 @@ public class TelegramSenderImpl implements TelegramSender {
   @Autowired private Logger logger;
 
   @Override
-  public Optional<ChatMember> getChatMember(String botId, long chatId, int userId) {
+  public Optional<ChatMember> getChatMember(String botId, long chatId, long userId) {
     try (CloseableHttpClient httpClient = createHttpClient()) {
       HttpGet request = new HttpGet(buildGetChatMemberURI(botId, chatId, userId));
       request.setHeader("Content-Type", "application/json");
@@ -45,8 +45,11 @@ public class TelegramSenderImpl implements TelegramSender {
         String content = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
         EntityUtils.consume(responseEntity);
         JSONObject chatMember = new JSONObject(content);
-        String userString = chatMember.getJSONObject("result").toString();
-        return Optional.ofNullable(new ObjectMapper().readValue(userString, ChatMember.class));
+        if(chatMember.has("result")) {
+          String userString = chatMember.getJSONObject("result").toString();
+          return Optional.ofNullable(new ObjectMapper().readValue(userString, ChatMember.class));
+        }
+        return Optional.empty();
       }
     } catch (Exception ex) {
       logger.error("Cannot get ChatMember " + userId + " for chat " + chatId, ex);
@@ -206,6 +209,9 @@ public class TelegramSenderImpl implements TelegramSender {
         String content = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
         EntityUtils.consume(responseEntity);
         JSONObject chatMember = new JSONObject(content);
+        if (!chatMember.has("result")) {
+          return 0;
+        }
         return chatMember.getInt("result");
       }
     } catch (Exception ex) {
@@ -230,7 +236,7 @@ public class TelegramSenderImpl implements TelegramSender {
         + messageId;
   }
 
-  private String buildGetChatMemberURI(String botId, long chatId, int userId) {
+  private String buildGetChatMemberURI(String botId, long chatId, long userId) {
     return "https://api.telegram.org/bot"
         + botId
         + "/getChatMember?chat_id="

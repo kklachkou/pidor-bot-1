@@ -71,7 +71,7 @@ public class GameCommandHandler implements CommandHandler {
               new FullNamePidorText(pidorOfTheDay.get())));
       return;
     }
-    Set<Integer> playedIds =
+    Set<Long> playedIds =
         excludeGameService.getExcludeGameUserValues(chatId, DateUtil.now()).stream()
             .map(ExcludeGameUserValue::getPlayerTgId)
             .collect(Collectors.toSet());

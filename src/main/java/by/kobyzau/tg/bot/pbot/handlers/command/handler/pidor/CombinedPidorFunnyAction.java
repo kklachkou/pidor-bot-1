@@ -2,6 +2,7 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.fun.Intro;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.PrioritySelection;
@@ -9,15 +10,17 @@ import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.Optional;
 
@@ -29,8 +32,8 @@ public class CombinedPidorFunnyAction implements PidorFunnyAction {
   @Qualifier("PidorOfTheDayIntro")
   private Intro intro;
 
+  @Autowired private FeedbackService feedbackService;
   private final Selection<String> finalMessage;
-
 
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private BotActionCollector botActionCollector;
@@ -39,7 +42,6 @@ public class CombinedPidorFunnyAction implements PidorFunnyAction {
   public CombinedPidorFunnyAction() {
     this.finalMessage =
         new ConsistentSelection<>(
-
             "Зачем что-то утаивать, ведь {0} пидор дня",
             "{0} - не нужно быть пидор-ботом, чтобы догадаться, что ты сегодня пидор дня",
             "Если кто-то спросит меня, кто сегодня пидор дня, я отвечу {0}",
@@ -70,8 +72,14 @@ public class CombinedPidorFunnyAction implements PidorFunnyAction {
 
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());
     if (pidorSticker.isPresent()) {
-      botActionCollector.text(
-          chatId, new ParametizedText(finalMessage.next(), new FullNamePidorText(pidorOfTheDay)));
+      botActionCollector.add(
+          new ReplyKeyboardBotAction(
+              chatId,
+              new ParametizedText(finalMessage.next(), new FullNamePidorText(pidorOfTheDay)),
+              InlineKeyboardMarkup.builder()
+                  .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                  .build(),
+              null));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
@@ -81,9 +89,13 @@ public class CombinedPidorFunnyAction implements PidorFunnyAction {
     } else {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendMessageBotAction(
+              new ReplyKeyboardBotAction(
                   chatId,
-                  new ParametizedText(finalMessage.next(), new FullNamePidorText(pidorOfTheDay))),
+                  new ParametizedText(finalMessage.next(), new FullNamePidorText(pidorOfTheDay)),
+                  InlineKeyboardMarkup.builder()
+                      .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                      .build(),
+                  null),
               botService.canPinMessage(chatId)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }

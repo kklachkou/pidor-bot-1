@@ -37,7 +37,7 @@ public class TopNaturalAchievement implements Achievement {
     }
     int numDays = dailyPidors.size();
 
-    Map<Integer, Integer> numWinsById = new HashMap<>();
+    Map<Long, Integer> numWinsById = new HashMap<>();
     for (DailyPidor dailyPidor : dailyPidors) {
       int numWins = numWinsById.getOrDefault(dailyPidor.getPlayerTgId(), 0);
       numWinsById.put(dailyPidor.getPlayerTgId(), numWins + 1);

@@ -7,6 +7,13 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_5(
+      LocalDate.of(2021, 1, 29),
+      new TextBuilder(new SimpleText("- Давай свою оценку!"))
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "- Реагируйте на различные события. Например - на назначение пидора дня"))),
   VERSION_4(
       LocalDate.of(2021, 1, 15),
       new TextBuilder(new SimpleText("- GDPR"))
@@ -61,9 +68,7 @@ public enum Version {
           .append(new SimpleText("Следи за тем какая будет игра через команду /schedule"))
           .append(new NewLineText())
           .append(new NewLineText())
-          .append(
-              new ParametizedText(
-                  "- Добавлена новая команда /{0}", new SimpleText(Command.REG_PIDOR.getName())))
+          .append(new SimpleText("- Добавлена новая команда /reg_pidor"))
           .append(
               new SimpleText(
                   "Отправь эту команду в ответ на сообщение человека, который сам никак не зарегистритуеться в игре"))

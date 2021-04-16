@@ -10,19 +10,18 @@ import java.util.UUID;
 import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.VOTE;
 import static org.junit.Assert.*;
 
-public class VoteInlineMessageDtoTest {
+public class VoteInlineMessageInlineDtoTest {
 
   @Test
   public void serizlize_maxLength64() {
     // given
-    VoteInlineMessageDto dtoWithNegative =
-        new VoteInlineMessageDto(
-            UUID.randomUUID().toString().substring(VOTE.getIdSize()),
-            Integer.MIN_VALUE,
-            Integer.MIN_VALUE);
-    VoteInlineMessageDto dtoWithPositive =
-        new VoteInlineMessageDto(
-            UUID.randomUUID().toString().substring(VOTE.getIdSize()), Integer.MAX_VALUE, Integer.MAX_VALUE);
+    VoteInlineMessageInlineDto dtoWithNegative =
+        new VoteInlineMessageInlineDto(
+                UUID.randomUUID().toString().substring(VOTE.getIdSize()),
+            Long.MIN_VALUE);
+    VoteInlineMessageInlineDto dtoWithPositive =
+        new VoteInlineMessageInlineDto(
+                UUID.randomUUID().toString().substring(VOTE.getIdSize()), Long.MAX_VALUE);
 
     // when
     String serializeNegative = StringUtil.serialize(dtoWithNegative);
@@ -38,13 +37,13 @@ public class VoteInlineMessageDtoTest {
   @Test
   public void deserialize_eq() {
     // given
-    VoteInlineMessageDto dto =
-        new VoteInlineMessageDto(UUID.randomUUID().toString().substring(VOTE.getIdSize()), 53, 24);
+    VoteInlineMessageInlineDto dto =
+        new VoteInlineMessageInlineDto(UUID.randomUUID().toString().substring(VOTE.getIdSize()), 53L);
 
     // when
     String json = StringUtil.serialize(dto);
-    Optional<VoteInlineMessageDto> deserialized =
-        StringUtil.deserialize(json, VoteInlineMessageDto.class);
+    Optional<VoteInlineMessageInlineDto> deserialized =
+        StringUtil.deserialize(json, VoteInlineMessageInlineDto.class);
 
     // then
     assertTrue(deserialized.isPresent());

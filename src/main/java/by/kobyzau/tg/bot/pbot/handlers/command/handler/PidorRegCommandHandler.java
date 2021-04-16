@@ -41,7 +41,7 @@ public class PidorRegCommandHandler implements CommandHandler {
   @Override
   public void processCommand(Message message, String text) {
     long chatId = message.getChatId();
-    int userId = message.getFrom().getId();
+    long userId = message.getFrom().getId();
     Optional<Pidor> existingPidor = pidorService.getPidor(chatId, userId);
     if (existingPidor.isPresent()) {
       botActionCollector.collectHTMLMessage(chatId, alreadyRegMessages.next());

@@ -31,8 +31,8 @@ public class DiceEmojiGame implements EmojiGame {
   public boolean isDateToGame(LocalDate date) {
     switch (date.getDayOfWeek()) {
       case MONDAY:
-        return date.getDayOfMonth() % 2 == 0;
       case WEDNESDAY:
+        return date.getDayOfMonth() % 2 == 0;
       case FRIDAY:
         return true;
       default:
@@ -49,9 +49,6 @@ public class DiceEmojiGame implements EmojiGame {
             .orElse(0);
     if (userValue > minValue) {
       return EmojiGameResult.WIN;
-    }
-    if (userValue == minValue) {
-      return EmojiGameResult.LOSE;
     }
     if (userValue == 0) {
       return EmojiGameResult.NONE;

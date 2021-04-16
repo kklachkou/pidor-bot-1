@@ -18,7 +18,7 @@ public class DbPidorRepository implements PidorRepository {
   @Autowired private IRepoPidorRepository pidorRepository;
 
   @Override
-  public Optional<Pidor> getByChatAndPlayerTgId(long chatId, int tgId) {
+  public Optional<Pidor> getByChatAndPlayerTgId(long chatId, long tgId) {
     return pidorRepository.findByChatId(chatId).stream()
         .filter(p -> p.getTgId() == tgId)
         .findFirst();

@@ -2,13 +2,17 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.datebased;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,6 +23,7 @@ public class Feb23TimePidorFunnyAction implements DateBasePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
+  @Autowired private FeedbackService feedbackService;
 
   @Override
   public void processFunnyAction(long chatId, Pidor pidorOfTheDay) {
@@ -46,11 +51,18 @@ public class Feb23TimePidorFunnyAction implements DateBasePidorFunnyAction {
     botActionCollector.collectHTMLMessage(chatId, "Ииыиыиии!");
 
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.text(
-        chatId,
-        new ParametizedText(
-            "Упал - отжался, {0}. Твой праздник - 8 марта", new FullNamePidorText(pidorOfTheDay)));
-
+    botActionCollector.add(
+        new ReplyKeyboardBotAction(
+            chatId,
+            new ParametizedText(
+                new ParametizedText(
+                    "Упал - отжался, {0}. Твой праздник - 8 марта",
+                    new FullNamePidorText(pidorOfTheDay)),
+                new FullNamePidorText(pidorOfTheDay)),
+            InlineKeyboardMarkup.builder()
+                .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                .build(),
+            null));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());
     pidorSticker.ifPresent(

@@ -19,7 +19,7 @@ public class PidorUtilTest {
     List<DailyPidor> dailyPidors = Collections.emptyList();
 
     // when
-    Optional<Integer> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
+    Optional<Long> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
 
     // then
     assertFalse(topPidor.isPresent());
@@ -30,10 +30,10 @@ public class PidorUtilTest {
     // given
     final int year = 2019;
     final int month = 12;
-    final int player1 = 1;
-    final int player2 = 2;
-    final int player3 = 3;
-    final int player4 = 4;
+    final long player1 = 1;
+    final long player2 = 2;
+    final long player3 = 3;
+    final long player4 = 4;
     int day = 1;
     List<DailyPidor> dailyPidors =
         Arrays.asList(
@@ -47,11 +47,11 @@ public class PidorUtilTest {
             getDailyPidor(player4, LocalDate.of(year, month, day)));
 
     // when
-    Optional<Integer> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
+    Optional<Long> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
 
     // then
     assertTrue(topPidor.isPresent());
-    assertEquals(Integer.valueOf(player1), topPidor.get());
+    assertEquals(Long.valueOf(player1), topPidor.get());
   }
 
   @Test
@@ -75,11 +75,11 @@ public class PidorUtilTest {
             getDailyPidor(player4, LocalDate.of(year, month, day)));
 
     // when
-    Optional<Integer> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
+    Optional<Long> topPidor = PidorUtil.getTopPidorTgId(dailyPidors);
 
     // then
     assertTrue(topPidor.isPresent());
-    assertEquals(Integer.valueOf(player3), topPidor.get());
+    assertEquals(Long.valueOf(player3), topPidor.get());
   }
 
   @Test
@@ -95,7 +95,7 @@ public class PidorUtilTest {
     assertEquals("PidorAmongUsLoggerBot", result);
   }
 
-  private DailyPidor getDailyPidor(int tgId, LocalDate localDate) {
+  private DailyPidor getDailyPidor(long tgId, LocalDate localDate) {
     DailyPidor dailyPidor = new DailyPidor();
     dailyPidor.setPlayerTgId(tgId);
     dailyPidor.setLocalDate(localDate);

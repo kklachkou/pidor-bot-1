@@ -23,7 +23,7 @@ public class UserPrinter {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    Integer id = user.getId();
+    Long id = user.getId();
     String firstName = TGUtil.escapeHTML(user.getFirstName());
     String userName = TGUtil.escapeHTML(user.getUserName());
     String languageCode = user.getLanguageCode();

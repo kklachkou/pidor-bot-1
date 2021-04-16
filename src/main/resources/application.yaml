@@ -1,0 +1,36 @@
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 10
+  profiles:
+    default: dev
+server.port: ${PORT:8084}
+logger:
+  tg:
+    chat: ${LOGGER_CHAT}
+    level: INFO
+    token: ${LOGGER_TOKEN}
+
+bot:
+  username: ${BOT_USERNAME}
+  token: ${BOT_TOKEN}
+
+app:
+  version: 7.0 Long IDs
+  admin.userId: ${ADMIN_USER_ID}
+  time.bot.reconnect: 10000
+  threadNum:
+    sendMessages: 15
+    tasks: 5
+
+task:
+  gameStart.cron: 0 1 21 * * ?
+  gameReminderTask.cron: 0 0 13 * * ?
+  gameEnd.cron: 0 0 16 * * ?
+  notifyNoPidors.cron: 0 0 17 * * ?
+  notifyPidorOfTheMonthTask.cron: 0 0 18 * * ?
+  pidorOfYear.cron: 0 0 19 31 12 ?
+  futureAction.cron: 0 30 20 * * ?
+  updateUsername.cron: 0 0 1 * * ?
+  backup.cron: 0 0 20 * * ?

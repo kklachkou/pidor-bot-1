@@ -62,14 +62,14 @@ public class DailyPidorSystemChecker implements SystemChecker {
                     "Daily 1 - id:{0}, date:{1}, pidor:{2}",
                     new LongText(d1.getId()),
                     new DateText(d1.getLocalDate()),
-                    new IntText(d1.getPlayerTgId())))
+                    new LongText(d1.getPlayerTgId())))
             .append(new NewLineText())
             .append(
                 new ParametizedText(
                     "Daily 2 - id:{0}, date:{1}, pidor:{2}",
                     new LongText(d2.getId()),
                     new DateText(d2.getLocalDate()),
-                    new IntText(d2.getPlayerTgId())))
+                    new LongText(d2.getPlayerTgId())))
             .text();
     System.out.println(message);
     logger.warn(message);

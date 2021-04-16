@@ -31,7 +31,7 @@ public class CloseInlineMessageUpdateHandlerTest extends BotActionAbstractTest {
   @Before
   public void init() {
     ReflectionTestUtils.setField(handler, "botUserName", "bot");
-    bot = new User(0, "bot", true);
+    bot = new User(0L, "bot", true);
     bot.setUserName("bot");
   }
 

@@ -8,6 +8,7 @@ import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandlerFactory;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.IntText;
+import by.kobyzau.tg.bot.pbot.program.text.LongText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
@@ -37,7 +38,7 @@ public class CommandUpdateHandler implements UpdateHandler {
   @Autowired private BotService botService;
 
   @Value("${app.admin.userId}")
-  private int adminUserId;
+  private long adminUserId;
 
   @Override
   public boolean handleUpdate(Update update) {
@@ -80,7 +81,7 @@ public class CommandUpdateHandler implements UpdateHandler {
       logger.warn(
           new ParametizedText(
                   "User {0} calls hidden command {1}",
-                  new IntText(message.getFrom().getId()),
+                  new LongText(message.getFrom().getId()),
                   new SimpleText(parsedCommand.getCommand().name()))
               .text());
       return Command.NONE;

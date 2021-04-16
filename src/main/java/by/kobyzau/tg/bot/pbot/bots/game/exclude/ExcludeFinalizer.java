@@ -56,7 +56,7 @@ public class ExcludeFinalizer {
       return;
     }
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    Set<Integer> playedIds =
+    Set<Long> playedIds =
         gameService.getExcludeGameUserValues(chatId, now).stream()
             .map(ExcludeGameUserValue::getPlayerTgId)
             .collect(Collectors.toSet());

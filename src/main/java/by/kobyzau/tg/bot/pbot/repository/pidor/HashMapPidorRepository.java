@@ -28,7 +28,7 @@ public class HashMapPidorRepository implements PidorRepository {
   }
 
   @Override
-  public Optional<Pidor> getByChatAndPlayerTgId(long chatId, int tgId) {
+  public Optional<Pidor> getByChatAndPlayerTgId(long chatId, long tgId) {
     return getAll().stream()
         .filter(p -> tgId == p.getTgId())
         .filter(p -> chatId == p.getChatId())

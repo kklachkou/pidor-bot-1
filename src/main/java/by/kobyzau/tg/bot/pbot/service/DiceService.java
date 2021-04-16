@@ -15,7 +15,7 @@ public interface DiceService {
 
   void saveDice(PidorDice dice);
 
-  Optional<PidorDice> getUserDice(long chatId, int userId, LocalDate date);
+  Optional<PidorDice> getUserDice(long chatId, long userId, LocalDate date);
 
   Optional<EmojiGame> getGame(long chatId, LocalDate localDate);
 

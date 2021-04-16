@@ -25,7 +25,7 @@ public class BotServiceImpl implements BotService {
   private String botToken;
 
   @Value("${app.admin.userId}")
-  private int adminUserId;
+  private long adminUserId;
 
   @Autowired private TelegramService telegramService;
 

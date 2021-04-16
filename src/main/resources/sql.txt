@@ -1,39 +1,30 @@
-CREATE TABLE pidor(
+CREATE TABLE IF NOT EXISTS pidor(
     id serial PRIMARY KEY,
     tg_id int NOT NULL,
     chat_id bigint NOT NULL,
     username VARCHAR (100),
+    sticker VARCHAR (30),
     fullname VARCHAR (100) NOT NULL,
     nickname VARCHAR(100),
     username_last_updated TIMESTAMP NOT NULL
 );
 
-CREATE TABLE daily_pidor(
+CREATE TABLE IF NOT EXISTS daily_pidor(
     id serial PRIMARY KEY,
     player_tg_id int NOT NULL,
     chat_id bigint NOT NULL,
+    caller int,
     local_date TIMESTAMP NOT NULL
 );
 
-ALTER TABLE pidor ADD COLUMN sticker VARCHAR(30);
-
-UPDATE pidor set sticker = 'PIDOR_SHOHAN' where tg_id=306519117
-
-CREATE TABLE digest_usage(
+CREATE TABLE IF NOT EXISTS digest_usage(
     id serial PRIMARY KEY,
     type VARCHAR (100) NOT NULL,
     digest VARCHAR (1000) NOT NULL,
     date TIMESTAMP NOT NULL
 );
 
-
-ALTER TABLE daily_pidor ADD COLUMN caller int;
-
-
-UPDATE pidor set sticker = 'PIDOR_DIMKA' where tg_id=261011580
-
-
-CREATE TABLE pidor_dice(
+CREATE TABLE IF NOT EXISTS pidor_dice(
     id serial PRIMARY KEY,
     player_tg_id int NOT NULL,
     chat_id bigint NOT NULL,
@@ -42,14 +33,14 @@ CREATE TABLE pidor_dice(
 );
 
 
-CREATE TABLE exclude_game(
+CREATE TABLE IF NOT EXISTS exclude_game(
     id serial PRIMARY KEY,
     player_tg_id int NOT NULL,
     chat_id bigint NOT NULL,
     local_date TIMESTAMP NOT NULL
 );
 
-CREATE TABLE pidor_of_year(
+CREATE TABLE IF NOT EXISTS pidor_of_year(
     id serial PRIMARY KEY,
     player_tg_id int NOT NULL,
     chat_id bigint NOT NULL,
@@ -64,4 +55,13 @@ CREATE TABLE custom_daily_user_data(
     local_date TIMESTAMP NOT NULL,
     type VARCHAR (100) NOT NULL,
     data VARCHAR (1000) NOT NULL
+);
+
+CREATE TABLE feedback(
+    id serial PRIMARY KEY,
+    player_tg_id int NOT NULL,
+    message_id int NOT NULL,
+    chat_id bigint NOT NULL,
+    feedback_type VARCHAR (100) NOT NULL,
+    emoji_type VARCHAR (100) NOT NULL
 );

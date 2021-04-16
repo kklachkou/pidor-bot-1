@@ -45,7 +45,7 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
   @Rule public TestName testName = new TestName();
 
   private final long chatId = 123;
-  private final int userId = 54321;
+  private final long userId = 54321;
   private final String excludeWord = "not me";
 
   @InjectMocks private ExcludeGameUpdateHandler handler = new ExcludeGameUpdateHandler();

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class CommandUpdateHandlerTest extends BotActionAbstractTest {
 
   private final long chatId = 123;
-  private final int adminId = 54321;
+  private final long adminId = 54321;
   private final Command command = Command.PIDOR;
   private final String commandText = "command text";
   private final String messageText = "message text";
@@ -179,7 +179,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     assertCommandProcessed(update.getMessage());
   }
 
-  private Message getMessage(String messageText, Integer userId) {
+  private Message getMessage(String messageText, Long userId) {
     Message message = new Message();
     message.setChat(new Chat(chatId, "group"));
     message.setText(messageText);

@@ -21,11 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -118,25 +120,6 @@ public class RegPidorUpdateHandler implements UpdateHandler {
   private List<User> getUsersFromMessage(Message message) {
     List<User> users = new ArrayList<>();
     users.add(message.getFrom());
-    users.add(message.getForwardFrom());
-    if (message.getReplyToMessage() != null) {
-      users.addAll(getUsersFromMessage(message.getReplyToMessage()));
-    }
-    if (message.getEntities() != null) {
-      message.getEntities().stream()
-              .map(MessageEntity::getUser)
-              .filter(Objects::nonNull)
-              .forEach(users::add);
-    }
-    if (message.getCaptionEntities() != null) {
-      message.getCaptionEntities().stream()
-              .map(MessageEntity::getUser)
-              .filter(Objects::nonNull)
-              .forEach(users::add);
-    }
-    if (message.getPinnedMessage() != null) {
-      users.addAll(getUsersFromMessage(message.getPinnedMessage()));
-    }
     users.addAll(message.getNewChatMembers());
     return users;
   }

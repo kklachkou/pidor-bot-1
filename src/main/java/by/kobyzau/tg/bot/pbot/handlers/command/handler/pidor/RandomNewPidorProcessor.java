@@ -98,7 +98,7 @@ public class RandomNewPidorProcessor implements NewPidorProcessor {
     }
   }
 
-  private void saveDailyPidor(Pidor pidor, int callerId) {
+  private void saveDailyPidor(Pidor pidor, long callerId) {
     DailyPidor dailyPidor = new DailyPidor();
     dailyPidor.setChatId(pidor.getChatId());
     dailyPidor.setCaller(callerId);

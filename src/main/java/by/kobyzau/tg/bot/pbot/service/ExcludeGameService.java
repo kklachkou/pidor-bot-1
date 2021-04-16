@@ -11,7 +11,7 @@ public interface ExcludeGameService {
   boolean isExcludeGameDay(long chatId, LocalDate localDate);
 
   Optional<ExcludeGameUserValue> getExcludeGameUserValue(
-      long chatId, int userId, LocalDate localDate);
+      long chatId, long userId, LocalDate localDate);
 
   List<ExcludeGameUserValue> getExcludeGameUserValues(long chatId, LocalDate localDate);
 

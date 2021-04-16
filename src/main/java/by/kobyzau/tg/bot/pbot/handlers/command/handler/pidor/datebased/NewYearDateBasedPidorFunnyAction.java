@@ -2,18 +2,21 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.datebased;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -24,6 +27,7 @@ public class NewYearDateBasedPidorFunnyAction implements DateBasePidorFunnyActio
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
+  @Autowired private FeedbackService feedbackService;
 
   @Override
   public void processFunnyAction(long chatId, Pidor pidorOfTheDay) {
@@ -52,12 +56,17 @@ public class NewYearDateBasedPidorFunnyAction implements DateBasePidorFunnyActio
     botActionCollector.wait(chatId, ChatAction.TYPING);
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());
     if (pidorSticker.isPresent()) {
-      botActionCollector.text(
-          chatId,
-          new ParametizedText(
-              "Давайте поздравим {0} - нашего первооткрывателя, "
-                  + "нашего первого заднепроходчика, первого после Тима Кука!",
-              new FullNamePidorText(pidorOfTheDay)));
+      botActionCollector.add(
+          new ReplyKeyboardBotAction(
+              chatId,
+              new ParametizedText(
+                  "Давайте поздравим {0} - нашего первооткрывателя, "
+                      + "нашего первого заднепроходчика, первого после Тима Кука!",
+                  new FullNamePidorText(pidorOfTheDay)),
+              InlineKeyboardMarkup.builder()
+                  .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                  .build(),
+              null));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
@@ -67,12 +76,16 @@ public class NewYearDateBasedPidorFunnyAction implements DateBasePidorFunnyActio
     } else {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendMessageBotAction(
+              new ReplyKeyboardBotAction(
                   chatId,
                   new ParametizedText(
                       "Давайте поздравим {0} - нашего первооткрывателя, "
                           + "нашего первого заднепроходчика, первого после Тима Кука!",
-                      new FullNamePidorText(pidorOfTheDay))),
+                      new FullNamePidorText(pidorOfTheDay)),
+                  InlineKeyboardMarkup.builder()
+                      .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                      .build(),
+                  null),
               botService.canPinMessage(chatId)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }

@@ -9,12 +9,12 @@ public interface ElectionService {
   int getNumToVote(long chatId);
 
 
-  boolean canUserVote(long chatId, int userId);
+  boolean canUserVote(long chatId, long userId);
 
   int getNumVotes(long chatId, LocalDate date);
 
-  int getNumVotes(long chatId, LocalDate date, int userId);
+  int getNumVotes(long chatId, LocalDate date, long userId);
 
-  void saveVote(long chatId, int calledUserId, int targetUserId);
+  void saveVote(long chatId, long calledUserId, long targetUserId);
 
 }

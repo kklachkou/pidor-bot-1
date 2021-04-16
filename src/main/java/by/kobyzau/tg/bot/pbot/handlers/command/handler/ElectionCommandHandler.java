@@ -4,7 +4,7 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
+import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageInlineDto;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
@@ -48,7 +48,7 @@ public class ElectionCommandHandler implements CommandHandler {
   @Override
   public void processCommand(Message message, String text) {
     long chatId = message.getChatId();
-    int callerId = message.getFrom().getId();
+    long callerId = message.getFrom().getId();
     if (!electionService.canUserVote(chatId, callerId)) {
       botActionCollector.text(chatId, new SimpleText("Ты уже голосовал"), message.getMessageId());
       if (chatSettingsService.isEnabled(ELECTION_HIDDEN, chatId)) {
@@ -93,8 +93,7 @@ public class ElectionCommandHandler implements CommandHandler {
                     .text("- " + new ShortNamePidorText(p))
                     .callbackData(
                         StringUtil.serialize(
-                            new VoteInlineMessageDto(
-                                requestId, p.getTgId(), callerPidor.get().getTgId())))
+                            new VoteInlineMessageInlineDto(requestId, p.getTgId())))
                     .build())
         .map(Collections::singletonList)
         .forEach(keyboardMarkupBuilder::keyboardRow);

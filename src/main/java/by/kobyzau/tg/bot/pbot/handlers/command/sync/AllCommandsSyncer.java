@@ -2,7 +2,6 @@ package by.kobyzau.tg.bot.pbot.handlers.command.sync;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.NotBlankText;
 import by.kobyzau.tg.bot.pbot.tg.action.SetMyCommandBotAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 public class AllCommandsSyncer implements CommandSyncer {
 
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private Logger logger;
 
   @Override
   public void sync() {
@@ -32,7 +30,6 @@ public class AllCommandsSyncer implements CommandSyncer {
             .collect(Collectors.toList());
     setMyCommands.setCommands(botCommands);
     botActionCollector.add(new SetMyCommandBotAction(setMyCommands));
-    logger.info("All commands are synced");
   }
 
   private BotCommand map(Command command) {

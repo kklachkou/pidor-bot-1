@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface PidorService {
 
-  Optional<Pidor> getPidor(long chatId, int userId);
+  Optional<Pidor> getPidor(long chatId, long userId);
 
   Pidor createPidor(long chatId, User user);
 

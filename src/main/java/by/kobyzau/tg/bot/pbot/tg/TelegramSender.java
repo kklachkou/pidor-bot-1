@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface TelegramSender {
 
-  Optional<ChatMember> getChatMember(String botId, long chatId, int userId);
+  Optional<ChatMember> getChatMember(String botId, long chatId, long userId);
 
   void deleteMessage(String botId, String chatId, int messageId);
 

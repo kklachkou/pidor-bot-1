@@ -10,7 +10,7 @@ public class CustomDailyUserData {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private int playerTgId;
+  private long playerTgId;
   private long chatId;
   private LocalDate localDate;
   private Type type;
@@ -24,11 +24,11 @@ public class CustomDailyUserData {
     this.id = id;
   }
 
-  public int getPlayerTgId() {
+  public long getPlayerTgId() {
     return playerTgId;
   }
 
-  public void setPlayerTgId(int playerTgId) {
+  public void setPlayerTgId(long playerTgId) {
     this.playerTgId = playerTgId;
   }
 

@@ -3,14 +3,18 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.dev;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandler;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.program.Version;
 import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import javax.annotation.PostConstruct;
 
@@ -20,6 +24,7 @@ public class VersionCommandHandler implements CommandHandler {
   @Autowired private BotActionCollector botActionCollector;
 
   @Autowired private TelegramService telegramService;
+  @Autowired private FeedbackService feedbackService;
 
   @Value("${app.version}")
   private String version;
@@ -39,11 +44,17 @@ public class VersionCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
+    feedbackService.removeAllFeedbacks(FeedbackType.VERSION);
     telegramService.getChatIds().forEach(this::sendVersion);
   }
 
   private void sendVersion(long chatId) {
-    botActionCollector.text(chatId, versionDescription);
+
+    botActionCollector.add(
+        new ReplyKeyboardBotAction(
+            chatId, versionDescription, InlineKeyboardMarkup.builder()
+                .keyboardRow(feedbackService.getButtons(FeedbackType.VERSION))
+                .build(), null));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.sticker(chatId, Version.getLast().getSticker().getRandom());
   }

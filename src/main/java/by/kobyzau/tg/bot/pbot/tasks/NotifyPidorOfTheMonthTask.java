@@ -55,7 +55,7 @@ public class NotifyPidorOfTheMonthTask implements Task {
   private void processForChat(long chatId) {
     botActionCollector.typing(chatId);
     LocalDate now = DateUtil.now();
-    Map<Integer, Integer> numWins = new HashMap<>();
+    Map<Long, Integer> numWins = new HashMap<>();
 
     dailyPidorRepository.getByChat(chatId).stream()
         .filter(d -> d.getLocalDate().getYear() == now.getYear())
@@ -65,7 +65,7 @@ public class NotifyPidorOfTheMonthTask implements Task {
     printWinnerInfo(chatId, numWins, now.getMonthValue());
   }
 
-  private void printWinnerInfo(long chatId, Map<Integer, Integer> numWins, int month) {
+  private void printWinnerInfo(long chatId, Map<Long, Integer> numWins, int month) {
 
     Optional<Integer> topNumWins =
         numWins.values().stream()

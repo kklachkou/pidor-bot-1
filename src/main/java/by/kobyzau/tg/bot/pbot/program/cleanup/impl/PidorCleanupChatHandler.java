@@ -22,8 +22,8 @@ import java.time.LocalDate;
 @Component
 public class PidorCleanupChatHandler implements CleanupChatHandler {
 
-  public static final int NOTIFY_DAYS = 10;
-  public static final int CLEAR_DAYS = 11;
+  public static final int NOTIFY_DAYS = 15;
+  public static final int CLEAR_DAYS = 16;
   @Autowired private Logger logger;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;

@@ -33,9 +33,8 @@ public class DartsEmojiGame implements EmojiGame {
     DayOfWeek dayOfWeek = date.getDayOfWeek();
     switch (dayOfWeek) {
       case THURSDAY:
-        return date.getDayOfMonth() % 2 == 0;
       case SATURDAY:
-        return true;
+        return date.getDayOfMonth() % 2 == 0;
     }
     return false;
   }

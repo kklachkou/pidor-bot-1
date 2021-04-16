@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource(value = {"/application-prod.properties"})
+@PropertySource(value = {"/application-prod.yaml"})
 @Profile("prod")
 public class ProdAppConfig {}

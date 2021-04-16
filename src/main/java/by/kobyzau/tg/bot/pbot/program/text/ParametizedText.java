@@ -1,10 +1,9 @@
 package by.kobyzau.tg.bot.pbot.program.text;
 
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
 
 public class ParametizedText implements Text {
 
@@ -28,7 +27,11 @@ public class ParametizedText implements Text {
   public String text() {
     String template = new NotBlankText(text).text();
     for (int i = 0; i < params.size(); i++) {
-      template = template.replaceFirst("\\{" + i + "}", params.get(i).text());
+      try {
+        template = template.replaceFirst("\\{" + i + "}", params.get(i).text());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     return template;
   }

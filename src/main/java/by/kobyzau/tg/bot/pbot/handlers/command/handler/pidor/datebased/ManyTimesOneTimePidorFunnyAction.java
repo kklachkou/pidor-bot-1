@@ -2,19 +2,22 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.datebased;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -25,6 +28,7 @@ public class ManyTimesOneTimePidorFunnyAction implements DateBasePidorFunnyActio
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
 
+  @Autowired private FeedbackService feedbackService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
 
   @Override
@@ -69,18 +73,32 @@ public class ManyTimesOneTimePidorFunnyAction implements DateBasePidorFunnyActio
     botActionCollector.text(chatId, new SimpleText("Всё, нужно остановиться..."));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     if (pidorSticker.isPresent()) {
-      botActionCollector.text(
-          chatId,
-          new ParametizedText(
-              "Ну и на последок - {0} - ты пидор дня:)", new FullNamePidorText(pidorOfTheDay)));
+      botActionCollector.add(
+          new ReplyKeyboardBotAction(
+              chatId,
+              new ParametizedText(
+                  new ParametizedText(
+                      "Ну и на последок - {0} - ты пидор дня:)",
+                      new FullNamePidorText(pidorOfTheDay)),
+                  new FullNamePidorText(pidorOfTheDay)),
+              InlineKeyboardMarkup.builder()
+                  .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                  .build(),
+              null));
     } else {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendMessageBotAction(
+              new ReplyKeyboardBotAction(
                   chatId,
                   new ParametizedText(
-                      "Ну и на последок - {0} - ты пидор дня:)",
-                      new FullNamePidorText(pidorOfTheDay))),
+                      new ParametizedText(
+                          "Ну и на последок - {0} - ты пидор дня:)",
+                          new FullNamePidorText(pidorOfTheDay)),
+                      new FullNamePidorText(pidorOfTheDay)),
+                  InlineKeyboardMarkup.builder()
+                      .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                      .build(),
+                  null),
               botService.canPinMessage(chatId)));
     }
 

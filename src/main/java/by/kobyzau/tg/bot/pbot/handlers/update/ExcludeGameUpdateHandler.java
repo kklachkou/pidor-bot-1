@@ -77,7 +77,7 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
     if (hasPidorOfTheDay(chatId)) {
       return false;
     }
-    int userId = update.getMessage().getFrom().getId();
+    long userId = update.getMessage().getFrom().getId();
     Pidor pidor = pidorService.getPidor(chatId, userId).orElseThrow(IllegalStateException::new);
     botActionCollector.typing(update.getMessage().getChatId());
     Optional<ExcludeGameUserValue> userValue =
@@ -108,7 +108,7 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       executor.execute(() -> excludeFinalizer.finalize(chatId));
     } else {
       List<Pidor> pidors = pidorService.getByChat(chatId);
-      Set<Integer> playedIds =
+      Set<Long> playedIds =
           excludeGameService.getExcludeGameUserValues(chatId, DateUtil.now()).stream()
               .map(ExcludeGameUserValue::getPlayerTgId)
               .collect(Collectors.toSet());

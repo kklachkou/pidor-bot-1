@@ -8,6 +8,7 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
+import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -27,6 +28,7 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;
+  @Autowired private BotService botService;
 
   @Override
   public LocalDate getDate() {
@@ -36,7 +38,8 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
   @Override
   public void processFunnyAction(long chatId, Pidor pidorOfTheDay) {
     Text chatName = getChatName(chatId);
-    botActionCollector.text(chatId, new SimpleText("Варшава: Алло! Добрый день, Ник. Как наши дела?"));
+    botActionCollector.text(
+        chatId, new SimpleText("Варшава: Алло! Добрый день, Ник. Как наши дела?"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
         chatId,
@@ -61,7 +64,8 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
             chatName));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
-        chatId, new ParametizedText("Берлин: Этим и занимаемся... А как ваши дела в '{0}'?", chatName));
+        chatId,
+        new ParametizedText("Берлин: Этим и занимаемся... А как ваши дела в '{0}'?", chatName));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
         chatId,
@@ -73,7 +77,8 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
                 + " Пока работаем. Остальное при встрече, не по телефону.",
             new FullNamePidorText(pidorOfTheDay)));
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.text(chatId, new SimpleText("Берлин: Да-да, понимаю, тогда до встречи, пока"));
+    botActionCollector.text(
+        chatId, new SimpleText("Берлин: Да-да, понимаю, тогда до встречи, пока"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(chatId, new SimpleText("Варшава: Пока"));
 
@@ -82,7 +87,8 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
     if (pidorSticker.isPresent()) {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
+              botService.canPinMessage(chatId)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

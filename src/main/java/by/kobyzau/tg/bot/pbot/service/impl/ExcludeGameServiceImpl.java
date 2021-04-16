@@ -36,7 +36,7 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
 
   @Override
   public Optional<ExcludeGameUserValue> getExcludeGameUserValue(
-      long chatId, int userId, LocalDate date) {
+      long chatId, long userId, LocalDate date) {
     return repository.getAll().stream()
         .filter(d -> d.getChatId() == chatId)
         .filter(d -> d.getPlayerTgId() == userId)
@@ -77,7 +77,7 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
     int numPidorsToExclude = getNumPidorsToExclude(chatId);
     List<Pidor> pidors = pidorService.getByChat(chatId);
 
-    Set<Integer> playedIds =
+    Set<Long> playedIds =
         getExcludeGameUserValues(chatId, DateUtil.now()).stream()
             .map(ExcludeGameUserValue::getPlayerTgId)
             .collect(Collectors.toSet());

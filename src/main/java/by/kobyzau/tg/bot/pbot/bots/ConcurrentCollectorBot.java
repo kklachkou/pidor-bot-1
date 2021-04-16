@@ -51,7 +51,7 @@ public class ConcurrentCollectorBot extends TelegramLongPollingBot implements Bo
     try {
       return Optional.ofNullable(execute(getFileMethod));
     } catch (Exception e) {
-      logger.error("Cannot get animation " + fileId, e);
+      logger.error("Cannot get file " + fileId, e);
     }
     return Optional.empty();
   }

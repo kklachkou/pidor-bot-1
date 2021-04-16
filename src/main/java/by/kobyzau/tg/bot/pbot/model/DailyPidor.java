@@ -12,20 +12,20 @@ public class DailyPidor {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private int playerTgId;
+  private long playerTgId;
   private long chatId;
-  private Integer caller;
+  private Long caller;
   private LocalDate localDate;
 
   public DailyPidor() {}
 
-  public DailyPidor(int playerTgId, long chatId, LocalDate localDate) {
+  public DailyPidor(long playerTgId, long chatId, LocalDate localDate) {
     this.playerTgId = playerTgId;
     this.chatId = chatId;
     this.localDate = localDate;
   }
 
-  public DailyPidor(int playerTgId, long chatId, LocalDate localDate, Integer caller) {
+  public DailyPidor(long playerTgId, long chatId, LocalDate localDate, Long caller) {
     this.playerTgId = playerTgId;
     this.chatId = chatId;
     this.localDate = localDate;
@@ -40,11 +40,11 @@ public class DailyPidor {
     this.id = id;
   }
 
-  public int getPlayerTgId() {
+  public long getPlayerTgId() {
     return playerTgId;
   }
 
-  public void setPlayerTgId(int playerTgId) {
+  public void setPlayerTgId(long playerTgId) {
     this.playerTgId = playerTgId;
   }
 
@@ -64,11 +64,11 @@ public class DailyPidor {
     this.localDate = localDate;
   }
 
-  public Integer getCaller() {
+  public Long getCaller() {
     return caller;
   }
 
-  public void setCaller(Integer caller) {
+  public void setCaller(Long caller) {
     this.caller = caller;
   }
 

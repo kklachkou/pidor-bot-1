@@ -49,7 +49,7 @@ public class GameReminderTask implements Task {
   }
 
   private void sendInfo() {
-    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     telegramService.getChatIds().stream()
         .filter(botService::isChatValid)
         .forEach(chatId -> executor.execute(() -> sendInfo(chatId)));

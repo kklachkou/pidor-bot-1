@@ -15,7 +15,7 @@ public class Pidor{
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private int tgId;
+  private long tgId;
   private long chatId;
   private String username;
   private String fullname;
@@ -29,13 +29,13 @@ public class Pidor{
 
   public Pidor() {}
 
-  public Pidor(int tgId, long chatId, String fullname) {
+  public Pidor(long tgId, long chatId, String fullname) {
     this.tgId = tgId;
     this.chatId = chatId;
     this.fullname = fullname;
   }
 
-  public Pidor(int tgId, long chatId, String fullname, List<PidorMark> pidorMarks) {
+  public Pidor(long tgId, long chatId, String fullname, List<PidorMark> pidorMarks) {
     this.tgId = tgId;
     this.chatId = chatId;
     this.fullname = fullname;
@@ -94,11 +94,11 @@ public class Pidor{
     this.chatId = chatId;
   }
 
-  public int getTgId() {
+  public long getTgId() {
     return tgId;
   }
 
-  public void setTgId(int tgId) {
+  public void setTgId(long tgId) {
     this.tgId = tgId;
   }
 

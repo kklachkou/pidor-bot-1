@@ -56,7 +56,7 @@ public class PidorStatusServiceImpl implements PidorStatusService {
   }
 
   private int getNumWins(Pidor pidor, List<DailyPidor> dailyPidors) {
-    int tgId = pidor.getTgId();
+    long tgId = pidor.getTgId();
     return (int) dailyPidors.stream().filter(d -> d.getPlayerTgId() == tgId).count();
   }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 @Configuration
-@PropertySource(value = {"/application.properties"})
+@PropertySource(value = {"/application.yaml"})
 public class AppConfig {
 
   @Value("${app.threadNum.sendMessages}")

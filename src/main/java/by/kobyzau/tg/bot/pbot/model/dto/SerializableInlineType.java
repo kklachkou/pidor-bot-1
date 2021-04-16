@@ -1,10 +1,11 @@
 package by.kobyzau.tg.bot.pbot.model.dto;
 
 public enum SerializableInlineType {
-  VOTE(1, 20),
+  VOTE(1, 30),
   SETTING_ROOT(2, 20),
   CLOSE_INLINE(3, 20),
   STAT(4, 20),
+  FEEDBACK(5, 20),
   ;
 
   private final int index;

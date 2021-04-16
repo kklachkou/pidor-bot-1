@@ -51,8 +51,8 @@ public class SendMessagesToChatHandler implements Runnable {
   }
 
   private void send(BotAction<?> botAction) {
-    logger.debug("✉️ Sending new bot action:\n\n<pre>" + botAction + "</pre>");
     try {
+      logger.debug("✉️ Sending new bot action:\n\n<pre>" + botAction + "</pre>");
       botAction.process(bot);
     } catch (TelegramApiRequestException tgEx) {
       logger.error("Cannot send message:\n\n " + botAction + "\n\n" + tgEx.getApiResponse(), tgEx);

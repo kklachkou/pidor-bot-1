@@ -163,7 +163,7 @@ public class PidorChanceServiceTest {
     return new Pidor(id, chatId, id + "");
   }
 
-  private DailyPidor getDailyPidor(int tgId, LocalDate localDate) {
+  private DailyPidor getDailyPidor(long tgId, LocalDate localDate) {
     DailyPidor dailyPidor = new DailyPidor();
     dailyPidor.setChatId(chatId);
     dailyPidor.setLocalDate(localDate);

@@ -36,7 +36,7 @@ public class PidorServiceTest {
   @InjectMocks private PidorService pidorService = new PidorServiceImpl();
 
   private final long chatId = 123;
-  private final int userId = 111;
+  private final long userId = 111;
 
   @Before
   public void init() {

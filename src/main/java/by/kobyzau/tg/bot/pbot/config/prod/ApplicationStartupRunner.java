@@ -31,7 +31,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
   @Autowired private CommandSyncer commandSyncer;
 
   @Value("${app.admin.userId}")
-  private int adminUserId;
+  private long adminUserId;
 
   @Value("${app.version}")
   private String version;

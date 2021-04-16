@@ -5,7 +5,7 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
-import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
+import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageInlineDto;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
@@ -72,8 +72,8 @@ public class ElectionUpdateHandler implements UpdateHandler {
     }
     Message prevMessage = callbackQuery.getMessage();
     User calledUser = callbackQuery.getFrom();
-    Optional<VoteInlineMessageDto> data =
-        StringUtil.deserialize(callbackQuery.getData(), VoteInlineMessageDto.class);
+    Optional<VoteInlineMessageInlineDto> data =
+        StringUtil.deserialize(callbackQuery.getData(), VoteInlineMessageInlineDto.class);
     if (prevMessage == null
         || calledUser == null
         || prevMessage.getFrom() == null
@@ -86,7 +86,8 @@ public class ElectionUpdateHandler implements UpdateHandler {
     if (!electionService.isElectionDay(prevMessage.getChatId(), DateUtil.now())) {
       return false;
     }
-    if (!Objects.equals(calledUser.getId(), data.get().getCallerId())) {
+    Message replyToMessage = prevMessage.getReplyToMessage();
+    if (replyToMessage == null || !Objects.equals(calledUser.getId(), replyToMessage.getFrom().getId())) {
       botActionCollector.add(
           new AnswerCallbackBotAction(
               prevMessage.getChatId(),

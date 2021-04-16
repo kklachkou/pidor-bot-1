@@ -34,7 +34,7 @@ public class DevApplicationStartupRunner implements ApplicationRunner {
   private String version;
 
   @Value("${app.admin.userId}")
-  private int adminUserId;
+  private long adminUserId;
 
   @Autowired private Logger logger;
 

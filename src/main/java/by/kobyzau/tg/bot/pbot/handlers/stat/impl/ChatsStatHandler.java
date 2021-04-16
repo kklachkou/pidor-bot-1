@@ -56,7 +56,7 @@ public class ChatsStatHandler implements StatHandler {
         .append(new NewLineText());
 
     for (Pidor pidor : pidors) {
-      tx.append(new IntText(pidor.getTgId()))
+      tx.append(new LongText(pidor.getTgId()))
           .append(new SimpleText(": "))
           .append(new FullNamePidorText(pidor))
           .append(new SimpleText(" "))

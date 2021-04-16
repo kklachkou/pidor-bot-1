@@ -109,13 +109,13 @@ public class PidorChanceServiceImpl implements PidorChanceService {
   private Pidor getPidorOfTheYear(
       long chatId, DailyPidorRepository repository, List<Pidor> pidors) {
     int year = nowProvider.get().getYear();
-    Optional<Integer> pidorOfTheYearId =
+    Optional<Long> pidorOfTheYearId =
         PidorUtil.getTopPidorTgId(
             repository.getByChat(chatId).stream()
                 .filter(dailyPidor -> dailyPidor.getLocalDate().getYear() == year)
                 .collect(Collectors.toList()));
     return pidors.stream()
-        .filter(p -> p.getTgId() == pidorOfTheYearId.orElse(-1))
+        .filter(p -> p.getTgId() == pidorOfTheYearId.orElse(-1L))
         .findFirst()
         .orElseThrow(IllegalAccessError::new);
   }

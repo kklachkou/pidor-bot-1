@@ -8,7 +8,7 @@ import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
-import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageDto;
+import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageInlineDto;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
@@ -45,8 +45,8 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
   @Rule public TestName testName = new TestName();
 
   private final long chatId = 123;
-  private final int callerId = 1;
-  private final int targetId = 2;
+  private final long callerId = 1;
+  private final long targetId = 2;
   private User bot;
 
   @InjectMocks private ElectionUpdateHandler handler;
@@ -63,7 +63,7 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
   @Before
   public void init() {
     ReflectionTestUtils.setField(handler, "botUserName", "bot");
-    bot = new User(0, "bot", true);
+    bot = new User(0L, "bot", true);
     bot.setUserName("bot");
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.of(new Pidor(callerId, chatId, "caller")))
@@ -139,8 +139,12 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(targetId, "caller", false);
+    User callerUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(callerUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
 
@@ -165,8 +169,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    VoteInlineMessageDto dto = new VoteInlineMessageDto("id", targetId, callerId);
+    VoteInlineMessageInlineDto dto = new VoteInlineMessageInlineDto("id", targetId);
     dto.setIndex(SerializableInlineType.VOTE.getIndex() + 1);
     callbackQuery.setData(StringUtil.serialize(dto));
     callbackQuery.setMessage(prevMessage);
@@ -193,8 +200,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
 
@@ -219,7 +229,10 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(Optional.empty()).when(pidorService).getPidor(chatId, targetId);
@@ -244,8 +257,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(Optional.empty()).when(pidorService).getPidor(chatId, callerId);
@@ -270,8 +286,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(5).when(electionService).getNumToVote(chatId);
@@ -300,8 +319,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(5).when(electionService).getNumToVote(chatId);
@@ -329,8 +351,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
 
@@ -357,8 +382,11 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     prevMessage.setChat(new Chat(chatId, "group"));
     prevMessage.setFrom(bot);
     User calledUser = new User(callerId, "caller", false);
+    Message replyMessage = new Message();
+    replyMessage.setFrom(calledUser);
+    prevMessage.setReplyToMessage(replyMessage);
     callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageDto("id", targetId, callerId)));
+    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
     callbackQuery.setMessage(prevMessage);
     update.setCallbackQuery(callbackQuery);
     doReturn(false).when(electionService).isElectionDay(chatId, DateUtil.now());

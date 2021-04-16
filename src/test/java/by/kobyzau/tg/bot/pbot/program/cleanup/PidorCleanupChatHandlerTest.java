@@ -51,11 +51,11 @@ public class PidorCleanupChatHandlerTest extends BotActionAbstractTest {
     pidors.add(getPidor(1, now.minusDays(0)));
     pidors.add(getPidor(2, now.minusDays(1)));
     pidors.add(getPidor(3, now.minusDays(9)));
-    pidors.add(getPidor(5, now.minusDays(10)));
-    pidors.add(getPidor(6, now.minusDays(11)));
-    pidors.add(getPidor(7, now.minusDays(12)));
-    pidors.add(getPidor(8, now.minusDays(13)));
-    pidors.add(getPidor(9, now.minusDays(10)));
+    pidors.add(getPidor(5, now.minusDays(15)));
+    pidors.add(getPidor(6, now.minusDays(16)));
+    pidors.add(getPidor(7, now.minusDays(17)));
+    pidors.add(getPidor(8, now.minusDays(18)));
+    pidors.add(getPidor(9, now.minusDays(15)));
     doReturn(pidors).when(pidorRepository).getByChat(chatId);
 
     // when

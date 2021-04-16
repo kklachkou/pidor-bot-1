@@ -136,7 +136,7 @@ public class DailyPidorSystemCheckerTest {
     verify(logger, times(times)).warn(anyString());
   }
 
-  private DailyPidor getDailyPidor(int id, int userId, LocalDate localDate) {
+  private DailyPidor getDailyPidor(int id, long userId, LocalDate localDate) {
     DailyPidor dailyPidor = new DailyPidor(userId, chatId, localDate);
     dailyPidor.setId(id);
     return dailyPidor;

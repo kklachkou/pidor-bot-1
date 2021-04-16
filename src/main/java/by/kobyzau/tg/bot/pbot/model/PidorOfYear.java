@@ -11,14 +11,14 @@ public class PidorOfYear {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private int playerTgId;
+  private long playerTgId;
   private long chatId;
   private int year;
 
   public PidorOfYear() {
   }
 
-  public PidorOfYear(int playerTgId, long chatId, int year) {
+  public PidorOfYear(long playerTgId, long chatId, int year) {
     this.playerTgId = playerTgId;
     this.chatId = chatId;
     this.year = year;
@@ -32,11 +32,11 @@ public class PidorOfYear {
     this.id = id;
   }
 
-  public int getPlayerTgId() {
+  public long getPlayerTgId() {
     return playerTgId;
   }
 
-  public void setPlayerTgId(int playerTgId) {
+  public void setPlayerTgId(long playerTgId) {
     this.playerTgId = playerTgId;
   }
 

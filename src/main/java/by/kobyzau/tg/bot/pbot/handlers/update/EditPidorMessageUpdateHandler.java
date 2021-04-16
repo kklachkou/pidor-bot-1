@@ -143,7 +143,7 @@ public class EditPidorMessageUpdateHandler implements UpdateHandler {
     return true;
   }
 
-  private Pidor getPidorOfTheDay(long chatId, int callerId) {
+  private Pidor getPidorOfTheDay(long chatId, long callerId) {
     Optional<DailyPidor> dailyPidor = dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now());
     if (dailyPidor.isPresent()) {
       return pidorService
@@ -215,7 +215,7 @@ public class EditPidorMessageUpdateHandler implements UpdateHandler {
     return from.getId() != null;
   }
 
-  private void saveDailyPidor(Pidor pidor, int callerId) {
+  private void saveDailyPidor(Pidor pidor, long callerId) {
     DailyPidor dailyPidor = new DailyPidor();
     dailyPidor.setChatId(pidor.getChatId());
     dailyPidor.setCaller(callerId);

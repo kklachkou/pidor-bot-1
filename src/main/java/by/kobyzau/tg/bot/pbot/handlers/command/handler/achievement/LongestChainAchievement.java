@@ -38,35 +38,35 @@ public class LongestChainAchievement implements Achievement {
     if (dailyPidors.isEmpty()) {
       return Optional.empty();
     }
-    Map<Integer, Integer> topChainsByPidorId = new HashMap<>();
+    Map<Long, Integer> topChainsByPidorId = new HashMap<>();
     int currentChainNum = 0;
-    OptionalInt currentChainUserId = OptionalInt.empty();
+    OptionalLong currentChainUserId = OptionalLong.empty();
     for (DailyPidor dailyPidor : dailyPidors) {
       if (!currentChainUserId.isPresent()) {
         currentChainNum = 1;
-        currentChainUserId = OptionalInt.of(dailyPidor.getPlayerTgId());
+        currentChainUserId = OptionalLong.of(dailyPidor.getPlayerTgId());
         continue;
       }
-      int pidorId = currentChainUserId.getAsInt();
+      long pidorId = currentChainUserId.getAsLong();
       if (dailyPidor.getPlayerTgId() == pidorId) {
         currentChainNum++;
         continue;
       }
-      int topChain = topChainsByPidorId.getOrDefault(pidorId, 0);
+      long topChain = topChainsByPidorId.getOrDefault(pidorId, 0);
       if (currentChainNum > topChain) {
         topChainsByPidorId.put(pidorId, currentChainNum);
       }
-      currentChainUserId = OptionalInt.of(dailyPidor.getPlayerTgId());
+      currentChainUserId = OptionalLong.of(dailyPidor.getPlayerTgId());
       currentChainNum = 1;
     }
 
-    int pidorId = currentChainUserId.getAsInt();
+    long pidorId = currentChainUserId.getAsLong();
     int topChain = topChainsByPidorId.getOrDefault(pidorId, 0);
     if (currentChainNum > topChain) {
       topChainsByPidorId.put(pidorId, currentChainNum);
     }
 
-    Optional<Map.Entry<Integer, Integer>> topEntry =
+    Optional<Map.Entry<Long, Integer>> topEntry =
         topChainsByPidorId.entrySet().stream().max(Map.Entry.comparingByValue());
 
     if (!topEntry.isPresent()) {

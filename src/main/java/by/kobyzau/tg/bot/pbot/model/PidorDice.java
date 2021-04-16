@@ -17,14 +17,14 @@ public class PidorDice {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private int playerTgId;
+  private long playerTgId;
   private long chatId;
   private LocalDate localDate;
   private int value;
 
   public PidorDice() {}
 
-  public PidorDice(int tgId, long chatId, LocalDate localDate, int value) {
+  public PidorDice(long tgId, long chatId, LocalDate localDate, int value) {
     this.playerTgId = tgId;
     this.chatId = chatId;
     this.localDate = localDate;
@@ -39,11 +39,11 @@ public class PidorDice {
     this.id = id;
   }
 
-  public int getPlayerTgId() {
+  public long getPlayerTgId() {
     return playerTgId;
   }
 
-  public void setPlayerTgId(int playerTgId) {
+  public void setPlayerTgId(long playerTgId) {
     this.playerTgId = playerTgId;
   }
 

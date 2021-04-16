@@ -1,8 +1,5 @@
 package by.kobyzau.tg.bot.pbot.bots;
 
-import java.io.Serializable;
-import java.util.Optional;
-
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -11,6 +8,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.Serializable;
+import java.util.Optional;
 
 public interface Bot {
 
@@ -31,5 +31,5 @@ public interface Bot {
 
   Message execute(SendAnimation animation) throws TelegramApiException;
 
-  Optional<File> getFile(String botId);
+  Optional<File> getFile(String fileId);
 }

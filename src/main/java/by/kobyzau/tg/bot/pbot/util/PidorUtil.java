@@ -13,17 +13,17 @@ import by.kobyzau.tg.bot.pbot.model.Pidor;
 
 public class PidorUtil {
 
-  public static Optional<Integer> getTopPidorTgId(List<DailyPidor> dailyPidors) {
+  public static Optional<Long> getTopPidorTgId(List<DailyPidor> dailyPidors) {
     if (CollectionUtil.isEmpty(dailyPidors)) {
       return Optional.empty();
     }
-    Map<Integer, Integer> numWins = new HashMap<>();
+    Map<Long, Integer> numWins = new HashMap<>();
     for (DailyPidor dailyPidor : dailyPidors) {
       Integer num = numWins.getOrDefault(dailyPidor.getPlayerTgId(), 0);
       numWins.put(dailyPidor.getPlayerTgId(), num + 1);
     }
     Integer maxWins = numWins.values().stream().max(Comparator.comparing(i -> i)).orElse(0);
-    List<Integer> winners =
+    List<Long> winners =
         numWins.entrySet().stream()
             .filter(e -> e.getValue().equals(maxWins))
             .map(Map.Entry::getKey)

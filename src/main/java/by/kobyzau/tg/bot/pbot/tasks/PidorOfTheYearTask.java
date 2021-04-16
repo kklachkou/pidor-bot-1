@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -51,11 +50,10 @@ public class PidorOfTheYearTask implements Task {
 
   @Override
   public void processTask() {
-    LocalDate tomorrow = DateUtil.now().plusDays(1);
     logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     telegramService.getChatIds().stream()
-            .filter(botService::isChatValid)
-            .forEach(chatId -> executor.execute(() -> handlePidorOfTheYear(chatId)));
+        .filter(botService::isChatValid)
+        .forEach(chatId -> executor.execute(() -> handlePidorOfTheYear(chatId)));
   }
 
   private void handlePidorOfTheYear(long chatId) {
@@ -130,8 +128,8 @@ public class PidorOfTheYearTask implements Task {
             new SendMessageBotAction(
                 chatId,
                 new ParametizedText(
-                    "{0} - ты наш главный Пидор этого года!",
-                    new ShortNameLinkedPidorText(pidor)))));
+                    "{0} - ты наш главный Пидор этого года!", new ShortNameLinkedPidorText(pidor))),
+            botService.canPinMessage(chatId)));
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
     botActionCollector.sticker(chatId, StickerType.CONGRATULATION.getRandom());

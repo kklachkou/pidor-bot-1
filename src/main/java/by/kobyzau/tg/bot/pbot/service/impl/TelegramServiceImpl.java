@@ -31,7 +31,7 @@ public class TelegramServiceImpl implements TelegramService {
   @Autowired private Logger logger;
 
   @Override
-  public Optional<ChatMember> getChatMember(long chatId, int userId) {
+  public Optional<ChatMember> getChatMember(long chatId, long userId) {
     return telegramSender.getChatMember(botToken, chatId, userId);
   }
 

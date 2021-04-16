@@ -54,7 +54,7 @@ public class MyStatusCommandHandler implements CommandHandler {
   @Override
   public void processCommand(Message message, String text) {
     long chatId = message.getChatId();
-    int userId = message.getFrom().getId();
+    long userId = message.getFrom().getId();
     List<DailyPidor> dailyPidors =
         dailyPidorRepository.getByChat(chatId).stream()
             .filter(d -> d.getPlayerTgId() == userId)

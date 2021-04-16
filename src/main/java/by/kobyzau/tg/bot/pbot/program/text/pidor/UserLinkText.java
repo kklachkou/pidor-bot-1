@@ -4,10 +4,10 @@ import by.kobyzau.tg.bot.pbot.program.text.Text;
 
 public class UserLinkText implements Text {
 
-  private final int userId;
+  private final long userId;
   private final Text text;
 
-  public UserLinkText(int userId, Text text) {
+  public UserLinkText(long userId, Text text) {
     this.userId = userId;
     this.text = text;
   }

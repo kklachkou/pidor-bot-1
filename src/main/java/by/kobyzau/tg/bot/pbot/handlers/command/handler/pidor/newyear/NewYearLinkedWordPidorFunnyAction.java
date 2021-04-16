@@ -4,6 +4,7 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.RepeatPidorProcessor;
 import by.kobyzau.tg.bot.pbot.handlers.update.fun.Intro;
+import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.PrioritySelection;
@@ -12,15 +13,17 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.UserLinkText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
+import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
+import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.Optional;
 
@@ -35,6 +38,7 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
   private final Selection<String> finalMessage;
   private final Selection<String> pidorName;
 
+  @Autowired private FeedbackService feedbackService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
@@ -84,11 +88,16 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
 
     Optional<StickerType> pidorSticker = StickerType.getPidorSticker(pidorOfTheDay.getSticker());
     if (pidorSticker.isPresent()) {
-      botActionCollector.text(
-          chatId,
-          new ParametizedText(
-              finalMessage.next(),
-              new UserLinkText(pidorOfTheDay.getTgId(), new SimpleText(pidorName.next()))));
+      botActionCollector.add(
+          new ReplyKeyboardBotAction(
+              chatId,
+              new ParametizedText(
+                  finalMessage.next(),
+                  new UserLinkText(pidorOfTheDay.getTgId(), new SimpleText(pidorName.next()))),
+              InlineKeyboardMarkup.builder()
+                  .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                  .build(),
+              null));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
@@ -98,11 +107,15 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
     } else {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendMessageBotAction(
+              new ReplyKeyboardBotAction(
                   chatId,
                   new ParametizedText(
                       finalMessage.next(),
-                      new UserLinkText(pidorOfTheDay.getTgId(), new SimpleText(pidorName.next())))),
+                      new UserLinkText(pidorOfTheDay.getTgId(), new SimpleText(pidorName.next()))),
+                  InlineKeyboardMarkup.builder()
+                      .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
+                      .build(),
+                  null),
               botService.canPinMessage(chatId)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }

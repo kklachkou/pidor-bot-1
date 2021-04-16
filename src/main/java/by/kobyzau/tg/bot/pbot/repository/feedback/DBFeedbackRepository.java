@@ -1,44 +1,41 @@
-package by.kobyzau.tg.bot.pbot.repository.digestusage;
+package by.kobyzau.tg.bot.pbot.repository.feedback;
+
+import by.kobyzau.tg.bot.pbot.model.Feedback;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
-import by.kobyzau.tg.bot.pbot.model.DigestUsage;
-
 @Component
 @Profile("prod")
-public class DBDigestUsageRepository implements DigestUsageRepository {
-
-  @Autowired
-  private IDigestUsageRepository repository;
+public class DBFeedbackRepository implements FeedbackRepository {
+  @Autowired private IFeedbackRepository repository;
 
   @Override
-  public List<DigestUsage> findByType(String type) {
-    return repository.findByType(type);
+  public List<Feedback> getByChat(long chatId) {
+    return repository.findByChatId(chatId);
   }
 
   @Override
-  public long create(DigestUsage obj) {
+  public long create(Feedback obj) {
     return repository.save(obj).getId();
   }
 
   @Override
-  public void update(DigestUsage obj) {
+  public void update(Feedback obj) {
     repository.save(obj);
   }
 
   @Override
-  public DigestUsage get(long id) {
+  public Feedback get(long id) {
     return repository.findById(id).orElse(null);
   }
 
   @Override
-  public List<DigestUsage> getAll() {
+  public List<Feedback> getAll() {
     return StreamSupport.stream(repository.findAll().spliterator(), false)
         .collect(Collectors.toList());
   }

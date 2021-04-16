@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface TelegramService {
 
-  Optional<ChatMember> getChatMember(long chatId, int userId);
+  Optional<ChatMember> getChatMember(long chatId, long userId);
 
   List<Long> getChatIds();
 

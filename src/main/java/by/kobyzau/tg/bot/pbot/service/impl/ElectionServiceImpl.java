@@ -29,7 +29,7 @@ public class ElectionServiceImpl implements ElectionService {
   }
 
   @Override
-  public boolean canUserVote(long chatId, int userId) {
+  public boolean canUserVote(long chatId, long userId) {
     return dailyDataRepository.getByChatAndDate(chatId, DateUtil.now()).stream()
         .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
         .noneMatch(p -> p.getPlayerTgId() == userId);
@@ -53,7 +53,7 @@ public class ElectionServiceImpl implements ElectionService {
   }
 
   @Override
-  public int getNumVotes(long chatId, LocalDate date, int userId) {
+  public int getNumVotes(long chatId, LocalDate date, long userId) {
     return (int)
         dailyDataRepository.getByChatAndDate(chatId, date).stream()
             .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
@@ -64,7 +64,7 @@ public class ElectionServiceImpl implements ElectionService {
   }
 
   @Override
-  public void saveVote(long chatId, int calledUserId, int targetUserId) {
+  public void saveVote(long chatId, long calledUserId, long targetUserId) {
     CustomDailyUserData data = new CustomDailyUserData();
     data.setPlayerTgId(calledUserId);
     data.setChatId(chatId);

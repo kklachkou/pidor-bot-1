@@ -31,7 +31,7 @@ public class PidorServiceImpl implements PidorService {
   @Autowired private TelegramService telegramService;
 
   @Override
-  public Optional<Pidor> getPidor(long chatId, int userId) {
+  public Optional<Pidor> getPidor(long chatId, long userId) {
     return pidorRepository
         .getByChatAndPlayerTgId(chatId, userId)
         .filter(p -> TGUtil.isChatMember(telegramService.getChatMember(chatId, p.getTgId())))

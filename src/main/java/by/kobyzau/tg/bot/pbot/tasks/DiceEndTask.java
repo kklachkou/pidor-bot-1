@@ -35,7 +35,7 @@ public class DiceEndTask implements Task {
 
   @Override
   public void processTask() {
-    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     LocalDate now = DateUtil.now();
     telegramService.getChatIds().stream()
             .filter(botService::isChatValid)

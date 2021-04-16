@@ -42,7 +42,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
   @Rule public TestName testName = new TestName();
 
   private final long chatId = 123;
-  private final int userId = 54321;
+  private final long userId = 54321;
   private final String diceEmoji = ":)";
 
   @InjectMocks private DiceDayUpdateHandler handler = new DiceDayUpdateHandler();

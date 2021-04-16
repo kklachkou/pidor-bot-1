@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
 @Component("TGLogger")
 public class TelegramLogger implements Logger {
 
-  @Value("${logger.tg.bot.token}")
+  @Value("${logger.tg.token}")
   private String botToken;
 
   @Value("${logger.tg.chat}")

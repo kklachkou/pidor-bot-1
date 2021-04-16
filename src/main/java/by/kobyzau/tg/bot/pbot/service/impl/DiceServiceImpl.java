@@ -50,7 +50,7 @@ public class DiceServiceImpl implements DiceService {
   }
 
   @Override
-  public Optional<PidorDice> getUserDice(long chatId, int userId, LocalDate date) {
+  public Optional<PidorDice> getUserDice(long chatId, long userId, LocalDate date) {
     return diceRepository.getAll().stream()
         .filter(d -> d.getChatId() == chatId)
         .filter(d -> d.getPlayerTgId() == userId)

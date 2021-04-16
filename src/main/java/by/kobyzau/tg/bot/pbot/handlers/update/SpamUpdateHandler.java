@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpamUpdateHandler implements UpdateHandler {
 
-  private static final int LIMIT_PER_FEW_MINUTES = 3;
+  private static final int LIMIT_PER_FEW_MINUTES = 4;
   private static final int LIMIT_PER_FEW_SECONDS = 1;
   @Autowired private Logger logger;
 
@@ -48,7 +48,7 @@ public class SpamUpdateHandler implements UpdateHandler {
       return false;
     }
     long chatId = update.getMessage().getChatId();
-    int userId = update.getMessage().getFrom().getId();
+    long userId = update.getMessage().getFrom().getId();
     Key key = new Key(chatId, userId, command);
     if (isSpam(key)) {
       botActionCollector.typing(chatId);
@@ -119,10 +119,10 @@ public class SpamUpdateHandler implements UpdateHandler {
 
   private static class Key {
     private final long chatId;
-    private final int userId;
+    private final long userId;
     private final Command command;
 
-    public Key(long chatId, int userId, Command command) {
+    public Key(long chatId, long userId, Command command) {
       this.chatId = chatId;
       this.userId = userId;
       this.command = command;

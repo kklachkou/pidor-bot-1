@@ -34,7 +34,7 @@ import java.util.concurrent.Executor;
 public class NotifyNoPidorsTask implements Task {
 
   @Value("${app.admin.userId}")
-  private int adminUserId;
+  private long adminUserId;
 
   private final Selection<Text> notifyMessage =
       new ConsistentSelection<>(
@@ -62,7 +62,7 @@ public class NotifyNoPidorsTask implements Task {
 
   @Override
   public void processTask() {
-    logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
+    logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     telegramService.getChatIds().stream()
         .filter(botService::isChatValid)
         .forEach(chatId -> executor.execute(() -> processNotify(chatId)));
@@ -111,7 +111,7 @@ public class NotifyNoPidorsTask implements Task {
             .map(SimpleText::new);
     botActionCollector.text(
         pidor.getChatId(),
-        new ParametizedText(messages.next(), new ShortNameLinkedPidorText(pidor)));
+            new ParametizedText(messages.next(), new ShortNameLinkedPidorText(pidor)));
     botActionCollector.wait(pidor.getChatId(), ChatAction.TYPING);
     botActionCollector.sticker(pidor.getChatId(), StickerType.LOVE.getRandom());
   }

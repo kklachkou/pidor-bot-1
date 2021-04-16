@@ -8,7 +8,7 @@ import by.kobyzau.tg.bot.pbot.repository.CrudRepository;
 
 public interface PidorRepository extends CrudRepository<Pidor> {
 
-  Optional<Pidor> getByChatAndPlayerTgId(long chatId, int tgId);
+  Optional<Pidor> getByChatAndPlayerTgId(long chatId, long tgId);
 
   List<Pidor> getByChat(long chatId);
 }
