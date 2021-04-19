@@ -17,7 +17,7 @@ bot:
   token: ${BOT_TOKEN}
 
 app:
-  version: 7.1 Remove Digest Services
+  version: 7.2 Update Feedback emoji
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:

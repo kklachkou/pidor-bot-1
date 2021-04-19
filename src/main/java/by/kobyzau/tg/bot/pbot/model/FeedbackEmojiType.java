@@ -1,8 +1,6 @@
 package by.kobyzau.tg.bot.pbot.model;
 
 public enum FeedbackEmojiType {
-  LIKE("\uD83D\uDC4D"),
-  DISLIKE("\uD83D\uDC4E"),
   LAUGH("\uD83D\uDE02"),
   LOVE("❤️"),
   CRY("\uD83D\uDE2D"),
