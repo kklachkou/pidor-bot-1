@@ -2,7 +2,7 @@ package by.kobyzau.tg.bot.pbot.program.cleanup.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.cleanup.CleanupChatHandler;
+import by.kobyzau.tg.bot.pbot.program.cleanup.CleanupHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
@@ -18,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class PidorCleanupChatHandler implements CleanupChatHandler {
+public class PidorCleanupChatHandler implements CleanupHandler {
 
   public static final int NOTIFY_DAYS = 15;
   public static final int CLEAR_DAYS = 16;
@@ -32,9 +34,12 @@ public class PidorCleanupChatHandler implements CleanupChatHandler {
   @Autowired private DateService dateService;
 
   @Override
-  public void cleanup(long chatId) {
-    pidorRepository.getByChat(chatId).forEach(this::notifyPidor);
-    pidorRepository.getByChat(chatId).forEach(this::handlePidor);
+  public void cleanup() {
+    List<Long> chatIds = pidorRepository.getAll().stream().map(Pidor::getChatId).distinct().collect(Collectors.toList());
+    for (long chatId : chatIds) {
+      pidorRepository.getByChat(chatId).forEach(this::notifyPidor);
+      pidorRepository.getByChat(chatId).forEach(this::handlePidor);
+    }
   }
 
   private void notifyPidor(Pidor pidor) {

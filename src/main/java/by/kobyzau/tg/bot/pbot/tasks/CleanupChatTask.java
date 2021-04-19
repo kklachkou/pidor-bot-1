@@ -1,6 +1,5 @@
 package by.kobyzau.tg.bot.pbot.tasks;
 
-import by.kobyzau.tg.bot.pbot.program.cleanup.CleanupChatHandler;
 import by.kobyzau.tg.bot.pbot.program.cleanup.CleanupHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
@@ -16,7 +15,6 @@ public class CleanupChatTask implements Task {
 
   @Autowired private TelegramService telegramService;
   @Autowired private List<CleanupHandler> cleanupHandlers;
-  @Autowired private List<CleanupChatHandler> cleanupChatHandlers;
   @Autowired private Logger logger;
 
   @Autowired
@@ -26,9 +24,6 @@ public class CleanupChatTask implements Task {
   @Override
   public void processTask() {
     logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-    for (long chatId : telegramService.getChatIds()) {
-      cleanupChatHandlers.forEach(c -> executor.execute(() -> c.cleanup(chatId)));
-    }
     cleanupHandlers.forEach(c -> executor.execute(c::cleanup));
   }
 }

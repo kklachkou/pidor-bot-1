@@ -1,7 +1,11 @@
 package by.kobyzau.tg.bot.pbot.model;
 
 
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import org.springframework.util.unit.DataUnit;
+
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +21,7 @@ public class Feedback {
     private int messageId;
     private FeedbackEmojiType emojiType;
     private FeedbackType feedbackType;
+    private LocalDate updated;
 
     public Feedback() {
     }
@@ -27,6 +32,7 @@ public class Feedback {
         this.messageId = messageId;
         this.emojiType = emojiType;
         this.feedbackType = feedbackType;
+        this.updated = DateUtil.now();
     }
 
     public long getId() {
@@ -75,6 +81,14 @@ public class Feedback {
 
     public void setFeedbackType(FeedbackType feedbackType) {
         this.feedbackType = feedbackType;
+    }
+
+    public LocalDate getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDate updated) {
+        this.updated = updated;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
 
   @Override
   public PrioritySelection.Priority getPriority() {
-    return PrioritySelection.Priority.LOW;
+    return PrioritySelection.Priority.MEDIUM;
   }
 
   @Override

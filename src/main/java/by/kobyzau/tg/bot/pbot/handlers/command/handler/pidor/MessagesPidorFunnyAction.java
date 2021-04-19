@@ -99,16 +99,7 @@ public class MessagesPidorFunnyAction implements PidorFunnyAction {
             "Оттого, наш маршрут – мимо кассы,",
             "пидарасом быть полный залёт.",
             "Охренели вконец, пидорасы,",
-            "и вот-вот {0} запоёт!"),
-        Arrays.asList(
-            "Надоели!",
-            "Каждый день одно и тоже",
-            "Хоть бы денёк провели как нормальные пацаны",
-            "Пиво выпили...",
-            "В покер поиграли...",
-            "Девчонок полапали..",
-            "Тфу на вас!",
-            "И дважды на {0} - ты пидор дня"));
+            "и вот-вот {0} запоёт!"));
   }
 
   private Selection<List<String>> getFunnyMessages() {
@@ -117,7 +108,7 @@ public class MessagesPidorFunnyAction implements PidorFunnyAction {
 
   @Override
   public PrioritySelection.Priority getPriority() {
-    return PrioritySelection.Priority.HIGH;
+    return PrioritySelection.Priority.MEDIUM;
   }
 
   @Override

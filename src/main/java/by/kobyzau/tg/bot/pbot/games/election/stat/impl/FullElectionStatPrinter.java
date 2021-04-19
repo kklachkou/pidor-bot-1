@@ -34,7 +34,7 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
             new RandomText(
                 "Информация голосования:",
                 "Информация по голосованию:",
-                "Предворительная информация голосования:"));
+                "Предварительная информация голосования:"));
     textBuilder.append(new NewLineText());
     textBuilder.append(new NewLineText());
     Comparator<Pidor> comparator =

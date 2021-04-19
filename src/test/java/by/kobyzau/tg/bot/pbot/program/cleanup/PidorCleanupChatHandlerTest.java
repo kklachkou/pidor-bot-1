@@ -21,6 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PidorCleanupChatHandlerTest extends BotActionAbstractTest {
 
-  @InjectMocks private CleanupChatHandler handler = new PidorCleanupChatHandler();
+  @InjectMocks private CleanupHandler handler = new PidorCleanupChatHandler();
   @Mock private Logger logger;
   @Mock private TelegramService telegramService;
   @Mock private PidorRepository pidorRepository;
@@ -57,9 +58,10 @@ public class PidorCleanupChatHandlerTest extends BotActionAbstractTest {
     pidors.add(getPidor(8, now.minusDays(18)));
     pidors.add(getPidor(9, now.minusDays(15)));
     doReturn(pidors).when(pidorRepository).getByChat(chatId);
+    doReturn(pidors).when(pidorRepository).getAll();
 
     // when
-    handler.cleanup(chatId);
+    handler.cleanup();
 
     // then
     verify(pidorRepository, times(0)).delete(1);

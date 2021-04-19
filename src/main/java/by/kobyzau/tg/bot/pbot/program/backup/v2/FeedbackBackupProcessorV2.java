@@ -4,6 +4,7 @@ import by.kobyzau.tg.bot.pbot.model.Feedback;
 import by.kobyzau.tg.bot.pbot.model.FeedbackEmojiType;
 import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.repository.feedback.FeedbackRepository;
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,7 @@ public class FeedbackBackupProcessorV2 implements BackupProcessorV2 {
         feedback.setPlayerTgId(userId);
         feedback.setEmojiType(feedbackEmojiType);
         feedback.setFeedbackType(feedbackType);
+        feedback.setUpdated(DateUtil.now());
         feedbackRepository.create(feedback);
       }
     }

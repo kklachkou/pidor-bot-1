@@ -40,6 +40,8 @@ public class NotifyNoPidorsTask implements Task {
       new ConsistentSelection<>(
               "Вы там совсем того? Забыли узнать кто сегодня /pidor",
               "Вы не забыли про меня? давайте играть - /pidor",
+              "Эй, вы где? Играйте - /pidor",
+              "Если вы забыли, нужно нажать /pidor",
               "Сегодня вы еще не играли. Жми /pidor")
           .map(SimpleText::new);
   @Autowired private PidorRepository pidorRepository;
