@@ -42,7 +42,7 @@ public class FeedbackInlineDtoTest {
         new FeedbackInlineDto(
             UUID.randomUUID().toString().substring(FEEDBACK.getIdSize()),
             FeedbackType.VERSION,
-            FeedbackEmojiType.DISLIKE);
+            FeedbackEmojiType.LOVE);
 
     // when
     String json = StringUtil.serialize(dto);
