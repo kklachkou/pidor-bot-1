@@ -3,7 +3,6 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.digest.StringListDigestCalc;
 import by.kobyzau.tg.bot.pbot.program.selection.HalfSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.PrioritySelection;
 import by.kobyzau.tg.bot.pbot.program.selection.Selection;
