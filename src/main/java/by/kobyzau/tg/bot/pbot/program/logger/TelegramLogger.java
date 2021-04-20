@@ -17,8 +17,6 @@ public class TelegramLogger implements Logger {
   @Value("${logger.tg.chat}")
   private String backupChat;
 
-  @Autowired private LoggerLevelHolder loggerLevel;
-
   @Autowired private TelegramSender telegramSender;
 
   @Autowired
@@ -27,39 +25,31 @@ public class TelegramLogger implements Logger {
 
   @Override
   public void debug(String message) {
-    if (loggerLevel.getLevel().matchLevel(LoggerLevel.DEBUG)) {
-      executor.execute(() -> sendMessage("<pre>[DEBUG]</pre>\n" + message));
-    }
+    executor.execute(() -> sendMessage("<pre>[DEBUG]</pre>\n" + message));
   }
 
   @Override
   public void info(String message) {
-    if (loggerLevel.getLevel().matchLevel(LoggerLevel.INFO)) {
-      executor.execute(() -> sendMessage("<pre>[INFO]</pre>\n" + message));
-    }
+    executor.execute(() -> sendMessage("<pre>[INFO]</pre>\n" + message));
   }
 
   @Override
   public void warn(String message) {
-    if (loggerLevel.getLevel().matchLevel(LoggerLevel.WARN)) {
-      executor.execute(() -> sendMessage("[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message));
-    }
+    executor.execute(() -> sendMessage("[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message));
   }
 
   @Override
   public void error(String s, Exception e) {
-    if (loggerLevel.getLevel().matchLevel(LoggerLevel.ERROR)) {
-      executor.execute(
-          () ->
-              sendMessage(
-                  "[ #ERROR ]\n❗️❗️❗️❗️❗️\n"
-                      + s
-                      + "\n"
-                      + e.getMessage()
-                      + "\nStacktrace:\n<pre>"
-                      + getStacktrace(e)
-                      + "</pre>"));
-    }
+    executor.execute(
+        () ->
+            sendMessage(
+                "[ #ERROR ]\n❗️❗️❗️❗️❗️\n"
+                    + s
+                    + "\n"
+                    + e.getMessage()
+                    + "\nStacktrace:\n<pre>"
+                    + getStacktrace(e)
+                    + "</pre>"));
   }
 
   private String getStacktrace(Exception e) {

@@ -23,6 +23,8 @@ public class CompositeLoggerLogger implements Logger {
   @Qualifier("TGLogger")
   private Logger tgLogger;
 
+  @Autowired private LoggerLevelHolder loggerLevel;
+
   @PostConstruct
   private void init() {
     loggers.add(systemLogger);
@@ -31,21 +33,29 @@ public class CompositeLoggerLogger implements Logger {
 
   @Override
   public void debug(String message) {
-    loggers.forEach(logger -> logger.debug(message));
+    if (loggerLevel.getLevel().matchLevel(LoggerLevel.DEBUG)) {
+      loggers.forEach(logger -> logger.debug(message));
+    }
   }
 
   @Override
   public void info(String message) {
-    loggers.forEach(logger -> logger.info(message));
+    if (loggerLevel.getLevel().matchLevel(LoggerLevel.INFO)) {
+      loggers.forEach(logger -> logger.info(message));
+    }
   }
 
   @Override
   public void warn(String message) {
-    loggers.forEach(logger -> logger.warn(message));
+    if (loggerLevel.getLevel().matchLevel(LoggerLevel.WARN)) {
+      loggers.forEach(logger -> logger.warn(message));
+    }
   }
 
   @Override
   public void error(String s, Exception e) {
-    loggers.forEach(logger -> logger.error(s, e));
+    if (loggerLevel.getLevel().matchLevel(LoggerLevel.ERROR)) {
+      loggers.forEach(logger -> logger.error(s, e));
+    }
   }
 }
