@@ -48,7 +48,7 @@ public class CommandUpdateHandler implements UpdateHandler {
     try {
       return processCommand(update) != Command.NONE;
     } catch (Exception e) {
-      logger.error("Error in analazing", e);
+      logger.error("Error in process command", e);
     }
     return false;
   }
