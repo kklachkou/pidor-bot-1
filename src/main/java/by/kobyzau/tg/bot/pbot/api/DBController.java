@@ -71,7 +71,7 @@ public class DBController {
       while (rs.next()) {
         sb.append("\n\n");
         ResultSetMetaData metaData = rs.getMetaData();
-        for (int columnIndex = 0; columnIndex < metaData.getColumnCount(); columnIndex++) {
+        for (int columnIndex = 1; columnIndex <= metaData.getColumnCount(); columnIndex++) {
           sb.append("\n")
               .append(metaData.getColumnName(columnIndex))
               .append(": ")
