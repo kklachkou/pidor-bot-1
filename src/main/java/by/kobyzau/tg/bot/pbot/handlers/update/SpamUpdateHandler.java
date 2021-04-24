@@ -9,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -36,6 +37,9 @@ public class SpamUpdateHandler implements UpdateHandler {
 
   @Autowired private BotActionCollector botActionCollector;
 
+  @Value("${app.admin.userId}")
+  private long adminUserId;
+
   private final Map<Key, List<LocalDateTime>> records = new HashMap<>();
 
   @Override
@@ -48,6 +52,9 @@ public class SpamUpdateHandler implements UpdateHandler {
       return false;
     }
     long chatId = update.getMessage().getChatId();
+    if (chatId == adminUserId) {
+      return false;
+    }
     long userId = update.getMessage().getFrom().getId();
     Key key = new Key(chatId, userId, command);
     if (isSpam(key)) {
