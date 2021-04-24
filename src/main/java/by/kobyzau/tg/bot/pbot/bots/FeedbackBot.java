@@ -53,14 +53,14 @@ public class FeedbackBot extends TelegramLongPollingBot {
                     .text(
                         "Приветствую! Пришли мне предложения либо отзывы по боту @" + pidorBotName)
                     .parseMode("html")
-                    .chatId(String.valueOf(adminUserId))
+                    .chatId(String.valueOf(user.getId()))
                     .build());
           } else {
             sendApiMethod(
                 SendMessage.builder()
                     .text("Спасибо, фидбек получен")
                     .parseMode("html")
-                    .chatId(String.valueOf(adminUserId))
+                    .chatId(String.valueOf(user.getId()))
                     .build());
             logger.info(
                 new TextBuilder()
