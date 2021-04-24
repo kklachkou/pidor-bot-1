@@ -28,6 +28,9 @@ public class FeedbackBot extends TelegramLongPollingBot {
   @Value("${bot.feedback.username}")
   private String botUserName;
 
+  @Value("${bot.pidor.username}")
+  private String pidorBotName;
+
   @Value("${bot.feedback.token}")
   private String botToken;
 
@@ -44,25 +47,44 @@ public class FeedbackBot extends TelegramLongPollingBot {
           feedbackHandled = true;
           String text = message.getText();
           User user = message.getFrom();
-          sendApiMethod(
-              SendMessage.builder()
-                  .text("Спасибо, фидбек получен")
-                  .parseMode("html")
-                  .chatId(String.valueOf(adminUserId))
-                  .build());
-          logger.info(
-              new TextBuilder()
-                  .append(new SimpleText("#Feedback"))
-                  .append(
-                      new ParametizedText(
-                          "{0}: {1}",
-                          new SimpleText(TGUtil.escapeHTML(user.getFirstName())),
-                          new LongText(user.getId())))
-                  .append(new NewLineText())
-                  .append(new NewLineText())
-                  .append(new SimpleText(TGUtil.escapeHTML(text)))
-                  .text());
+          if ("/start".equals(text)) {
+            sendApiMethod(
+                SendMessage.builder()
+                    .text(
+                        "Приветствую! Пришли мне предложения либо отзывы по боту @" + pidorBotName)
+                    .parseMode("html")
+                    .chatId(String.valueOf(adminUserId))
+                    .build());
+          } else {
+            sendApiMethod(
+                SendMessage.builder()
+                    .text("Спасибо, фидбек получен")
+                    .parseMode("html")
+                    .chatId(String.valueOf(adminUserId))
+                    .build());
+            logger.info(
+                new TextBuilder()
+                    .append(new SimpleText("#Feedback"))
+                    .append(new NewLineText())
+                    .append(
+                        new ParametizedText(
+                            "{0}: {1}",
+                            new SimpleText(TGUtil.escapeHTML(user.getFirstName())),
+                            new LongText(user.getId())))
+                    .append(new NewLineText())
+                    .append(new NewLineText())
+                    .append(new SimpleText(TGUtil.escapeHTML(text)))
+                    .text());
+          }
         }
+      }
+      if (!feedbackHandled) {
+        sendApiMethod(
+            SendMessage.builder()
+                .text("Пишите мне только текст")
+                .parseMode("html")
+                .chatId(String.valueOf(adminUserId))
+                .build());
       }
     } catch (Exception e) {
       logger.error("Cannot handle feedback", e);
