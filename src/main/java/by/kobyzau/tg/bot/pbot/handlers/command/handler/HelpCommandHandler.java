@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 
+import by.kobyzau.tg.bot.pbot.bots.FeedbackBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.program.text.*;
@@ -20,6 +21,8 @@ public class HelpCommandHandler implements CommandHandler {
   @Value("${app.version}")
   private String version;
 
+  @Autowired private FeedbackBot feedbackBot;
+
   @Autowired private BotActionCollector botActionCollector;
 
   @Override
@@ -34,6 +37,10 @@ public class HelpCommandHandler implements CommandHandler {
         .append(buildCommandsMessage(Command.Category.ACTION))
         .append(new NewLineText())
         .append(buildCommandsMessage(Command.Category.INFO))
+        .append(new NewLineText())
+        .append(
+            new SimpleText(
+                "Написать предложение/сообщить об ошибке - @" + feedbackBot.getBotUsername()))
         .append(new NewLineText())
         .append(new NewLineText())
         .append(new SimpleText("Автор - @NKRB2021"))

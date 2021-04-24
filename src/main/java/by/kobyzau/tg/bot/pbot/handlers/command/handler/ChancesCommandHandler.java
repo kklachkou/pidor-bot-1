@@ -27,7 +27,7 @@ public class ChancesCommandHandler implements CommandHandler {
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
 
-  @Value("${bot.token}")
+  @Value("${bot.pidor.token}")
   private String botToken;
 
   @Override

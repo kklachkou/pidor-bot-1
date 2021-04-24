@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 public class BotServiceImpl implements BotService {
 
-  @Value("${bot.token}")
+  @Value("${bot.pidor.token}")
   private String botToken;
 
   @Value("${app.admin.userId}")

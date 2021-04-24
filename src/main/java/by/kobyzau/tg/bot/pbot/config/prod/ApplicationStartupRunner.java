@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.config.prod;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
+import by.kobyzau.tg.bot.pbot.bots.FeedbackBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.sync.CommandSyncer;
 import by.kobyzau.tg.bot.pbot.program.Version;
@@ -23,8 +24,9 @@ import java.util.Arrays;
 @Profile("prod")
 public class ApplicationStartupRunner implements ApplicationRunner {
 
-  @Autowired
-  private Environment env;
+  @Autowired private FeedbackBot feedbackBot;
+
+  @Autowired private Environment env;
 
   @Autowired private Bot bot;
 
@@ -59,6 +61,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
             + ": "
             + version);
     bot.botConnect();
+    feedbackBot.botConnect();
     logger.info("Bot started " + bot.getBotUsername());
     commandSyncer.sync();
     logger.info(
@@ -83,12 +86,15 @@ public class ApplicationStartupRunner implements ApplicationRunner {
         .map(ParametizedText::text)
         .forEach(logger::info);
     botActionCollector.text(adminUserId, new SimpleText("App is ready"));
-    if (DateUtil.isNewYearTime() && Arrays.stream(env.getActiveProfiles()).noneMatch("new-year"::equals)) {
-      botActionCollector.text(adminUserId, new SimpleText("!!!new-year profile need to be activated"));
+    if (DateUtil.isNewYearTime()
+        && Arrays.stream(env.getActiveProfiles()).noneMatch("new-year"::equals)) {
+      botActionCollector.text(
+          adminUserId, new SimpleText("!!!new-year profile need to be activated"));
       logger.warn("!!!new-year profile need to be activated");
     }
     if (!DateUtil.isNewYearTime() && Arrays.asList(env.getActiveProfiles()).contains("new-year")) {
-      botActionCollector.text(adminUserId, new SimpleText("!!!new-year profile need to be deactivated"));
+      botActionCollector.text(
+          adminUserId, new SimpleText("!!!new-year profile need to be deactivated"));
       logger.warn("!!!new-year profile need to be deactivated");
     }
   }

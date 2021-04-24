@@ -14,7 +14,7 @@ public class BaseCommandParser implements CommandParser {
   private final String PREFIX_FOR_COMMAND = "/";
   private final String DELIMITER_COMMAND_BOTNAME = "@";
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botName;
 
   public BaseCommandParser() {}

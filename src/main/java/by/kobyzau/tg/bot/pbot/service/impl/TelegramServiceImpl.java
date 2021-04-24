@@ -25,7 +25,7 @@ public class TelegramServiceImpl implements TelegramService {
 
   @Autowired private PidorRepository pidorRepository;
 
-  @Value("${bot.token}")
+  @Value("${bot.pidor.token}")
   private String botToken;
 
   @Autowired private Logger logger;

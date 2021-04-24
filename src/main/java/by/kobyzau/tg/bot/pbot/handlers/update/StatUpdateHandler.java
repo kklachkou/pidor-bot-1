@@ -28,7 +28,7 @@ public class StatUpdateHandler implements UpdateHandler {
 
   @Autowired private BotActionCollector botActionCollector;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   @Autowired private StatHandlerFactory statHandlerFactory;

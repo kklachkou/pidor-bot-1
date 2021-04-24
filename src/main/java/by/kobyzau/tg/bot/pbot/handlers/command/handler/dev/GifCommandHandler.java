@@ -18,7 +18,7 @@ import java.util.Optional;
 @Profile("dev")
 public class GifCommandHandler implements CommandHandler {
 
-  @Value("${bot.token}")
+  @Value("${bot.pidor.token}")
   private String botToken;
 
   @Autowired

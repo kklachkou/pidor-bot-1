@@ -55,7 +55,7 @@ public class ElectionUpdateHandler implements UpdateHandler {
   @Qualifier("cachedExecutor")
   private Executor executor;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   private final Selection<Text> emoji =

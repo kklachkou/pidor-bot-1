@@ -26,7 +26,7 @@ public class CloseInlineMessageUpdateHandler implements UpdateHandler {
 
   @Autowired private BotActionCollector botActionCollector;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   private final Selection<Text> emoji =

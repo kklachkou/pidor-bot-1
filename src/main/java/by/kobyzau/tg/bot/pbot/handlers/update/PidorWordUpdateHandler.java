@@ -25,7 +25,7 @@ public class PidorWordUpdateHandler implements UpdateHandler {
 
   @Autowired private Logger logger;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   @Autowired private CommandParser commandParser;

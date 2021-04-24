@@ -36,7 +36,7 @@ public class CheckboxSettingUpdateHandler implements UpdateHandler {
   @Autowired private FutureActionService futureActionService;
   @Autowired private SettingsCommandPrinter settingsCommandPrinter;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   @Autowired

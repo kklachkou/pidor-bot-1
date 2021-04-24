@@ -7,6 +7,13 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_8(
+      LocalDate.of(2021, 4, 24),
+      new TextBuilder(new SimpleText("- Отзывы/предложения!"))
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "- Теперь вы можете прислать пожелания, предложения, отзывы либо сообщить об ошибке в бота @FeedbackPidorBot"))),
   VERSION_5(
       LocalDate.of(2021, 1, 29),
       new TextBuilder(new SimpleText("- Давай свою оценку!"))

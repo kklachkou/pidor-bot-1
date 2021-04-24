@@ -31,7 +31,7 @@ import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.FEEDBACK;
 @Component
 public class FeedbackInlineUpdateHandler implements UpdateHandler {
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
   @Autowired private FeedbackService feedbackService;

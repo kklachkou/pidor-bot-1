@@ -24,10 +24,10 @@ public class ConcurrentCollectorBot extends TelegramLongPollingBot implements Bo
   @Value("${app.time.bot.reconnect}")
   private int reconnectTime;
 
-  @Value("${bot.username}")
+  @Value("${bot.pidor.username}")
   private String botUserName;
 
-  @Value("${bot.token}")
+  @Value("${bot.pidor.token}")
   private String botToken;
 
   @Autowired private ReceiveUpdateCollector updateCollector;

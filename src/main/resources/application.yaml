@@ -13,11 +13,15 @@ logger:
     token: ${LOGGER_TOKEN}
 
 bot:
-  username: ${BOT_USERNAME}
-  token: ${BOT_TOKEN}
+  feedback:
+    username: ${BOT_FEEDBACK_USERNAME}
+    token: ${BOT_FEEDBACK_TOKEN}
+  pidor:
+    username: ${BOT_USERNAME}
+    token: ${BOT_TOKEN}
 
 app:
-  version: 7.4 DB Controller
+  version: 8.0 Feedback
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
