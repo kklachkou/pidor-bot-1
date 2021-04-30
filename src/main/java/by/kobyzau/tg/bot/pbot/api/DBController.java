@@ -16,6 +16,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
 @RestController
+@Profile("prod")
 public class DBController {
 
   @Autowired private DataSource dataSource;

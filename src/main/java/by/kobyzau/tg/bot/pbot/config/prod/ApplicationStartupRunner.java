@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Profile("prod")
 public class ApplicationStartupRunner implements ApplicationRunner {
 
-  @Autowired private FeedbackBot feedbackBot;
+  @Autowired(required = false) private FeedbackBot feedbackBot;
 
   @Autowired private Environment env;
 
@@ -61,7 +61,9 @@ public class ApplicationStartupRunner implements ApplicationRunner {
             + ": "
             + version);
     bot.botConnect();
-    feedbackBot.botConnect();
+    if (feedbackBot != null) {
+      feedbackBot.botConnect();
+    }
     logger.info("Bot started " + bot.getBotUsername());
     commandSyncer.sync();
     logger.info(

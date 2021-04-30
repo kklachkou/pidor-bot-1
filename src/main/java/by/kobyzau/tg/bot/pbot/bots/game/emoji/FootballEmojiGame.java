@@ -29,14 +29,7 @@ public class FootballEmojiGame implements EmojiGame {
 
   @Override
   public boolean isDateToGame(LocalDate date) {
-    switch (date.getDayOfWeek()) {
-      case MONDAY:
-        return date.getDayOfMonth() % 2 != 0;
-      case SUNDAY:
-        return true;
-      default:
-        return false;
-    }
+    return date.getDayOfYear() % 3 == 0;
   }
 
   @Override

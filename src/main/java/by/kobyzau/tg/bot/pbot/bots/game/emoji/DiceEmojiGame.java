@@ -29,15 +29,7 @@ public class DiceEmojiGame implements EmojiGame {
 
   @Override
   public boolean isDateToGame(LocalDate date) {
-    switch (date.getDayOfWeek()) {
-      case MONDAY:
-      case WEDNESDAY:
-        return date.getDayOfMonth() % 2 == 0;
-      case FRIDAY:
-        return true;
-      default:
-        return false;
-    }
+    return date.getDayOfYear() % 2 == 0;
   }
 
   @Override

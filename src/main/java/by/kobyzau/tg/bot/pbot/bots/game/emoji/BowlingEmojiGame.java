@@ -30,13 +30,7 @@ public class BowlingEmojiGame implements EmojiGame {
 
   @Override
   public boolean isDateToGame(LocalDate date) {
-    switch (date.getDayOfWeek()) {
-      case WEDNESDAY:
-      case SATURDAY:
-        return date.getDayOfMonth() % 2 != 0;
-      default:
-        return false;
-    }
+    return date.getDayOfYear() % 7 == 0;
   }
 
   @Override

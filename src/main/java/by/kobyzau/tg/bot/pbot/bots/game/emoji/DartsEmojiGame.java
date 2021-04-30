@@ -30,13 +30,7 @@ public class DartsEmojiGame implements EmojiGame {
 
   @Override
   public boolean isDateToGame(LocalDate date) {
-    DayOfWeek dayOfWeek = date.getDayOfWeek();
-    switch (dayOfWeek) {
-      case THURSDAY:
-      case SATURDAY:
-        return date.getDayOfMonth() % 2 == 0;
-    }
-    return false;
+    return date.getDayOfYear() % 11 == 0;
   }
 
   @Override

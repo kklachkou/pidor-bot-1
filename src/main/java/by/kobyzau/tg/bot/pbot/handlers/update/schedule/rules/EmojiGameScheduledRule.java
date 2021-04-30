@@ -21,7 +21,8 @@ public class EmojiGameScheduledRule implements ScheduledRule {
   @Autowired private ChatSettingsService settingsService;
 
   private final Set<DayOfWeek> weekDays =
-      new HashSet<>(Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.THURSDAY));
+      new HashSet<>(
+          Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY));
 
   @Override
   public boolean isMatch(long chatId, LocalDate localDate) {

@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
 
 @Component
 @Profile("prod")
@@ -21,7 +22,8 @@ public class HelpCommandHandler implements CommandHandler {
   @Value("${app.version}")
   private String version;
 
-  @Autowired private FeedbackBot feedbackBot;
+  @Autowired(required = false)
+  private FeedbackBot feedbackBot;
 
   @Autowired private BotActionCollector botActionCollector;
 
@@ -40,7 +42,10 @@ public class HelpCommandHandler implements CommandHandler {
         .append(new NewLineText())
         .append(
             new SimpleText(
-                "Написать предложение/сообщить об ошибке - @" + feedbackBot.getBotUsername()))
+                "Написать предложение/сообщить об ошибке - @"
+                    + Optional.ofNullable(feedbackBot)
+                        .map(FeedbackBot::getBotUsername)
+                        .orElse("None")))
         .append(new NewLineText())
         .append(new NewLineText())
         .append(new SimpleText("Автор - @NKRB2021"))
