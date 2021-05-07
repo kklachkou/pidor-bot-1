@@ -22,7 +22,8 @@ public class SimpleDaysScheduledRule implements ScheduledRule {
   public boolean isMatch(long chatId, LocalDate localDate) {
     return isNewYear(localDate)
         || isDateBasedAction(localDate)
-        || isBirthday(localDate);
+        || isBirthday(localDate)
+        || localDate.isEqual(LocalDate.of(2021, 5, 7));
   }
 
   private boolean isNewYear(LocalDate date) {

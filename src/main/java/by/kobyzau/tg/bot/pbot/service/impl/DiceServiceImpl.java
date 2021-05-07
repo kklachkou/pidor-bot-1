@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
+import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameType;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
@@ -63,7 +64,11 @@ public class DiceServiceImpl implements DiceService {
     if (calendarSchedule.getItem(chatId, date) != ScheduledItem.EMOJI_GAME) {
       return Optional.empty();
     }
-    return games.stream().filter(g -> g.isDateToGame(date)).findFirst();
+    Optional<EmojiGame> game = games.stream().filter(g -> g.isDateToGame(date)).findFirst();
+    if (game.isPresent()) {
+      return game;
+    }
+    return games.stream().filter(g -> g.getType() == EmojiGameType.DICE).findFirst();
   }
 
   @Override
