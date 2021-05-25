@@ -37,6 +37,8 @@ public class PidorWordUpdateHandler implements UpdateHandler {
           "бот-пидор",
           "бот пидор",
           "пидор бот",
+          "пидр бот",
+          "пидр-бот",
           "пидорора бот",
           "пидору бот",
           "пидоры бот",

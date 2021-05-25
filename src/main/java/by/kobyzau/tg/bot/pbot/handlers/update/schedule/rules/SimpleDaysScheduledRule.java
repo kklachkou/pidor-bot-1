@@ -2,6 +2,8 @@ package by.kobyzau.tg.bot.pbot.handlers.update.schedule.rules;
 
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.datebased.DateBasePidorFunnyAction;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
+import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
+import by.kobyzau.tg.bot.pbot.service.PidorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ import static by.kobyzau.tg.bot.pbot.handlers.update.schedule.rules.ScheduledRul
 @Order(SIMPLE_DAY_ORDER)
 public class SimpleDaysScheduledRule implements ScheduledRule {
 
+  @Autowired
+  private DailyPidorRepository dailyPidorRepository;
   @Autowired private List<DateBasePidorFunnyAction> dateBasePidorFunnyActions;
 
   @Override
@@ -23,6 +27,7 @@ public class SimpleDaysScheduledRule implements ScheduledRule {
     return isNewYear(localDate)
         || isDateBasedAction(localDate)
         || isBirthday(localDate)
+        || hasNoDailyPidors(chatId)
         || localDate.isEqual(LocalDate.of(2021, 5, 7));
   }
 
@@ -40,6 +45,9 @@ public class SimpleDaysScheduledRule implements ScheduledRule {
         || (date.getMonth() == Month.DECEMBER && date.getDayOfMonth() == 25);
   }
 
+  private boolean hasNoDailyPidors(long chatId) {
+    return dailyPidorRepository.getByChat(chatId).isEmpty();
+  }
   @Override
   public ScheduledItem getItem() {
     return ScheduledItem.NONE;
