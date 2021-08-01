@@ -1,15 +1,15 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.system;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class PidorWordUpdateHandler implements UpdateHandler {
 
   @Autowired private Logger logger;
@@ -47,6 +46,11 @@ public class PidorWordUpdateHandler implements UpdateHandler {
           "бот пидар",
           "пидар бот",
           "пидар-бот");
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.SYSTEM;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {
@@ -109,5 +113,4 @@ public class PidorWordUpdateHandler implements UpdateHandler {
         .map(ParsedCommand::getCommand)
         .filter(c -> c != Command.NONE);
   }
-
 }

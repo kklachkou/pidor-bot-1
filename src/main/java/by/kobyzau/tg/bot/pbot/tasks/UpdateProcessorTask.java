@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import javax.annotation.PostConstruct;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("updateProcessorTask")
 public class UpdateProcessorTask implements Task {
@@ -17,6 +20,14 @@ public class UpdateProcessorTask implements Task {
 
   @Autowired private List<UpdateHandler> updateHandlers;
   @Autowired private Logger logger;
+
+  @PostConstruct
+  public void init() {
+    updateHandlers =
+        updateHandlers.stream()
+            .sorted(Comparator.comparingInt(u -> u.getStage().getOrder()))
+            .collect(Collectors.toList());
+  }
 
   @Override
   public void processTask() {
@@ -27,7 +38,7 @@ public class UpdateProcessorTask implements Task {
     }
   }
 
-  public void process(Update update) {
+  private void process(Update update) {
     for (UpdateHandler updateHandler : updateHandlers) {
       try {
         if (updateHandler.handleUpdate(update)) {

@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Feedback;
 import by.kobyzau.tg.bot.pbot.model.FeedbackEmojiType;
 import by.kobyzau.tg.bot.pbot.model.FeedbackType;
@@ -36,6 +38,12 @@ public class FeedbackInlineUpdateHandler implements UpdateHandler {
 
   @Autowired private FeedbackService feedbackService;
   @Autowired private BotActionCollector botActionCollector;
+
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.CALLBACK;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

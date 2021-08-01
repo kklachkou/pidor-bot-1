@@ -2,13 +2,19 @@ package by.kobyzau.tg.bot.pbot.tg.sticker;
 
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
 public enum StickerType {
+  SPAM(
+      "CAACAgIAAxkBAAN8YQbW8yxJXKQFoQ2HRCW0kjxgDyEAAgUAAwKkJwuLVWIe3gegcyAE",
+      "CAACAgIAAxkBAAN9YQbXA3LQWhb0qW5AjNRQGTk5w2kAAg8AAwKkJwvGlkE3rBJ_9yAE",
+      "CAACAgIAAxkBAAN-YQbXCqawlEDRvh3jtMSxURf6iFYAAhIAAwKkJwsBdIk2jlmJaiAE",
+      "CAACAgIAAxkBAAN_YQbXFdi3v8THcFtWJFa8R9eIXJsAAhsAAwKkJwvQTiSUvDOJPSAE",
+      "CAACAgIAAxkBAAOAYQbXFxhpYgWkdlKRRbaVXAYMI_MAAhwAAwKkJwsgcUcQo2pfzyAE",
+      "CAACAgIAAxkBAAOBYQbXPvS6iDS0SSfuxY3nhhHBxicAAlEAAwKkJwuFyRyJ0gLTjSAE"),
   COVID(
       "CAACAgIAAxkBAAIFe160P3RkZPrbeEviA4MPRJ-ayO0HAALtAQACVp29ChFLItZKWIpNGQQ",
       "CAACAgIAAxkBAAIFel60P2qjxpsx4b1-eA_GKAMp4KHkAAKoAAPkoM4HGX3fqOpZy1UZBA",
@@ -51,6 +57,15 @@ public enum StickerType {
       "CAADAgADoQUAAlOx9wMCmfXNSE716xYE",
       "CAADAgADpQUAAlOx9wOvbMIJtsAWphYE",
       "CAADAgADyT0AAlOx9wM-BQmopQzCdxYE",
+      "CAACAgIAAxkBAAOCYQbYCnBnfkLY6Lkw7GLsLwd_Y0cAAgoAAwKkJws8oroChrgY0SAE",
+      "CAACAgIAAxkBAAODYQbYDs2nwlcjXDojJ6rUeq4okVsAAgsAAwKkJwuRc7kyQbyPcCAE",
+      "CAACAgIAAxkBAAOEYQbYF1l2mkYzMQOJ5u_8NgSiFcgAAhAAAwKkJwuZ02XakZSM_yAE",
+      "CAACAgIAAxkBAAOFYQbYIItQTMO6ib8SpU4wb1MDbuUAAh0AAwKkJwsFNUx7d3-50iAE",
+      "CAACAgIAAxkBAAOGYQbYL1TtIysLannuBbIpTrJ3mG8AAiwAAwKkJwvsH9cUonYNaiAE",
+      "CAACAgIAAxkBAAOHYQbYP3uGBGZHQDB2VKyPyOLYvdcAAk0AAwKkJwvZR54vyhg2xCAE",
+      "CAACAgIAAxkBAAOIYQbYQl7B3xHJ4-iM8Fqo9CHsgGYAAlYAAwKkJwu3u0_afyNoIyAE",
+      "CAACAgIAAxkBAAOJYQbYSFdqfnRIZbzsR2aI8M3IE1wAAlgAAwKkJwuM6vyRXd9WdSAE",
+      "CAACAgIAAxkBAAOKYQbYUH6N-GMK3o0Nl_K1iyxGSEAAAncAAwKkJwvByVQdGgYhOSAE",
       "CAACAgIAAxkBAAIIg19bOmVttE5NNRrcXnqfE-wI8Q1BAAIfAAMq7r0STr0soSPG8_4bBA",
       "CAACAgIAAxkBAAIIhF9bOmU96l2M_ximOZ7mwxS7josMAAIiAAMq7r0SP_NwCWjyVUIbBA",
       "CAACAgIAAxkBAAIIhV9bOmX17JZKPEWIpsw_2xs_-GugAAIqAAMq7r0SrzpV8bT3ZXMbBA",

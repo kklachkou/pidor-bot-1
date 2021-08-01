@@ -1,4 +1,4 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
@@ -6,8 +6,9 @@ import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandler;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandlerFactory;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
-import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.LongText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
@@ -15,7 +16,6 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -24,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import java.util.Objects;
 
 @Component
-@Order(UpdateHandler.COMMAND_ORDER)
 public class CommandUpdateHandler implements UpdateHandler {
 
   @Autowired private Logger logger;
@@ -39,6 +38,11 @@ public class CommandUpdateHandler implements UpdateHandler {
 
   @Value("${app.admin.userId}")
   private long adminUserId;
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.COMMAND;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {
@@ -92,7 +96,7 @@ public class CommandUpdateHandler implements UpdateHandler {
       }
       botActionCollector.typing(message.getChatId());
       logger.debug(
-              "\uD83D\uDECE New Command: " + parsedCommand + "\nFrom Update: " + update.getUpdateId());
+          "\uD83D\uDECE New Command: " + parsedCommand + "\nFrom Update: " + update.getUpdateId());
     }
     CommandHandler commandHandler = commandHandlerFactory.getHandler(parsedCommand.getCommand());
     commandHandler.processCommand(message, parsedCommand.getText());

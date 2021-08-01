@@ -7,6 +7,7 @@ import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.ContainsTextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.RandomTextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.handlers.update.impl.game.DiceDayUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;

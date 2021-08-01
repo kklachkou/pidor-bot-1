@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.dto.CloseInlineMessageInlineDto;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
@@ -20,7 +22,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Objects;
 import java.util.Optional;
 
-@Order
 @Component
 public class CloseInlineMessageUpdateHandler implements UpdateHandler {
 
@@ -31,6 +32,12 @@ public class CloseInlineMessageUpdateHandler implements UpdateHandler {
 
   private final Selection<Text> emoji =
       new ConsistentSelection<>("\uD83D\uDE42").map(SimpleText::new);
+
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.CALLBACK;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

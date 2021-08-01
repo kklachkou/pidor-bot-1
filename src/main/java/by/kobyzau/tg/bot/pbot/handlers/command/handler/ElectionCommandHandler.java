@@ -40,7 +40,7 @@ public class ElectionCommandHandler implements CommandHandler {
   @Autowired private BotActionCollector botActionCollector;
 
   @Autowired private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
-  @Autowired private ElectionStatPrinter hiddenElectionStatPrinter;
+  @Autowired private ElectionStatPrinter anotherNamesWithNumLeftElectionStatPrinter;
   @Autowired private ChatSettingsService chatSettingsService;
 
   private final Map<String, LocalDateTime> lastCallsCache = new HashMap<>();
@@ -52,7 +52,7 @@ public class ElectionCommandHandler implements CommandHandler {
     if (!electionService.canUserVote(chatId, callerId)) {
       botActionCollector.text(chatId, new SimpleText("Ты уже голосовал"), message.getMessageId());
       if (chatSettingsService.isEnabled(ELECTION_HIDDEN, chatId)) {
-        hiddenElectionStatPrinter.printInfo(chatId);
+        anotherNamesWithNumLeftElectionStatPrinter.printInfo(chatId);
       } else {
         fullWithNumLeftElectionStatPrinter.printInfo(chatId);
       }

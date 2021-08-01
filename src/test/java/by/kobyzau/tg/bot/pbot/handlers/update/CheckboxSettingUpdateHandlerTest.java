@@ -3,6 +3,7 @@ package by.kobyzau.tg.bot.pbot.handlers.update;
 import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
+import by.kobyzau.tg.bot.pbot.handlers.update.impl.callback.CheckboxSettingUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.dto.ChatCheckboxSettingCommandDto;
 import by.kobyzau.tg.bot.pbot.model.dto.CheckboxSettingCommandInlineDto;
 import by.kobyzau.tg.bot.pbot.program.printer.SettingsCommandPrinter;

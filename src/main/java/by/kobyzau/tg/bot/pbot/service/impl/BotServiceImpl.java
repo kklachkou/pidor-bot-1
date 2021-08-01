@@ -48,13 +48,13 @@ public class BotServiceImpl implements BotService {
   @Override
   public boolean canDeleteMessage(long chatId) {
     return telegramService
-            .getMe()
-            .map(User::getId)
-            .map(botId -> telegramService.getChatMember(chatId, botId))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(ChatMember::getCanDeleteMessages)
-            .orElse(false);
+        .getMe()
+        .map(User::getId)
+        .map(botId -> telegramService.getChatMember(chatId, botId))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(ChatMember::getCanDeleteMessages)
+        .orElse(false);
   }
 
   @Override
@@ -62,10 +62,13 @@ public class BotServiceImpl implements BotService {
   public boolean isChatValid(long chatId) {
     logger.debug("Checking is chat valid: " + chatId);
     return adminUserId == chatId
-        || telegramService
-            .getChat(chatId)
-            .map(c -> c.isGroupChat() || c.isSuperGroupChat())
-            .orElse(false);
+        || telegramService.getChat(chatId).map(this::isChatValid).orElse(false);
+  }
+
+  @Override
+  public boolean isChatValid(Chat chat) {
+    return chat != null
+        && (chat.isGroupChat() || chat.isSuperGroupChat() || adminUserId == chat.getId());
   }
 
   @Override

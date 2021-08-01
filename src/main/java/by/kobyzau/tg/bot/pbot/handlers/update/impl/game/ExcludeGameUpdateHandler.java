@@ -1,7 +1,9 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.game;
 
 import by.kobyzau.tg.bot.pbot.bots.game.exclude.ExcludeFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.ExcludeGameUserValue;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
@@ -32,10 +34,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
-import static by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler.EXCLUDE_ORDER;
-
 @Component
-@Order(EXCLUDE_ORDER)
 public class ExcludeGameUpdateHandler implements UpdateHandler {
 
   @Autowired private ExcludeGameService excludeGameService;
@@ -61,6 +60,11 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
 
   private static final List<String> NUM_LEFT_TEXT =
       Arrays.asList("Осталось {0}", "Ещё {0}", "Ждём ещё {0}-х");
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.GAME;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

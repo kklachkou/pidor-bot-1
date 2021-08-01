@@ -1,7 +1,9 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.stat.StatHandlerFactory;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.StatType;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.model.dto.StatInlineDto;
@@ -23,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class StatUpdateHandler implements UpdateHandler {
 
   @Autowired private BotActionCollector botActionCollector;
@@ -36,6 +37,12 @@ public class StatUpdateHandler implements UpdateHandler {
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
+
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.CALLBACK;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

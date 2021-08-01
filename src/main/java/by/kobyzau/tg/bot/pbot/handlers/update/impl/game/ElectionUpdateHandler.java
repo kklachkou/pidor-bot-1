@@ -1,8 +1,10 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.game;
 
 import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageInlineDto;
@@ -22,7 +24,6 @@ import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -39,7 +40,6 @@ import java.util.concurrent.Executor;
 import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.ELECTION_HIDDEN;
 
 @Component
-@Order(UpdateHandler.ELECTION_ORDER)
 public class ElectionUpdateHandler implements UpdateHandler {
 
   @Autowired private ElectionService electionService;
@@ -48,7 +48,7 @@ public class ElectionUpdateHandler implements UpdateHandler {
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private ElectionFinalizer electionFinalizer;
   @Autowired private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
-  @Autowired private ElectionStatPrinter hiddenElectionStatPrinter;
+  @Autowired private ElectionStatPrinter anotherNamesWithNumLeftElectionStatPrinter;
   @Autowired private ChatSettingsService chatSettingsService;
 
   @Autowired
@@ -63,6 +63,11 @@ public class ElectionUpdateHandler implements UpdateHandler {
           .map(SimpleText::new);
 
   private final Set<String> handledRequests = new HashSet<>();
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.GAME;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {
@@ -87,7 +92,8 @@ public class ElectionUpdateHandler implements UpdateHandler {
       return false;
     }
     Message replyToMessage = prevMessage.getReplyToMessage();
-    if (replyToMessage == null || !Objects.equals(calledUser.getId(), replyToMessage.getFrom().getId())) {
+    if (replyToMessage == null
+        || !Objects.equals(calledUser.getId(), replyToMessage.getFrom().getId())) {
       botActionCollector.add(
           new AnswerCallbackBotAction(
               prevMessage.getChatId(),
@@ -125,7 +131,7 @@ public class ElectionUpdateHandler implements UpdateHandler {
         executor.execute(() -> electionFinalizer.finalize(chatId));
       } else {
         if (chatSettingsService.isEnabled(ELECTION_HIDDEN, chatId)) {
-          hiddenElectionStatPrinter.printInfo(chatId);
+          anotherNamesWithNumLeftElectionStatPrinter.printInfo(chatId);
         } else {
           fullWithNumLeftElectionStatPrinter.printInfo(chatId);
         }

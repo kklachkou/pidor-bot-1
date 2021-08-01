@@ -5,6 +5,7 @@ import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
+import by.kobyzau.tg.bot.pbot.handlers.update.impl.game.ElectionUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
@@ -57,7 +58,7 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private ElectionFinalizer electionFinalizer;
   @Mock private ChatSettingsService chatSettingsService;
   @Mock private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
-  @Mock private ElectionStatPrinter hiddenElectionStatPrinter;
+  @Mock private ElectionStatPrinter anotherNamesWithNumLeftElectionStatPrinter;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Before
@@ -418,12 +419,12 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
 
   private void assertPrinted(boolean isHidden) {
     verify(fullWithNumLeftElectionStatPrinter, times(isHidden ? 0 : 1)).printInfo(chatId);
-    verify(hiddenElectionStatPrinter, times(isHidden ? 1 : 0)).printInfo(chatId);
+    verify(anotherNamesWithNumLeftElectionStatPrinter, times(isHidden ? 1 : 0)).printInfo(chatId);
   }
 
   private void assertNotPrinter() {
     verify(fullWithNumLeftElectionStatPrinter, times(0)).printInfo(chatId);
-    verify(hiddenElectionStatPrinter, times(0)).printInfo(chatId);
+    verify(anotherNamesWithNumLeftElectionStatPrinter, times(0)).printInfo(chatId);
   }
 
   private void assertSavedVote() {

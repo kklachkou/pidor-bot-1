@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.system;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.program.backup.BackupProgress;
 import by.kobyzau.tg.bot.pbot.program.backup.BackupService;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
@@ -26,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Order
 @Component
 public class BackupUpdateHandler implements UpdateHandler {
 
@@ -36,6 +37,11 @@ public class BackupUpdateHandler implements UpdateHandler {
 
   @Value("${app.admin.userId}")
   private long adminUserId;
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.SYSTEM;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

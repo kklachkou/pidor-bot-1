@@ -7,6 +7,7 @@ import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandler;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandlerFactory;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
+import by.kobyzau.tg.bot.pbot.handlers.update.impl.CommandUpdateHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.tg.action.ChatActionBotAction;

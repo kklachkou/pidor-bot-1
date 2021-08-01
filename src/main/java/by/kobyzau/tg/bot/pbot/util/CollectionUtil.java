@@ -1,6 +1,12 @@
 package by.kobyzau.tg.bot.pbot.util;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 public class CollectionUtil {
 
@@ -39,5 +45,27 @@ public class CollectionUtil {
     List<T> list = new ArrayList<>(c);
     Collections.shuffle(list, RANDOM);
     return list;
+  }
+
+  public static <T> List<T> getRandomListByDay(Collection<T> c, LocalDate date) {
+    List<T> result = new ArrayList<>();
+    List<T> iterationList = new ArrayList<>(c);
+    for (int iteration = 0; iteration < c.size(); iteration++) {
+      int newIndex =
+          Objects.hash(
+                  date.getDayOfYear(),
+                  date.getMonthValue(),
+                  date.getDayOfWeek().getValue(),
+                  iterationList.size())
+              % iterationList.size();
+      result.add(iterationList.get(newIndex));
+      iterationList.remove(newIndex);
+    }
+    return result;
+  }
+
+  public static <T> T getItem(List<T> list, int index) {
+    int size = list.size();
+    return list.get(index % size);
   }
 }

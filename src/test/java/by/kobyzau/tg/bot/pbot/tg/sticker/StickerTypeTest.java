@@ -2,13 +2,21 @@ package by.kobyzau.tg.bot.pbot.tg.sticker;
 
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.internal.matchers.LessOrEqual;
 
-import java.util.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class StickerTypeTest {
 
@@ -20,15 +28,14 @@ public class StickerTypeTest {
       for (String sticker : stickers) {
         if (!uniqueStickers.add(sticker)) {
           fail(
-                  new ParametizedText(
-                          "Duplicate Sticker for Type {0} - {1}",
-                          new SimpleText(stickerType.name()), new SimpleText(sticker))
-                          .text());
+              new ParametizedText(
+                      "Duplicate Sticker for Type {0} - {1}",
+                      new SimpleText(stickerType.name()), new SimpleText(sticker))
+                  .text());
         }
       }
     }
   }
-
 
   @Test
   public void assertStickerNameLength() {

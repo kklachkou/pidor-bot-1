@@ -1,30 +1,36 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.validate;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandlerFactory;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
+import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @Profile("prod")
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpamUpdateHandler implements UpdateHandler {
 
   private static final int LIMIT_PER_FEW_MINUTES = 4;
@@ -43,10 +49,12 @@ public class SpamUpdateHandler implements UpdateHandler {
   private final Map<Key, List<LocalDateTime>> records = new HashMap<>();
 
   @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.VALIDATE;
+  }
+
+  @Override
   public boolean handleUpdate(Update update) {
-    if (!validateMessage(update)) {
-      return false;
-    }
     Command command = parseCommand(update);
     if (command == Command.NONE) {
       return false;
@@ -62,6 +70,7 @@ public class SpamUpdateHandler implements UpdateHandler {
       logger.debug("\uD83D\uDCEC Spam is detected: " + key);
       botActionCollector.text(
           chatId, new RandomText("Хватит спамить", "Надоел спамить", "Не так часто"));
+      botActionCollector.sticker(chatId, StickerType.SPAM.getRandom());
       return true;
     } else {
       recordCommand(key);
@@ -99,29 +108,13 @@ public class SpamUpdateHandler implements UpdateHandler {
     return spamInMinutes || spamInSeconds;
   }
 
-  private boolean validateMessage(Update update) {
-    if (!update.hasMessage()) {
-      return false;
-    }
-    Message message = update.getMessage();
-
-    if (message.getChatId() == null) {
-      return false;
-    }
-    if (!message.hasText()) {
-      return false;
-    }
-    User from = message.getFrom();
-    if (from == null) {
-      return false;
-    }
-    return from.getId() != null;
-  }
-
   private Command parseCommand(Update update) {
-    Message message = update.getMessage();
-    ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
-    return parsedCommand.getCommand();
+    return Optional.of(update)
+        .map(Update::getMessage)
+        .map(Message::getText)
+        .map(commandParser::parseCommand)
+        .map(ParsedCommand::getCommand)
+        .orElse(Command.NONE);
   }
 
   private static class Key {

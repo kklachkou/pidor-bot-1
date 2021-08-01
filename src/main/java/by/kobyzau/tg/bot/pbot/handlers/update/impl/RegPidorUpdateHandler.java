@@ -1,9 +1,11 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
 import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.printer.UserPrinter;
@@ -18,8 +20,6 @@ import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -31,15 +31,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class RegPidorUpdateHandler implements UpdateHandler {
-  @Autowired private CommandParser commandParser;
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;
   @Autowired private Logger logger;
-  @Autowired private BotService botService;
-  private Selection<String> catchedPidorMessage =
+  private final Selection<String> catchedPidorMessage =
       new ConsistentSelection<>(
           "Ага, попался, {0}\nТеперь ты в игре, хочет ты этого или нет",
           "{0}, зря ты заговорил\nТеперь ты в игре",
@@ -47,59 +44,31 @@ public class RegPidorUpdateHandler implements UpdateHandler {
           "Теперь {0} участвует в игре");
 
   @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.INVOKE_USER;
+  }
+
+  @Override
   public boolean handleUpdate(Update update) {
-    if (!update.hasMessage() || !botService.isChatValid(update.getMessage().getChatId())) {
-      return false;
-    }
-    Optional<Command> command = getCommand(update);
-    if (command.isPresent()) {
-      return false;
-    }
-    updateUser(update.getMessage());
-    return false;
-  }
-
-  private Optional<Command> getCommand(Update update) {
     if (!update.hasMessage()) {
-      return Optional.empty();
+      return false;
     }
-    Message message = update.getMessage();
-    if (message == null) {
-      return Optional.empty();
-    }
-    if (!message.hasText()) {
-      return Optional.empty();
-    }
-    ParsedCommand parsedCommand = commandParser.parseCommand(message.getText());
-    return Optional.ofNullable(parsedCommand)
-        .map(ParsedCommand::getCommand)
-        .filter(c -> c != Command.NONE);
+
+   return updateUser(update.getMessage().getChatId(), update.getMessage().getFrom());
   }
 
-  private void updateUser(Message message) {
-    if (message == null) {
-      return;
-    }
-    long chatId = message.getChatId();
-    List<User> users = getUsersFromMessage(message);
-    users.forEach(u -> updateUser(chatId, u));
-  }
-
-  private void updateUser(long chatId, User user) {
-    if (user == null) {
-      return;
-    }
+  private boolean updateUser(long chatId, User user) {
     Boolean bot = user.getIsBot();
     if (bot != null && bot) {
-      return;
+      return false;
     }
     Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.getId());
     if (!chatMember.isPresent() || !TGUtil.isChatMember(chatMember)) {
-      return;
+      return false;
     }
     Optional<Pidor> existingPidor = pidorService.getPidor(chatId, user.getId());
     if (existingPidor.isPresent()) {
-      return;
+      return false;
     }
     botActionCollector.typing(chatId);
     logger.info(
@@ -115,13 +84,6 @@ public class RegPidorUpdateHandler implements UpdateHandler {
         chatId, new ParametizedText(catchedPidorMessage.next(), new FullNamePidorText(pidor)));
     botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     botActionCollector.sticker(chatId, StickerType.LOL.getRandom());
+    return true;
   }
-
-  private List<User> getUsersFromMessage(Message message) {
-    List<User> users = new ArrayList<>();
-    users.add(message.getFrom());
-    users.addAll(message.getNewChatMembers());
-    return users;
-  }
-
 }

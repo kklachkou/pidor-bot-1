@@ -1,6 +1,8 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.system;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.GdprMessageDto;
 import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
@@ -10,8 +12,6 @@ import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -28,7 +28,6 @@ import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSet
 import static by.kobyzau.tg.bot.pbot.service.FutureActionService.FutureActionType.GDPR_MESSAGE;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GdprUpdateHandler implements UpdateHandler {
 
   private final Set<String> gdprKeywords =
@@ -44,6 +43,11 @@ public class GdprUpdateHandler implements UpdateHandler {
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.SYSTEM;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

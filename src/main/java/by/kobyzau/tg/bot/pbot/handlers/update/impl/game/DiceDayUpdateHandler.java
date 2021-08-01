@@ -1,9 +1,11 @@
-package by.kobyzau.tg.bot.pbot.handlers.update;
+package by.kobyzau.tg.bot.pbot.handlers.update.impl.game;
 
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameResult;
 import by.kobyzau.tg.bot.pbot.bots.game.dice.DiceFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
+import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
 import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
@@ -20,7 +22,6 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Dice;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -31,10 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
-import static by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler.DICE_ORDER;
-
 @Component
-@Order(DICE_ORDER)
 public class DiceDayUpdateHandler implements UpdateHandler {
 
   @Autowired private DiceService diceService;
@@ -47,6 +45,11 @@ public class DiceDayUpdateHandler implements UpdateHandler {
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
+
+  @Override
+  public UpdateHandlerStage getStage() {
+    return UpdateHandlerStage.GAME;
+  }
 
   @Override
   public boolean handleUpdate(Update update) {

@@ -21,7 +21,7 @@ bot:
     token: ${BOT_TOKEN}
 
 app:
-  version: 8.4 Feedback
+  version: 9.0 New Votes
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
