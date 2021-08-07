@@ -145,12 +145,6 @@ public class ChatDetailsStatHandler implements StatHandler {
 
   private void createContactPage(ChatStat chatStat, String linkedId) {
     List<Node> content = new ArrayList<>();
-    content.add(
-        new NodeElement(
-            "p",
-            emptyMap(),
-            Collections.singletonList(new NodeText("Контакты для чата " + chatStat.chatId))));
-
     List<Map.Entry<Long, Set<Long>>> entries =
         chatStat.getContacts().entrySet().stream()
             .filter(e -> e.getValue().size() > 0)
@@ -172,7 +166,10 @@ public class ChatDetailsStatHandler implements StatHandler {
     }
 
     telegraphService.createPageIfNotExist(linkedId);
-    telegraphService.updatePage(linkedId, "Контакты для чата " + chatStat.chatId, content);
+    telegraphService.updatePage(
+        linkedId,
+        "Контакты для чата " + chatStat.chatId,
+        singletonList(new NodeElement("p", emptyMap(), content)));
   }
 
   private ChatStat toStat(long chatId) {
