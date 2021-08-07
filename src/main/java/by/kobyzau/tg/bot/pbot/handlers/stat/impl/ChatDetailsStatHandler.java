@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.stat.impl;
 
+import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.stat.StatHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
@@ -31,6 +32,7 @@ public class ChatDetailsStatHandler implements StatHandler {
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private PidorService pidorService;
   @Autowired private Logger logger;
+  @Autowired private BotActionCollector botActionCollector;
 
   @Override
   public void printStat(long chatIdToSend) {
@@ -60,6 +62,7 @@ public class ChatDetailsStatHandler implements StatHandler {
           .append(new NewLineText())
           .append(new NewLineText());
     }
+    botActionCollector.text(chatIdToSend, textBuilder);
   }
 
   private void appendRow(TextBuilder textBuilder, String column, Text value) {
