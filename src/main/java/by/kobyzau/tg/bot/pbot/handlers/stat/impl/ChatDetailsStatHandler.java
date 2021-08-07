@@ -17,12 +17,12 @@ import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
-import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -37,7 +37,11 @@ public class ChatDetailsStatHandler implements StatHandler {
 
   @Override
   public void printStat(long chatIdToSend) {
-    List<Long> chatIds = telegramService.getChatIds();
+    List<Long> chatIds =
+        pidorRepository.getAll().stream()
+            .map(Pidor::getChatId)
+            .distinct()
+            .collect(Collectors.toList());
     TextBuilder textBuilder = new TextBuilder();
     textBuilder
         .append(new IntText(chatIds.size()))
@@ -82,7 +86,11 @@ public class ChatDetailsStatHandler implements StatHandler {
 
   private Text getContactPeopleNum(long chatId) {
     List<Pidor> pidorsOfChat = pidorRepository.getByChat(chatId);
-    List<Long> chatIds = telegramService.getChatIds();
+    List<Long> chatIds =
+        pidorRepository.getAll().stream()
+            .map(Pidor::getChatId)
+            .distinct()
+            .collect(Collectors.toList());
     int numContacts = 0;
     for (Pidor pidor : pidorsOfChat) {
       long pidorTgId = pidor.getTgId();
@@ -91,7 +99,7 @@ public class ChatDetailsStatHandler implements StatHandler {
           continue;
         }
         boolean hasSameUser =
-                pidorRepository.getByChat(chatId).stream()
+            pidorRepository.getByChat(chatId).stream()
                 .map(Pidor::getTgId)
                 .anyMatch(id -> id == pidorTgId);
         if (hasSameUser) {
