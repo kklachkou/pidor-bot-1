@@ -149,7 +149,7 @@ public class ChatDetailsStatHandler implements StatHandler {
         chatStat.getContacts().entrySet().stream()
             .filter(e -> e.getValue().size() > 0)
             .collect(Collectors.toList());
-
+    content.add(new NodeText("Списки контактов"));
     for (Map.Entry<Long, Set<Long>> entry : entries) {
       Long pidorId = entry.getKey();
       Set<Long> linkedChats = entry.getValue();
@@ -162,6 +162,7 @@ public class ChatDetailsStatHandler implements StatHandler {
       content.add(
           new NodeText(
               name
+                  + ": "
                   + linkedChats.stream().map(this::getChatName).collect(Collectors.joining(", "))));
     }
 
