@@ -16,6 +16,7 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
+import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -30,7 +31,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 public class ChatDetailsStatHandler implements StatHandler {
   @Autowired private TelegramService telegramService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
-  @Autowired private PidorService pidorService;
+  @Autowired private PidorRepository pidorRepository;
   @Autowired private Logger logger;
   @Autowired private BotActionCollector botActionCollector;
 
@@ -76,11 +77,11 @@ public class ChatDetailsStatHandler implements StatHandler {
   }
 
   private Text getPidorCount(long chatId) {
-    return new IntText(pidorService.getByChat(chatId).size());
+    return new IntText(pidorRepository.getByChat(chatId).size());
   }
 
   private Text getContactPeopleNum(long chatId) {
-    List<Pidor> pidorsOfChat = pidorService.getByChat(chatId);
+    List<Pidor> pidorsOfChat = pidorRepository.getByChat(chatId);
     List<Long> chatIds = telegramService.getChatIds();
     int numContacts = 0;
     for (Pidor pidor : pidorsOfChat) {
@@ -90,7 +91,7 @@ public class ChatDetailsStatHandler implements StatHandler {
           continue;
         }
         boolean hasSameUser =
-            pidorService.getByChat(chatId).stream()
+                pidorRepository.getByChat(chatId).stream()
                 .map(Pidor::getTgId)
                 .anyMatch(id -> id == pidorTgId);
         if (hasSameUser) {
