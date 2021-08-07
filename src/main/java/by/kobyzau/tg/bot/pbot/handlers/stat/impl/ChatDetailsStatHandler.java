@@ -61,16 +61,21 @@ public class ChatDetailsStatHandler implements StatHandler {
     List<ChatStat> chatStats = new ArrayList<>();
     for (int i = 0; i < chatIds.size(); i++) {
       Long chatId = chatIds.get(i);
-      chatStats.add(toStat(chatId));
+      ChatStat chatStat = toStat(chatId);
+      chatStats.add(chatStat);
+      if (chatStat.getContacts().values().stream().anyMatch(c -> c.size() > 0)) {
+        createContactPage(chatStat, "Stat-Contact-" + chatStat.chatId);
+      }
       logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
     }
+    Comparator<ChatStat> countComparator =
+        Comparator.comparing(c -> c.getContacts().keySet().size());
+    Comparator<ChatStat> contactComparator =
+        Comparator.comparing(c -> c.getContacts().values().size());
     createPage(
         chatStats, Comparator.comparing(ChatStat::getFirstDate), "По времени", "Stat-Duration");
-    createPage(
-        chatStats,
-        Comparator.comparing(c -> c.getContacts().keySet().size()),
-        "По колличеству пидоров",
-        "Stat-Count");
+    createPage(chatStats, countComparator.reversed(), "По колличеству пидоров", "Stat-Count");
+    createPage(chatStats, contactComparator.reversed(), "По колличеству контактов", "Stat-Contact");
     botActionCollector.text(
         chatIdToSend,
         new ParametizedText(
@@ -92,6 +97,7 @@ public class ChatDetailsStatHandler implements StatHandler {
 
     List<ChatStat> sorted = chatStats.stream().sorted(comparator).collect(Collectors.toList());
     for (ChatStat chatStat : sorted) {
+      boolean hasContacts = chatStat.getContacts().values().stream().anyMatch(c -> c.size() > 0);
       content.add(
           new NodeElement(
               "p",
@@ -117,16 +123,56 @@ public class ChatDetailsStatHandler implements StatHandler {
                   new NodeElement("br", emptyMap(), emptyList()),
                   new NodeElement(
                       "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
-                  new NodeText(
-                      String.valueOf(
-                          chatStat.getContacts().values().stream()
-                              .filter(c -> c.size() > 0)
-                              .count())),
+                  hasContacts
+                      ? new NodeElement(
+                          "a",
+                          Collections.singletonMap(
+                              "href",
+                              telegraphService.getPage("Stat-Contact-" + chatStat.chatId).getUrl()),
+                          Collections.singletonList(
+                              new NodeText(
+                                  String.valueOf(
+                                      chatStat.getContacts().values().stream()
+                                          .filter(c -> c.size() > 0)
+                                          .count()))))
+                      : new NodeText("0"),
                   new NodeElement("br", emptyMap(), emptyList()))));
     }
 
     telegraphService.createPageIfNotExist(linkedId);
     telegraphService.updatePage(linkedId, name, content);
+  }
+
+  private void createContactPage(ChatStat chatStat, String linkedId) {
+    List<Node> content = new ArrayList<>();
+    content.add(
+        new NodeElement(
+            "p",
+            emptyMap(),
+            Collections.singletonList(new NodeText("Контакты для чата " + chatStat.chatId))));
+
+    List<Map.Entry<Long, Set<Long>>> entries =
+        chatStat.getContacts().entrySet().stream()
+            .filter(e -> e.getValue().size() > 0)
+            .collect(Collectors.toList());
+
+    for (Map.Entry<Long, Set<Long>> entry : entries) {
+      Long pidorId = entry.getKey();
+      Set<Long> linkedChats = entry.getValue();
+      String name =
+          pidorRepository
+              .getByChatAndPlayerTgId(chatStat.getChatId(), pidorId)
+              .map(Pidor::getFullName)
+              .orElse("-");
+      content.add(new NodeElement("br", emptyMap(), emptyList()));
+      content.add(
+          new NodeText(
+              name
+                  + linkedChats.stream().map(this::getChatName).collect(Collectors.joining(", "))));
+    }
+
+    telegraphService.createPageIfNotExist(linkedId);
+    telegraphService.updatePage(linkedId, "Контакты для чата " + chatStat.chatId, content);
   }
 
   private ChatStat toStat(long chatId) {
