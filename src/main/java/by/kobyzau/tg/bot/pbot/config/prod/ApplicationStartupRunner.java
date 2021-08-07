@@ -19,6 +19,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import org.telegram.telegraph.ExecutorOptions;
+import org.telegram.telegraph.TelegraphContext;
+import org.telegram.telegraph.TelegraphContextInitializer;
 
 @Component
 @Profile("prod")
@@ -60,6 +63,8 @@ public class ApplicationStartupRunner implements ApplicationRunner {
             + new ShortDateText(Version.getLast().getRelease())
             + ": "
             + version);
+    TelegraphContextInitializer.init();
+    TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();
     if (feedbackBot != null) {
       feedbackBot.botConnect();

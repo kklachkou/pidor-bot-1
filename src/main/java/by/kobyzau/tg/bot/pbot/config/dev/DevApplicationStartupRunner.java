@@ -19,6 +19,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import org.telegram.telegraph.ExecutorOptions;
+import org.telegram.telegraph.TelegraphContext;
+import org.telegram.telegraph.TelegraphContextInitializer;
 
 @Component
 @Profile("dev")
@@ -50,6 +53,8 @@ public class DevApplicationStartupRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     logger.info("\u2B50\u2B50\u2B50\u2B50\u2B50\nDev DevApp started\nVersion " + version);
+    TelegraphContextInitializer.init();
+    TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();
     logger.info("Bot started : " + bot.getBotUsername());
     commandSyncer.sync();
