@@ -3,6 +3,7 @@ package by.kobyzau.tg.bot.pbot.handlers.command.sync;
 import by.kobyzau.tg.bot.pbot.bots.PidorBot;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
+import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -61,7 +62,7 @@ public class CommandSyncerImpl implements CommandSyncer {
   private BotCommand map(Command command) {
     BotCommand botCommand = new BotCommand();
     botCommand.setCommand(command.getName());
-    botCommand.setDescription(command.getShortDesc());
+    botCommand.setDescription(StringUtil.isBlank(command.getShortDesc(), command.getName()));
     return botCommand;
   }
 }
