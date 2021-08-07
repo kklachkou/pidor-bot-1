@@ -6,5 +6,6 @@ public enum StatType {
   CHATS,
   PERMISSIONS,
   FEEDBACK,
-  ROW_COUNT
+  ROW_COUNT,
+  CHAT_DETAILS
 }

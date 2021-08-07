@@ -21,7 +21,7 @@ bot:
     token: ${BOT_TOKEN}
 
 app:
-  version: 9.1 Auto-Pidor setting
+  version: 9.2 Chat Details
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
