@@ -47,8 +47,14 @@ CREATE TABLE IF NOT EXISTS pidor_of_year(
     year int NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS telegraph_page(
+    id serial PRIMARY KEY,
+    path VARCHAR (100) NOT NULL,
+    url VARCHAR (100) NOT NULL,
+    linked_id VARCHAR (100) NOT NULL
+);
 
-CREATE TABLE custom_daily_user_data(
+CREATE TABLE IF NOT EXISTS custom_daily_user_data(
     id serial PRIMARY KEY,
     chat_id bigint NOT NULL,
     player_tg_id int NOT NULL,
@@ -57,7 +63,7 @@ CREATE TABLE custom_daily_user_data(
     data VARCHAR (1000) NOT NULL
 );
 
-CREATE TABLE feedback(
+CREATE TABLE IF NOT EXISTS feedback(
     id serial PRIMARY KEY,
     player_tg_id int NOT NULL,
     message_id int NOT NULL,

@@ -71,7 +71,11 @@
             <version>5.3.3</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegraph</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
         <dependency>
             <groupId>org.mockito</groupId>

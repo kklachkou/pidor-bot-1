@@ -5,11 +5,11 @@ import by.kobyzau.tg.bot.pbot.handlers.stat.StatHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.StatType;
+import by.kobyzau.tg.bot.pbot.model.TelegraphPage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.BoldText;
 import by.kobyzau.tg.bot.pbot.program.text.DateText;
 import by.kobyzau.tg.bot.pbot.program.text.IntText;
-import by.kobyzau.tg.bot.pbot.program.text.LongText;
 import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
@@ -18,15 +18,26 @@ import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
+import by.kobyzau.tg.bot.pbot.telegraph.TelegraphService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegraph.api.objects.Node;
+import org.telegram.telegraph.api.objects.NodeElement;
+import org.telegram.telegraph.api.objects.NodeText;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 
 @Component
 public class ChatDetailsStatHandler implements StatHandler {
@@ -35,6 +46,7 @@ public class ChatDetailsStatHandler implements StatHandler {
   @Autowired private PidorRepository pidorRepository;
   @Autowired private Logger logger;
   @Autowired private BotActionCollector botActionCollector;
+  @Autowired private TelegraphService telegraphService;
 
   @Override
   public void printStat(long chatIdToSend) {
@@ -45,37 +57,54 @@ public class ChatDetailsStatHandler implements StatHandler {
             .map(Pidor::getChatId)
             .distinct()
             .collect(Collectors.toList());
-    TextBuilder textBuilder = new TextBuilder();
-    textBuilder
-        .append(new IntText(chatIds.size()))
-        .append(new SimpleText(" чатов."))
-        .append(new NewLineText())
-        .append(new NewLineText());
+    List<Node> content = new ArrayList<>();
+    content.add(
+        new NodeElement(
+            "p", emptyMap(), Collections.singletonList(new NodeText(chatIds.size() + " чатов."))));
 
     logger.info("#DetailedStat Got chat count");
     for (int i = 0; i < chatIds.size(); i++) {
+
       logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
       Long chatId = chatIds.get(i);
-      textBuilder
-          .append(new ParametizedText("#START {0}", new LongText(chatId)))
-          .append(new NewLineText());
+
       try {
-        appendRow(textBuilder, "Имя", getChatName(chatId));
-        appendRow(textBuilder, "Колличество людей", getMemberCount(chatId));
-        appendRow(textBuilder, "Колличество Пидоров", getPidorCount(chatId));
-        appendRow(textBuilder, "Срок", getDuration(chatId));
-        appendRow(textBuilder, "Людей-контактов", getContactPeopleNum(chatId));
+        content.add(
+            new NodeElement(
+                "p",
+                emptyMap(),
+                Arrays.asList(
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Чат " + chatId))),
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Имя: "))),
+                    new NodeText(getChatName(chatId).text()),
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement(
+                        "b", emptyMap(), singletonList(new NodeText("Колличество людей: "))),
+                    new NodeText(getMemberCount(chatId).text()),
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement(
+                        "b", emptyMap(), singletonList(new NodeText("Колличество пидоров: "))),
+                    new NodeText(getPidorCount(chatId).text()),
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Срок: "))),
+                    new NodeText(getDuration(chatId).text()),
+                    new NodeElement("br", emptyMap(), emptyList()),
+                    new NodeElement(
+                        "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
+                    new NodeText(getContactPeopleNum(chatId).text()),
+                    new NodeElement("br", emptyMap(), emptyList()))));
 
       } catch (Exception e) {
         logger.error("Cannot get Stat for chat " + chatId, e);
       }
-      textBuilder
-          .append(new ParametizedText("#END {0}", new LongText(chatId)))
-          .append(new NewLineText())
-          .append(new NewLineText());
     }
     logger.info("#DetailedStat Completed");
-    botActionCollector.text(chatIdToSend, textBuilder);
+    telegraphService.createPageIfNotExist("TEMP");
+    telegraphService.updatePage("TEMP", "Stat", content);
+    TelegraphPage telegraphPage = telegraphService.getPage("TEMP");
+    botActionCollector.text(chatIdToSend, new SimpleText(telegraphPage.getUrl()));
   }
 
   private void appendRow(TextBuilder textBuilder, String column, Text value) {
