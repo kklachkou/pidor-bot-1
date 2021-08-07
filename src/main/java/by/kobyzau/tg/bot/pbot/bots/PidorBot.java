@@ -17,7 +17,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.util.Optional;
 
 @Component
-public class ConcurrentCollectorBot extends TelegramLongPollingBot implements Bot {
+public class PidorBot extends TelegramLongPollingBot implements Bot {
 
   @Autowired private Logger logger;
 

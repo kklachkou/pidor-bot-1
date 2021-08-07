@@ -12,11 +12,10 @@ public interface ChatSettingsService {
   boolean willBeChanged(ChatCheckboxSettingType type, long chatId);
 
   enum ChatCheckboxSettingType {
-    GDPR_MESSAGE_ENABLED(
+    AUTO_REGISTER_USERS(
         false,
-        "Очистка сообщений",
-        "через 24-48 часов сообщение с политически-опастными словами будут удалены из чата."
-            + " Для этого боту требуется права на удаление сообщений",
+        "Авто-регистрация Пидоров",
+        "Автоматически регистрирует человека при любом его сообщении в чате",
         ENABLED_ICON,
         DISABLED_ICON,
         true),

@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.CallbackUpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.dto.ChatCheckboxSettingCommandDto;
@@ -27,10 +28,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.SETTING_ROOT;
 import static by.kobyzau.tg.bot.pbot.service.FutureActionService.FutureActionType.ENABLE_SETTING;
 
 @Component
-public class CheckboxSettingUpdateHandler implements UpdateHandler {
+public class CheckboxSettingUpdateHandler extends CallbackUpdateHandler<CheckboxSettingCommandInlineDto> {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private ChatSettingsService chatSettingsService;
@@ -45,8 +47,18 @@ public class CheckboxSettingUpdateHandler implements UpdateHandler {
   private Executor executor;
 
   @Override
-  public UpdateHandlerStage getStage() {
-    return UpdateHandlerStage.CALLBACK;
+  protected Class<CheckboxSettingCommandInlineDto> getDtoType() {
+    return CheckboxSettingCommandInlineDto.class;
+  }
+
+  @Override
+  protected SerializableInlineType getSerializableType() {
+    return SETTING_ROOT;
+  }
+
+  @Override
+  protected void handleCallback(Update update, CheckboxSettingCommandInlineDto dto) {
+
   }
 
   @Override
@@ -62,7 +74,7 @@ public class CheckboxSettingUpdateHandler implements UpdateHandler {
         || prevMessage.getFrom() == null
         || !data.isPresent()
         || data.get().getType() == null
-        || !Objects.equals(SerializableInlineType.SETTING_ROOT.getIndex(), data.get().getIndex())
+        || !Objects.equals(SETTING_ROOT.getIndex(), data.get().getIndex())
         || !botUserName.equalsIgnoreCase(prevMessage.getFrom().getUserName())) {
       return false;
     }

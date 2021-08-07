@@ -12,12 +12,13 @@ import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import java.time.LocalDate;
+import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.concurrent.Executor;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 @Component("excludeUserGameStartTask")
 public class ExcludeUserGameStartTask implements Task {
@@ -67,9 +68,17 @@ public class ExcludeUserGameStartTask implements Task {
           new ParametizedText(
               "Но поспеши, ведь я исключу из игры лишь {0}х", new IntText(numPidorsToExclude)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
+      KeyboardRow replyButton = new KeyboardRow();
+      replyButton.add(wordOfTheDay);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendMessageBotAction(chatId, new SimpleText(wordOfTheDay)),
+              new SendMessageBotAction(chatId, new SimpleText(wordOfTheDay))
+                  .withReplyMarkup(
+                      ReplyKeyboardMarkup.builder()
+                          .resizeKeyboard(true)
+                          .oneTimeKeyboard(true)
+                          .keyboardRow(replyButton)
+                          .build()),
               botService.canPinMessage(chatId)));
     } catch (Exception e) {
       logger.error("Cannot start exclude user game for chat " + chatId, e);

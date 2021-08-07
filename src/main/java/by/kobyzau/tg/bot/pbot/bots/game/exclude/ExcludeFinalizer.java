@@ -16,16 +16,17 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
+import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 @Component
 public class ExcludeFinalizer {
@@ -55,6 +56,10 @@ public class ExcludeFinalizer {
     if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
       return;
     }
+
+    botActionCollector.add(
+        new SendMessageBotAction(chatId, new SimpleText("Игра завершена!"))
+            .withReplyMarkup(ReplyKeyboardRemove.builder().removeKeyboard(true).build()));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     Set<Long> playedIds =
         gameService.getExcludeGameUserValues(chatId, now).stream()

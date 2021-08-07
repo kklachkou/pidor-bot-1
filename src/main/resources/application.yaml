@@ -14,14 +14,14 @@ logger:
 
 bot:
   feedback:
-    username: ${BOT_FEEDBACK_USERNAME}
-    token: ${BOT_FEEDBACK_TOKEN}
+    username: ${BOT_FEEDBACK_USERNAME:None}
+    token: ${BOT_FEEDBACK_TOKEN:None}
   pidor:
     username: ${BOT_USERNAME}
     token: ${BOT_TOKEN}
 
 app:
-  version: 9.0 New Votes
+  version: 9.1 Auto-Pidor setting
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:

@@ -1,9 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
-import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.handlers.command.ParsedCommand;
-import by.kobyzau.tg.bot.pbot.handlers.command.parser.CommandParser;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
@@ -13,28 +10,27 @@ import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
+import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.AUTO_REGISTER_USERS;
 
 @Component
 public class RegPidorUpdateHandler implements UpdateHandler {
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;
+  @Autowired private ChatSettingsService chatSettingsService;
   @Autowired private Logger logger;
   private final Selection<String> catchedPidorMessage =
       new ConsistentSelection<>(
@@ -54,10 +50,13 @@ public class RegPidorUpdateHandler implements UpdateHandler {
       return false;
     }
 
-   return updateUser(update.getMessage().getChatId(), update.getMessage().getFrom());
+    return updateUser(update.getMessage().getChatId(), update.getMessage().getFrom());
   }
 
   private boolean updateUser(long chatId, User user) {
+    if (!chatSettingsService.isEnabled(AUTO_REGISTER_USERS, chatId)) {
+      return false;
+    }
     Boolean bot = user.getIsBot();
     if (bot != null && bot) {
       return false;

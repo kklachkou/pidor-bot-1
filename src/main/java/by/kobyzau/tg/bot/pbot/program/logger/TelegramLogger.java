@@ -1,41 +1,38 @@
 package by.kobyzau.tg.bot.pbot.program.logger;
 
-import by.kobyzau.tg.bot.pbot.tg.TelegramSender;
+import by.kobyzau.tg.bot.pbot.bots.LoggerBot;
+import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.Executor;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component("TGLogger")
 public class TelegramLogger implements Logger {
 
-  @Value("${logger.tg.token}")
-  private String botToken;
-
   @Value("${logger.tg.chat}")
   private String backupChat;
 
-  @Autowired private TelegramSender telegramSender;
+  @Autowired private LoggerBot loggerBot;
 
   @Autowired
-  @Qualifier("cachedExecutor")
+  @Qualifier("loggerExecutor")
   private Executor executor;
 
   @Override
   public void debug(String message) {
-    executor.execute(() -> sendMessage("<pre>[DEBUG]</pre>\n" + message));
+    executor.execute(() -> sendMessage("<pre>[DEBUG]</pre>\n" + message, 0));
   }
 
   @Override
   public void info(String message) {
-    executor.execute(() -> sendMessage("<pre>[INFO]</pre>\n" + message));
+    executor.execute(() -> sendMessage("<pre>[INFO]</pre>\n" + message, 0));
   }
 
   @Override
   public void warn(String message) {
-    executor.execute(() -> sendMessage("[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message));
+    executor.execute(() -> sendMessage("[ #WARNING ]\n⚠️⚠️⚠️⚠️⚠️\n" + message, 0));
   }
 
   @Override
@@ -49,7 +46,8 @@ public class TelegramLogger implements Logger {
                     + e.getMessage()
                     + "\nStacktrace:\n<pre>"
                     + getStacktrace(e)
-                    + "</pre>"));
+                    + "</pre>",
+                0));
   }
 
   private String getStacktrace(Exception e) {
@@ -82,11 +80,24 @@ public class TelegramLogger implements Logger {
     }
   }
 
-  private void sendMessage(String message) {
+  private void sendMessage(String message, int attempt) {
     try {
-      telegramSender.sendMessage(botToken, backupChat, message);
+      loggerBot.execute(
+          SendMessage.builder()
+              .parseMode("html")
+              .text(message)
+              .chatId(backupChat)
+              .disableNotification(true)
+              .build());
     } catch (Exception e) {
       e.printStackTrace();
+      if (attempt < 10) {
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
+        sendMessage(message, attempt + 1);
+      }
     }
   }
 }

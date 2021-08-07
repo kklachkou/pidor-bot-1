@@ -8,15 +8,14 @@ import by.kobyzau.tg.bot.pbot.repository.exclude.ExcludeGameRepository;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ExcludeGameServiceImpl implements ExcludeGameService {
@@ -27,7 +26,8 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
   @Autowired private CalendarSchedule calendarSchedule;
 
   private static final List<String> KEYWORDS =
-      Arrays.asList("Чур не я", "Я не пидор", "Не пидор я", "Не тронь меня", "Боже упаси");
+      Arrays.asList(
+          "Чур не я", "Я не пидор", "Не пидор я", "Не тронь меня", "Боже упаси", "Отвали");
 
   @Override
   public boolean isExcludeGameDay(long chatId, LocalDate localDate) {

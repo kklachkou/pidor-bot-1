@@ -3,15 +3,14 @@ package by.kobyzau.tg.bot.pbot.config;
 import by.kobyzau.tg.bot.pbot.program.executor.LoggerExecutor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 @Configuration
 @PropertySource(value = {"/application.yaml"})
@@ -37,6 +36,13 @@ public class AppConfig {
     ThreadFactory threadFactory =
         new ThreadFactoryBuilder().setNameFormat("my-cached-thread-%d").build();
     return new LoggerExecutor(Executors.newCachedThreadPool(threadFactory), logger);
+  }
+
+  @Bean("loggerExecutor")
+  public Executor getLoggerExecutor() {
+    ThreadFactory threadFactory =
+        new ThreadFactoryBuilder().setNameFormat("my-logger-thread-%d").build();
+    return Executors.newCachedThreadPool(threadFactory);
   }
 
   @Bean("sendMessagesExecutor")

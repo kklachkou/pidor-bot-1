@@ -17,13 +17,12 @@ import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-
-import java.util.Optional;
 
 @Profile("!new-year")
 @Component
@@ -51,6 +50,7 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
             "Если кто-то спросит меня, кто сегодня пидор дня, я отвечу {0}",
             "И прекрасный человек дня сегодня... а нет, ошибка, всего-лишь пидор - {0}",
             "Ого, вы посмотрите только! А пидор дня то - {0}",
+            "{0} - у ракеты класса 'Земля-Пидор' для тебя плохие новости...",
             "А сегодня наш пидор это {0}",
             "Думаешь скрыться от судьбы? {0} - она тебя настигнет и сделает пидором дня",
             "Думаю всё очевидно, {0} - ты пидор дня!",
@@ -75,7 +75,7 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
 
   @Override
   public PrioritySelection.Priority getPriority() {
-    return PrioritySelection.Priority.MEDIUM;
+    return PrioritySelection.Priority.LOW;
   }
 
   @Override

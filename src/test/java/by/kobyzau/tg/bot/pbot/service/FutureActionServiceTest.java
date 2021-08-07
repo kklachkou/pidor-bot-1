@@ -27,7 +27,7 @@ public class FutureActionServiceTest {
   @Test
   public void getFutureActionData() {
     // given
-    FutureActionService.FutureActionType type = FutureActionService.FutureActionType.GDPR_MESSAGE;
+    FutureActionService.FutureActionType type = FutureActionService.FutureActionType.DEFAULT;
     LocalDate date = LocalDate.of(2020, 10, 11);
     List<CustomDailyUserData> dataList = new ArrayList<>();
     dataList.add(

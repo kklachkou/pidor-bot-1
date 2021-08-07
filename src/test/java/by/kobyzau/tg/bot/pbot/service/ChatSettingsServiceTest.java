@@ -4,6 +4,8 @@ import by.kobyzau.tg.bot.pbot.model.CustomDailyUserData;
 import by.kobyzau.tg.bot.pbot.repository.custom.CustomDailyDataRepository;
 import by.kobyzau.tg.bot.pbot.repository.custom.HashMapDailyDataRepositoryCustom;
 import by.kobyzau.tg.bot.pbot.service.impl.ChatSettingsServiceImpl;
+import java.time.LocalDate;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,10 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-
-import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.*;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.AUTO_REGISTER_USERS;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.ELECTION_HIDDEN;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.GAMES_FREQUENT;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +35,7 @@ public class ChatSettingsServiceTest {
   @Test
   public void isEnabled_noValue_defaultTrue() {
     // given
-    ChatSettingsService.ChatCheckboxSettingType type = GDPR_MESSAGE_ENABLED;
+    ChatSettingsService.ChatCheckboxSettingType type = AUTO_REGISTER_USERS;
     Arrays.asList(
             getDisabledItem(GAMES_FREQUENT),
             getDisabledItem(ELECTION_HIDDEN),
@@ -57,10 +58,10 @@ public class ChatSettingsServiceTest {
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
     Arrays.asList(
             getDisabledItem(GAMES_FREQUENT),
-            getDisabledItem(GDPR_MESSAGE_ENABLED),
+            getDisabledItem(AUTO_REGISTER_USERS),
             getAnotherTypeItem(type),
             getEnabledItem(GAMES_FREQUENT),
-            getEnabledItem(GDPR_MESSAGE_ENABLED),
+            getEnabledItem(AUTO_REGISTER_USERS),
             getUnknownItem())
         .forEach(repository::create);
 
@@ -74,7 +75,7 @@ public class ChatSettingsServiceTest {
   @Test
   public void isEnabled_disabled_defaultTrue() {
     // given
-    ChatSettingsService.ChatCheckboxSettingType type = GDPR_MESSAGE_ENABLED;
+    ChatSettingsService.ChatCheckboxSettingType type = AUTO_REGISTER_USERS;
     Arrays.asList(
             getDisabledItem(type),
             getDisabledItem(GAMES_FREQUENT),
@@ -99,10 +100,10 @@ public class ChatSettingsServiceTest {
     Arrays.asList(
             getDisabledItem(type),
             getDisabledItem(GAMES_FREQUENT),
-            getDisabledItem(GDPR_MESSAGE_ENABLED),
+            getDisabledItem(AUTO_REGISTER_USERS),
             getAnotherTypeItem(type),
             getEnabledItem(GAMES_FREQUENT),
-            getEnabledItem(GDPR_MESSAGE_ENABLED),
+            getEnabledItem(AUTO_REGISTER_USERS),
             getUnknownItem())
         .forEach(repository::create);
 
@@ -116,7 +117,7 @@ public class ChatSettingsServiceTest {
   @Test
   public void isEnabled_enabled_defaultTrue() {
     // given
-    ChatSettingsService.ChatCheckboxSettingType type = GDPR_MESSAGE_ENABLED;
+    ChatSettingsService.ChatCheckboxSettingType type = AUTO_REGISTER_USERS;
     Arrays.asList(
             getEnabledItem(type),
             getDisabledItem(GAMES_FREQUENT),
@@ -141,10 +142,10 @@ public class ChatSettingsServiceTest {
     Arrays.asList(
             getEnabledItem(type),
             getDisabledItem(GAMES_FREQUENT),
-            getDisabledItem(GDPR_MESSAGE_ENABLED),
+            getDisabledItem(AUTO_REGISTER_USERS),
             getAnotherTypeItem(type),
             getEnabledItem(GAMES_FREQUENT),
-            getEnabledItem(GDPR_MESSAGE_ENABLED),
+            getEnabledItem(AUTO_REGISTER_USERS),
             getUnknownItem())
         .forEach(repository::create);
 
@@ -157,91 +158,79 @@ public class ChatSettingsServiceTest {
 
   @Test
   public void setEnabled_noValues() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, true);
 
-    //then
+    // then
     assertTrue(settingsService.isEnabled(type, chatId));
   }
 
   @Test
   public void setEnabled_hasDisabled() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
     repository.create(getDisabledItem(type));
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, true);
 
-    //then
+    // then
     assertTrue(settingsService.isEnabled(type, chatId));
   }
 
   @Test
   public void setEnabled_hasEnabled() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
     repository.create(getEnabledItem(type));
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, true);
 
-    //then
+    // then
     assertTrue(settingsService.isEnabled(type, chatId));
   }
 
-
-
-
-
-
-
-
-
-
-
-
   @Test
   public void setDisabled_noValues() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, false);
 
-    //then
+    // then
     assertFalse(settingsService.isEnabled(type, chatId));
   }
 
   @Test
   public void setDisabled_hasDisabled() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
     repository.create(getDisabledItem(type));
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, false);
 
-    //then
+    // then
     assertFalse(settingsService.isEnabled(type, chatId));
   }
 
   @Test
   public void setDisabled_hasEnabled() {
-    //given
+    // given
     ChatSettingsService.ChatCheckboxSettingType type = ELECTION_HIDDEN;
     repository.create(getEnabledItem(type));
 
-    //when
+    // when
     settingsService.setEnabled(type, chatId, false);
 
-    //then
+    // then
     assertFalse(settingsService.isEnabled(type, chatId));
   }
-
 
   private CustomDailyUserData getDisabledItem(ChatSettingsService.ChatCheckboxSettingType type) {
     CustomDailyUserData customData = getBase();

@@ -6,6 +6,8 @@ import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class SendMessageBotAction implements BotAction<Message> {
@@ -13,6 +15,7 @@ public class SendMessageBotAction implements BotAction<Message> {
   private final long chatId;
   private final Text text;
   private final Integer replyToMessage;
+  private ReplyKeyboard replyKeyboardMarkup;
 
   public SendMessageBotAction(long chatId, String message) {
     this(chatId, new SimpleText(message));
@@ -28,6 +31,11 @@ public class SendMessageBotAction implements BotAction<Message> {
     this.replyToMessage = replyToMessage;
   }
 
+  public SendMessageBotAction withReplyMarkup(ReplyKeyboard replyMarkup) {
+    this.replyKeyboardMarkup = replyMarkup;
+    return this;
+  }
+
   @Override
   public Message process(Bot bot) throws TelegramApiException {
     SendMessage sendMessage =
@@ -37,6 +45,7 @@ public class SendMessageBotAction implements BotAction<Message> {
             .parseMode("html")
             .replyToMessageId(replyToMessage)
             .disableNotification(DateUtil.sleepTime())
+            .replyMarkup(replyKeyboardMarkup)
             .build();
     return bot.execute(sendMessage);
   }

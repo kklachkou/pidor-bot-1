@@ -12,6 +12,8 @@ import by.kobyzau.tg.bot.pbot.service.FutureActionService;
 import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import java.util.UUID;
+import java.util.concurrent.Executor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,24 +22,27 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.telegram.telegrambots.meta.api.objects.*;
-
-import java.util.UUID;
-import java.util.concurrent.Executor;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.SETTING_ROOT;
+import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.AUTO_REGISTER_USERS;
 import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.GAMES_FREQUENT;
-import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.GDPR_MESSAGE_ENABLED;
 import static by.kobyzau.tg.bot.pbot.service.FutureActionService.FutureActionType.ENABLE_SETTING;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CheckboxSettingUpdateHandlerTest extends BotActionAbstractTest {
 
   private final long chatId = 123;
-  private final ChatSettingsService.ChatCheckboxSettingType realTimeType = GDPR_MESSAGE_ENABLED;
+  private final ChatSettingsService.ChatCheckboxSettingType realTimeType = AUTO_REGISTER_USERS;
   private final ChatSettingsService.ChatCheckboxSettingType futureType = GAMES_FREQUENT;
   private User bot;
   private User calledUser;
