@@ -7,20 +7,16 @@ import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.StatType;
 import by.kobyzau.tg.bot.pbot.model.TelegraphPage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
-import by.kobyzau.tg.bot.pbot.program.text.BoldText;
 import by.kobyzau.tg.bot.pbot.program.text.DateText;
 import by.kobyzau.tg.bot.pbot.program.text.IntText;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.telegraph.TelegraphService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,14 +103,6 @@ public class ChatDetailsStatHandler implements StatHandler {
     botActionCollector.text(chatIdToSend, new SimpleText(telegraphPage.getUrl()));
   }
 
-  private void appendRow(TextBuilder textBuilder, String column, Text value) {
-    textBuilder
-        .append(new BoldText(column))
-        .append(new SimpleText(": "))
-        .append(value)
-        .append(new NewLineText());
-  }
-
   private Text getPidorCount(long chatId) {
     return new IntText(pidorRepository.getByChat(chatId).size());
   }
@@ -134,7 +122,7 @@ public class ChatDetailsStatHandler implements StatHandler {
           continue;
         }
         boolean hasSameUser =
-            pidorRepository.getByChat(chatId).stream()
+            pidorRepository.getByChat(anotherChatId).stream()
                 .map(Pidor::getTgId)
                 .anyMatch(id -> id == pidorTgId);
         if (hasSameUser) {
@@ -169,14 +157,19 @@ public class ChatDetailsStatHandler implements StatHandler {
     LocalDate now = DateUtil.now();
 
     if (firstDate.plusYears(2).isBefore(now)) {
-      return new SimpleText(TGUtil.escapeHTML(">2 лет"));
+      return new SimpleText(">2 лет");
     }
     if (firstDate.plusYears(1).isBefore(now)) {
-      return new SimpleText(TGUtil.escapeHTML(">1 года"));
+      return new SimpleText(">1 года");
     }
     for (int i = 11; i >= 1; i--) {
       if (firstDate.plusMonths(i).isBefore(now)) {
-        return new ParametizedText(TGUtil.escapeHTML("<{0} месяцев"), new IntText(i));
+        return new ParametizedText("<{0} месяцев", new IntText(i));
+      }
+    }
+    for (int i = 31; i >= 1; i--) {
+      if (firstDate.plusDays(i).isBefore(now)) {
+        return new ParametizedText("<{0} дней", new IntText(i));
       }
     }
     return new ParametizedText("Создан {0}", new DateText(firstDate));
