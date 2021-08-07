@@ -19,6 +19,7 @@ import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -139,14 +140,14 @@ public class ChatDetailsStatHandler implements StatHandler {
     LocalDate now = DateUtil.now();
 
     if (firstDate.plusYears(2).isBefore(now)) {
-      return new SimpleText(">2 лет");
+      return new SimpleText(TGUtil.escapeHTML(">2 лет"));
     }
     if (firstDate.plusYears(1).isBefore(now)) {
-      return new SimpleText(">1 года");
+      return new SimpleText(TGUtil.escapeHTML(">1 года"));
     }
     for (int i = 11; i >= 1; i--) {
       if (firstDate.plusMonths(i).isBefore(now)) {
-        return new ParametizedText("<{0} месяцев", new IntText(i));
+        return new ParametizedText(TGUtil.escapeHTML("<{0} месяцев"), new IntText(i));
       }
     }
     return new ParametizedText("Создан {0}", new DateText(firstDate));
