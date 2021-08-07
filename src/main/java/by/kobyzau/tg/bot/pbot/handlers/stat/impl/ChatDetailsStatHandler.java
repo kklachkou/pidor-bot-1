@@ -43,7 +43,9 @@ public class ChatDetailsStatHandler implements StatHandler {
         .append(new SimpleText(" чатов."))
         .append(new NewLineText())
         .append(new NewLineText());
-    for (long chatId : chatIds) {
+    for (int i = 0; i < chatIds.size(); i++) {
+      logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
+      Long chatId = chatIds.get(i);
       textBuilder
           .append(new ParametizedText("#START {0}", new LongText(chatId)))
           .append(new NewLineText());
