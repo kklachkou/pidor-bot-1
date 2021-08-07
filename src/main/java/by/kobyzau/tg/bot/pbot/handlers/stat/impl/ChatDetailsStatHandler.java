@@ -5,7 +5,6 @@ import by.kobyzau.tg.bot.pbot.handlers.stat.StatHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.StatType;
-import by.kobyzau.tg.bot.pbot.model.TelegraphPage;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.DateText;
 import by.kobyzau.tg.bot.pbot.program.text.IntText;
@@ -22,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,6 +46,7 @@ public class ChatDetailsStatHandler implements StatHandler {
   @Autowired private Logger logger;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegraphService telegraphService;
+  private static final LocalDate DEFAULT_DATE = LocalDate.of(2050, 1, 1);
 
   @Override
   public void printStat(long chatIdToSend) {
@@ -53,70 +57,99 @@ public class ChatDetailsStatHandler implements StatHandler {
             .map(Pidor::getChatId)
             .distinct()
             .collect(Collectors.toList());
+    logger.info("#DetailedStat Got chat count");
+    List<ChatStat> chatStats = new ArrayList<>();
+    for (int i = 0; i < chatIds.size(); i++) {
+      Long chatId = chatIds.get(i);
+      chatStats.add(toStat(chatId));
+      logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
+    }
+    createPage(
+        chatStats, Comparator.comparing(ChatStat::getFirstDate), "По времени", "Stat-Duration");
+    createPage(
+        chatStats,
+        Comparator.comparing(c -> c.getContacts().keySet().size()),
+        "По колличеству пидоров",
+        "Stat-Count");
+    botActionCollector.text(
+        chatIdToSend,
+        new ParametizedText(
+            "{0}: {1}\n{2}: {3}",
+            new SimpleText("По времени"),
+            new SimpleText(telegraphService.getPage("Stat-Duration").getUrl()),
+            new SimpleText("По Колличеству"),
+            new SimpleText(telegraphService.getPage("Stat-Count").getUrl())));
+  }
+
+  private void createPage(
+      List<ChatStat> chatStats, Comparator<ChatStat> comparator, String name, String linkedId) {
     List<Node> content = new ArrayList<>();
     content.add(
         new NodeElement(
-            "p", emptyMap(), Collections.singletonList(new NodeText(chatIds.size() + " чатов."))));
+            "p",
+            emptyMap(),
+            Collections.singletonList(new NodeText(chatStats.size() + " чатов."))));
 
-    logger.info("#DetailedStat Got chat count");
-    for (int i = 0; i < chatIds.size(); i++) {
-
-      logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
-      Long chatId = chatIds.get(i);
-
-      try {
-        content.add(
-            new NodeElement(
-                "p",
-                emptyMap(),
-                Arrays.asList(
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Чат " + chatId))),
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Имя: "))),
-                    new NodeText(getChatName(chatId).text()),
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement(
-                        "b", emptyMap(), singletonList(new NodeText("Колличество людей: "))),
-                    new NodeText(getMemberCount(chatId).text()),
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement(
-                        "b", emptyMap(), singletonList(new NodeText("Колличество пидоров: "))),
-                    new NodeText(getPidorCount(chatId).text()),
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement("b", emptyMap(), singletonList(new NodeText("Срок: "))),
-                    new NodeText(getDuration(chatId).text()),
-                    new NodeElement("br", emptyMap(), emptyList()),
-                    new NodeElement(
-                        "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
-                    new NodeText(getContactPeopleNum(chatId).text()),
-                    new NodeElement("br", emptyMap(), emptyList()))));
-
-      } catch (Exception e) {
-        logger.error("Cannot get Stat for chat " + chatId, e);
-      }
+    List<ChatStat> sorted = chatStats.stream().sorted(comparator).collect(Collectors.toList());
+    for (ChatStat chatStat : sorted) {
+      content.add(
+          new NodeElement(
+              "p",
+              emptyMap(),
+              Arrays.asList(
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement(
+                      "b", emptyMap(), singletonList(new NodeText("Чат " + chatStat.getChatId()))),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement("b", emptyMap(), singletonList(new NodeText("Имя: "))),
+                  new NodeText(chatStat.name),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement(
+                      "b", emptyMap(), singletonList(new NodeText("Колличество людей: "))),
+                  new NodeText(String.valueOf(chatStat.peopleCount)),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement(
+                      "b", emptyMap(), singletonList(new NodeText("Колличество пидоров: "))),
+                  new NodeText(String.valueOf(chatStat.getContacts().keySet().size())),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement("b", emptyMap(), singletonList(new NodeText("Срок: "))),
+                  new NodeText(getDuration(chatStat.getFirstDate()).text()),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement(
+                      "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
+                  new NodeText(
+                      String.valueOf(
+                          chatStat.getContacts().values().stream()
+                              .filter(c -> c.size() > 0)
+                              .count())),
+                  new NodeElement("br", emptyMap(), emptyList()))));
     }
-    logger.info("#DetailedStat Completed");
-    telegraphService.createPageIfNotExist("TEMP");
-    telegraphService.updatePage("TEMP", "Stat", content);
-    TelegraphPage telegraphPage = telegraphService.getPage("TEMP");
-    botActionCollector.text(chatIdToSend, new SimpleText(telegraphPage.getUrl()));
+
+    telegraphService.createPageIfNotExist(linkedId);
+    telegraphService.updatePage(linkedId, name, content);
   }
 
-  private Text getPidorCount(long chatId) {
-    return new IntText(pidorRepository.getByChat(chatId).size());
+  private ChatStat toStat(long chatId) {
+    return new ChatStat(
+        chatId,
+        getContacts(chatId),
+        getChatName(chatId),
+        getMemberCount(chatId),
+        getFirstDate(chatId),
+        getEndDate(chatId));
   }
 
-  private Text getContactPeopleNum(long chatId) {
+  private Map<Long, Set<Long>> getContacts(long chatId) {
     List<Pidor> pidorsOfChat = pidorRepository.getByChat(chatId);
     List<Long> chatIds =
         pidorRepository.getAll().stream()
             .map(Pidor::getChatId)
             .distinct()
             .collect(Collectors.toList());
-    int numContacts = 0;
+    Map<Long, Set<Long>> contacts = new HashMap<>();
     for (Pidor pidor : pidorsOfChat) {
       long pidorTgId = pidor.getTgId();
+      contacts.put(pidorTgId, new HashSet<>());
       for (Long anotherChatId : chatIds) {
         if (anotherChatId.equals(chatId)) {
           continue;
@@ -126,31 +159,35 @@ public class ChatDetailsStatHandler implements StatHandler {
                 .map(Pidor::getTgId)
                 .anyMatch(id -> id == pidorTgId);
         if (hasSameUser) {
-          numContacts++;
+          Set<Long> anotherContacts = contacts.get(pidorTgId);
+          anotherContacts.add(anotherChatId);
+          contacts.put(pidorTgId, anotherContacts);
         }
       }
     }
-    return new IntText(numContacts);
+    return contacts;
   }
 
-  private Text getMemberCount(long chatId) {
-    return telegramService.getChatMemberCount(chatId).map(IntText::new).orElse(new IntText(-1));
+  private int getMemberCount(long chatId) {
+    return telegramService.getChatMemberCount(chatId).orElse(-1);
   }
 
-  private Text getChatName(long chatId) {
-    return telegramService
-        .getChat(chatId)
-        .map(Chat::getTitle)
-        .map(SimpleText::new)
-        .orElse(new SimpleText("-"));
+  private String getChatName(long chatId) {
+    return telegramService.getChat(chatId).map(Chat::getTitle).orElse("-");
   }
 
-  private Text getDuration(long chatId) {
+  private LocalDate getFirstDate(long chatId) {
     return dailyPidorRepository.getByChat(chatId).stream()
         .min(Comparator.comparing(DailyPidor::getLocalDate))
         .map(DailyPidor::getLocalDate)
-        .map(this::getDuration)
-        .orElse(new SimpleText("-"));
+        .orElse(DEFAULT_DATE);
+  }
+
+  private LocalDate getEndDate(long chatId) {
+    return dailyPidorRepository.getByChat(chatId).stream()
+        .max(Comparator.comparing(DailyPidor::getLocalDate))
+        .map(DailyPidor::getLocalDate)
+        .orElse(DEFAULT_DATE);
   }
 
   private Text getDuration(LocalDate firstDate) {
@@ -173,6 +210,54 @@ public class ChatDetailsStatHandler implements StatHandler {
       }
     }
     return new ParametizedText("Создан {0}", new DateText(firstDate));
+  }
+
+  private static class ChatStat {
+    private final long chatId;
+    private final Map<Long, Set<Long>> contacts;
+    private final String name;
+    private final int peopleCount;
+    private final LocalDate firstDate;
+    private final LocalDate lastDate;
+
+    public ChatStat(
+        long chatId,
+        Map<Long, Set<Long>> contacts,
+        String name,
+        int peopleCount,
+        LocalDate firstDate,
+        LocalDate lastDate) {
+      this.chatId = chatId;
+      this.contacts = contacts;
+      this.name = name;
+      this.peopleCount = peopleCount;
+      this.firstDate = firstDate;
+      this.lastDate = lastDate;
+    }
+
+    public long getChatId() {
+      return chatId;
+    }
+
+    public Map<Long, Set<Long>> getContacts() {
+      return contacts;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public int getPeopleCount() {
+      return peopleCount;
+    }
+
+    public LocalDate getFirstDate() {
+      return firstDate;
+    }
+
+    public LocalDate getLastDate() {
+      return lastDate;
+    }
   }
 
   @Override
