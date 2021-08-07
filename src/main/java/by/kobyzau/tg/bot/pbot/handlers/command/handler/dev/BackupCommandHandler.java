@@ -35,8 +35,10 @@ public class BackupCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
-    botActionCollector.chatAction(message.getChatId(), ChatAction.UPLOAD_DOC);
 
+    if (message != null) {
+      botActionCollector.chatAction(message.getChatId(), ChatAction.UPLOAD_DOC);
+    }
     JSONObject json = backupService.buildBackup();
     try {
       loggerBot.execute(
@@ -53,7 +55,9 @@ public class BackupCommandHandler implements CommandHandler {
     } catch (TelegramApiException e) {
       logger.error("Cannot send Backup message", e);
     }
-    botActionCollector.text(message.getChatId(), new SimpleText("Backup created"));
+    if (message != null) {
+      botActionCollector.text(message.getChatId(), new SimpleText("Backup created"));
+    }
   }
 
   @Override
