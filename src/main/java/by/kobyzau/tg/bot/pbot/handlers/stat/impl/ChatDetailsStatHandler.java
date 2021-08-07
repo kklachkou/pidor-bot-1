@@ -167,10 +167,10 @@ public class ChatDetailsStatHandler implements StatHandler {
     }
 
     telegraphService.createPageIfNotExist(linkedId);
-    telegraphService.updatePage(
-        linkedId,
-        "Контакты для чата " + chatStat.chatId,
-        singletonList(new NodeElement("p", emptyMap(), content)));
+//    telegraphService.updatePage(
+//        linkedId,
+//        "Контакты для чата " + chatStat.chatId,
+//        singletonList(new NodeElement("p", emptyMap(), content)));
   }
 
   private ChatStat toStat(long chatId) {
