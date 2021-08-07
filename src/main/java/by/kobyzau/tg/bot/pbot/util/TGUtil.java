@@ -1,12 +1,12 @@
 package by.kobyzau.tg.bot.pbot.util;
 
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 public class TGUtil {
   public static String getUsername(User user) {

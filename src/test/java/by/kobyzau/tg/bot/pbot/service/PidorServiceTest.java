@@ -15,15 +15,16 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PidorServiceTest {
@@ -34,6 +35,7 @@ public class PidorServiceTest {
   @Mock private TelegramService telegramService;
 
   @InjectMocks private PidorService pidorService = new PidorServiceImpl();
+
 
   private final long chatId = 123;
   private final long userId = 111;
@@ -88,8 +90,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
         .when(pidorRepository)
         .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("kicked");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("kicked").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
 
     // when
@@ -105,8 +107,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
         .when(pidorRepository)
         .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("member");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("member").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
 
     // when
@@ -125,8 +127,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
             .when(pidorRepository)
             .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("member");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("member").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
     doReturn(
             Arrays.asList(
@@ -152,8 +154,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
             .when(pidorRepository)
             .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("member");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("member").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
     doReturn(
             Arrays.asList(
@@ -178,8 +180,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
         .when(pidorRepository)
         .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("member");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("member").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
     doReturn(
             Arrays.asList(
@@ -207,8 +209,8 @@ public class PidorServiceTest {
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
         .when(pidorRepository)
         .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = new ChatMember();
-    chatMember.setStatus("member");
+    ChatMember chatMember = mock(ChatMember.class);
+    doReturn("member").when(chatMember).getStatus();
     doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
     doReturn(
             Arrays.asList(

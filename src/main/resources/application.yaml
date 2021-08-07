@@ -21,7 +21,7 @@ bot:
     token: ${BOT_TOKEN}
 
 app:
-  version: 9.4 Chat Details
+  version: 10.0 Upgrate API Version
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:

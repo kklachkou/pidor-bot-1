@@ -6,15 +6,18 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
-import org.telegram.telegrambots.meta.api.objects.User;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberOwner;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted;
 
 @Component("updateUsernameTask")
 public class UpdateUsernameTask implements Task {
@@ -46,7 +49,31 @@ public class UpdateUsernameTask implements Task {
       Optional<ChatMember> chatMember =
           telegramService.getChatMember(pidor.getChatId(), pidor.getTgId());
       if (chatMember.isPresent()) {
-        User user = chatMember.get().getUser();
+        User user = null;
+        String status = chatMember.get().getStatus();
+        switch (status) {
+          case "administrator":
+            ChatMemberAdministrator chatMemberAdministrator =
+                (ChatMemberAdministrator) chatMember.get();
+            user = chatMemberAdministrator.getUser();
+            break;
+
+          case "creator":
+            ChatMemberOwner chatMemberOwner = (ChatMemberOwner) chatMember.get();
+            user = chatMemberOwner.getUser();
+            break;
+          case "member":
+            ChatMemberMember chatMemberMember = (ChatMemberMember) chatMember.get();
+            user = chatMemberMember.getUser();
+            break;
+          case "restricted":
+            ChatMemberRestricted chatMemberRestricted = (ChatMemberRestricted) chatMember.get();
+            user = chatMemberRestricted.getUser();
+            break;
+        }
+        if (user == null) {
+          return;
+        }
         pidor.setFullName(TGUtil.getFullName(user));
         pidor.setUsername(user.getUserName());
         pidorService.updatePidor(pidor);

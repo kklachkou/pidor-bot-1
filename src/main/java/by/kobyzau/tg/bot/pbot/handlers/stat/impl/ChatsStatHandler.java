@@ -15,10 +15,10 @@ import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
 
 import java.util.List;
 import java.util.Optional;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 @Component
 public class ChatsStatHandler implements StatHandler {

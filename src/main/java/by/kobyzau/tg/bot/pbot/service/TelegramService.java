@@ -1,11 +1,11 @@
 package by.kobyzau.tg.bot.pbot.service;
 
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
 import java.util.Optional;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 
 public interface TelegramService {
