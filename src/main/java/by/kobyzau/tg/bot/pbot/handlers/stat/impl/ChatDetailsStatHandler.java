@@ -37,6 +37,8 @@ public class ChatDetailsStatHandler implements StatHandler {
 
   @Override
   public void printStat(long chatIdToSend) {
+
+    logger.info("#DetailedStat Start");
     List<Long> chatIds =
         pidorRepository.getAll().stream()
             .map(Pidor::getChatId)
@@ -48,6 +50,8 @@ public class ChatDetailsStatHandler implements StatHandler {
         .append(new SimpleText(" чатов."))
         .append(new NewLineText())
         .append(new NewLineText());
+
+    logger.info("#DetailedStat Got chat count");
     for (int i = 0; i < chatIds.size(); i++) {
       logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
       Long chatId = chatIds.get(i);
@@ -69,6 +73,7 @@ public class ChatDetailsStatHandler implements StatHandler {
           .append(new NewLineText())
           .append(new NewLineText());
     }
+    logger.info("#DetailedStat Completed");
     botActionCollector.text(chatIdToSend, textBuilder);
   }
 
