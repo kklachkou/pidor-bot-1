@@ -19,7 +19,8 @@ bot:
   pidor:
     username: ${BOT_USERNAME}
     token: ${BOT_TOKEN}
-
+telegraph:
+  token: ${TELEGRAPH_TOKEN}
 app:
   version: 10.1 Added Telegraph support
   admin.userId: ${ADMIN_USER_ID}
