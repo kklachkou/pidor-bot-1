@@ -12,6 +12,6 @@ public interface FutureActionService {
   void removeFutureData(FutureActionType type, LocalDate date);
 
   enum FutureActionType {
-    ENABLE_SETTING, DEFAULT
+    ENABLE_SETTING, DEFAULT, GDPR_MESSAGE
   }
 }

@@ -27,8 +27,7 @@ public class SimpleDaysScheduledRule implements ScheduledRule {
     return isNewYear(localDate)
         || isDateBasedAction(localDate)
         || isBirthday(localDate)
-       // || hasNoDailyPidors(chatId)
-        || localDate.isEqual(LocalDate.of(2021, 5, 7));
+        || hasNoDailyPidors(chatId);
   }
 
   private boolean isNewYear(LocalDate date) {

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.GetMe;
@@ -39,7 +38,13 @@ public class TelegramServiceImpl implements TelegramService {
           pidorBot.execute(
               GetChatMember.builder().chatId(String.valueOf(chatId)).userId(userId).build()));
     } catch (TelegramApiException e) {
-      logger.error("Cannot get Chat Member for chat " + chatId + " and user " + userId, e);
+      logger.debug(
+          "Cannot get Chat Member for chat "
+              + chatId
+              + " and user "
+              + userId
+              + ":\n"
+              + e.getMessage());
       return Optional.empty();
     }
   }

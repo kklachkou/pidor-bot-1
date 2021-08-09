@@ -62,7 +62,7 @@ public class TelegramLogger implements Logger {
             skippedLines = 0;
           }
           sb.append("\n")
-              .append(stackTraceElement.getClassName())
+              .append(stackTraceElement.getClassName().replace("by.kobyzau.tg.bot.pbot", ""))
               .append(".")
               .append(stackTraceElement.getMethodName())
               .append(":")
