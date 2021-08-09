@@ -139,6 +139,9 @@ public class ChatDetailsStatHandler implements StatHandler {
                   new NodeElement("b", emptyMap(), singletonList(new NodeText("Срок: "))),
                   new NodeText(getDuration(chatStat.getFirstDate()).text()),
                   new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement("b", emptyMap(), singletonList(new NodeText("Последняя игра: "))),
+                  new NodeText(chatStat.getLastDate().toString()),
+                  new NodeElement("br", emptyMap(), emptyList()),
                   new NodeElement(
                       "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
                   hasContacts
