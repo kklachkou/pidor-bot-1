@@ -2,9 +2,12 @@ package by.kobyzau.tg.bot.pbot.repository.telegraph;
 
 import by.kobyzau.tg.bot.pbot.model.TelegraphPage;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,21 @@ public class HashMapTelegraphPageRepository implements TelegraphPageRepository {
     long newId = getNewId();
     map.put(newId, new TelegraphPage(page));
     return newId;
+  }
+
+  @Override
+  public TelegraphPage get(long id) {
+    return map.get(id);
+  }
+
+  @Override
+  public List<TelegraphPage> getAll() {
+    return new ArrayList<>(map.values());
+  }
+
+  @Override
+  public void delete(long id) {
+    map.remove(id);
   }
 
   private synchronized long getNewId() {

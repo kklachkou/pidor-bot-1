@@ -34,6 +34,7 @@ import org.telegram.telegraph.api.objects.Node;
 import org.telegram.telegraph.api.objects.NodeElement;
 import org.telegram.telegraph.api.objects.NodeText;
 
+import static by.kobyzau.tg.bot.pbot.telegraph.TelegraphType.STATISTIC;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -64,7 +65,7 @@ public class ChatDetailsStatHandler implements StatHandler {
       ChatStat chatStat = toStat(chatId);
       chatStats.add(chatStat);
       if (chatStat.getContacts().values().stream().anyMatch(c -> c.size() > 0)) {
-        createContactPage(chatStat, "Stat-Contact-" + chatStat.chatId);
+        createContactPage(chatStat, STATISTIC.getLinkedId("CONTACTS", chatStat.chatId));
       }
       logger.info("#DetailedStat " + (i + 1) + "/" + chatIds.size());
     }
@@ -73,17 +74,30 @@ public class ChatDetailsStatHandler implements StatHandler {
     Comparator<ChatStat> contactComparator =
         Comparator.comparing(c -> c.getContacts().values().size());
     createPage(
-        chatStats, Comparator.comparing(ChatStat::getFirstDate), "По времени", "Stat-Duration");
-    createPage(chatStats, countComparator.reversed(), "По колличеству пидоров", "Stat-Count");
-    createPage(chatStats, contactComparator.reversed(), "По колличеству контактов", "Stat-Contact");
+        chatStats,
+        Comparator.comparing(ChatStat::getFirstDate),
+        "По времени",
+        STATISTIC.getLinkedId("Duration"));
+    createPage(
+        chatStats,
+        countComparator.reversed(),
+        "По колличеству пидоров",
+        STATISTIC.getLinkedId("Count"));
+    createPage(
+        chatStats,
+        contactComparator.reversed(),
+        "По колличеству контактов",
+        STATISTIC.getLinkedId("Contact"));
     botActionCollector.text(
         chatIdToSend,
         new ParametizedText(
             "{0}: {1}\n{2}: {3}",
             new SimpleText("По времени"),
-            new SimpleText(telegraphService.getPage("Stat-Duration").getUrl()),
+            new SimpleText(telegraphService.getPage(STATISTIC.getLinkedId("Duration")).getUrl()),
+            new SimpleText("По Контактам"),
+            new SimpleText(telegraphService.getPage(STATISTIC.getLinkedId("Contact")).getUrl()),
             new SimpleText("По Колличеству"),
-            new SimpleText(telegraphService.getPage("Stat-Count").getUrl())));
+            new SimpleText(telegraphService.getPage(STATISTIC.getLinkedId("Count")).getUrl())));
   }
 
   private void createPage(
@@ -117,6 +131,10 @@ public class ChatDetailsStatHandler implements StatHandler {
                   new NodeElement(
                       "b", emptyMap(), singletonList(new NodeText("Колличество пидоров: "))),
                   new NodeText(String.valueOf(chatStat.getContacts().keySet().size())),
+                  new NodeElement("br", emptyMap(), emptyList()),
+                  new NodeElement(
+                      "b", emptyMap(), singletonList(new NodeText("Колличество игр: "))),
+                  new NodeText(String.valueOf(chatStat.getGameCount())),
                   new NodeElement("br", emptyMap(), emptyList()),
                   new NodeElement("b", emptyMap(), singletonList(new NodeText("Срок: "))),
                   new NodeText(getDuration(chatStat.getFirstDate()).text()),
@@ -165,12 +183,16 @@ public class ChatDetailsStatHandler implements StatHandler {
                   + ": "
                   + linkedChats.stream().map(this::getChatName).collect(Collectors.joining(", "))));
     }
-
+    logger.debug("Contact Content for " + linkedId + " is " + content);
     telegraphService.createPageIfNotExist(linkedId);
-//    telegraphService.updatePage(
-//        linkedId,
-//        "Контакты для чата " + chatStat.chatId,
-//        singletonList(new NodeElement("p", emptyMap(), content)));
+    try {
+      telegraphService.updatePage(
+          linkedId,
+          "Контакты для чата " + chatStat.chatId,
+          singletonList(new NodeElement("p", emptyMap(), content)));
+    } catch (Exception e) {
+      logger.error("Cannot create contact page for chat " + chatStat.chatId, e);
+    }
   }
 
   private ChatStat toStat(long chatId) {
@@ -179,6 +201,7 @@ public class ChatDetailsStatHandler implements StatHandler {
         getContacts(chatId),
         getChatName(chatId),
         getMemberCount(chatId),
+        getNumGames(chatId),
         getFirstDate(chatId),
         getEndDate(chatId));
   }
@@ -218,6 +241,10 @@ public class ChatDetailsStatHandler implements StatHandler {
 
   private String getChatName(long chatId) {
     return telegramService.getChat(chatId).map(Chat::getTitle).orElse("-");
+  }
+
+  private int getNumGames(long chatId) {
+    return dailyPidorRepository.getByChat(chatId).size();
   }
 
   private LocalDate getFirstDate(long chatId) {
@@ -261,6 +288,7 @@ public class ChatDetailsStatHandler implements StatHandler {
     private final Map<Long, Set<Long>> contacts;
     private final String name;
     private final int peopleCount;
+    private final int gameCount;
     private final LocalDate firstDate;
     private final LocalDate lastDate;
 
@@ -269,12 +297,14 @@ public class ChatDetailsStatHandler implements StatHandler {
         Map<Long, Set<Long>> contacts,
         String name,
         int peopleCount,
+        int gameCount,
         LocalDate firstDate,
         LocalDate lastDate) {
       this.chatId = chatId;
       this.contacts = contacts;
       this.name = name;
       this.peopleCount = peopleCount;
+      this.gameCount = gameCount;
       this.firstDate = firstDate;
       this.lastDate = lastDate;
     }
@@ -301,6 +331,10 @@ public class ChatDetailsStatHandler implements StatHandler {
 
     public LocalDate getLastDate() {
       return lastDate;
+    }
+
+    public int getGameCount() {
+      return gameCount;
     }
   }
 
