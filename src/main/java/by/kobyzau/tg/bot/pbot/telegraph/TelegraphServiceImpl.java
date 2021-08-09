@@ -53,7 +53,6 @@ public class TelegraphServiceImpl implements TelegraphService {
       repository.create(telegraphPage);
     } catch (TelegraphException e) {
       logger.error("Cannot create telegraph page", e);
-      throw new IllegalStateException("Cannot create telegraph page", e);
     }
   }
 

@@ -165,6 +165,10 @@ public class ChatDetailsStatHandler implements StatHandler {
   }
 
   private void createContactPage(ChatStat chatStat, String linkedId) {
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException ignored) {
+    }
     List<Node> content = new ArrayList<>();
     List<Map.Entry<Long, Set<Long>>> entries =
         chatStat.getContacts().entrySet().stream()
