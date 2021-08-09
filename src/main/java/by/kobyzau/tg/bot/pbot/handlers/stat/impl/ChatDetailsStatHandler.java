@@ -91,7 +91,7 @@ public class ChatDetailsStatHandler implements StatHandler {
     botActionCollector.text(
         chatIdToSend,
         new ParametizedText(
-            "{0}: {1}\n{2}: {3}",
+            "{0}: {1}\n{2}: {3}\n{4}: {5}",
             new SimpleText("По времени"),
             new SimpleText(telegraphService.getPage(STATISTIC.getLinkedId("Duration")).getUrl()),
             new SimpleText("По Контактам"),
@@ -195,7 +195,7 @@ public class ChatDetailsStatHandler implements StatHandler {
     try {
       telegraphService.updatePage(
           linkedId,
-          "Контакты для чата " + chatStat.chatId,
+          "Контакты для чата " + getChatName(chatStat.chatId),
           singletonList(new NodeElement("p", emptyMap(), content)));
     } catch (Exception e) {
       logger.error("Cannot create contact page for chat " + chatStat.chatId, e);
