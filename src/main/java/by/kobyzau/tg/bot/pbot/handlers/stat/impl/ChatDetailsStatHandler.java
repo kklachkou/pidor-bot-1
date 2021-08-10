@@ -149,7 +149,7 @@ public class ChatDetailsStatHandler implements StatHandler {
                           "a",
                           Collections.singletonMap(
                               "href",
-                              telegraphService.getPage("Stat-Contact-" + chatStat.chatId).getUrl()),
+                              telegraphService.getPage(STATISTIC.getLinkedId("CONTACTS", chatStat.chatId)).getUrl()),
                           Collections.singletonList(
                               new NodeText(
                                   String.valueOf(
