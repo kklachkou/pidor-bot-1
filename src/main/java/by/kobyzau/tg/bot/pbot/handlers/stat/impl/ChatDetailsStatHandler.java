@@ -149,7 +149,9 @@ public class ChatDetailsStatHandler implements StatHandler {
                           "a",
                           Collections.singletonMap(
                               "href",
-                              telegraphService.getPage(STATISTIC.getLinkedId("CONTACTS", chatStat.chatId)).getUrl()),
+                              telegraphService
+                                  .getPage(STATISTIC.getLinkedId("CONTACTS", chatStat.chatId))
+                                  .getUrl()),
                           Collections.singletonList(
                               new NodeText(
                                   String.valueOf(
@@ -188,14 +190,14 @@ public class ChatDetailsStatHandler implements StatHandler {
           new NodeText(
               name
                   + ": "
-                  + linkedChats.stream().map(String::valueOf).collect(Collectors.joining(", "))));
+                  + linkedChats.stream().map(this::getChatName).collect(Collectors.joining(", "))));
     }
     logger.debug("Contact Content for " + linkedId + " is " + content);
     telegraphService.createPageIfNotExist(linkedId);
     try {
       telegraphService.updatePage(
           linkedId,
-          "Контакты для чата " + chatStat.chatId,
+          "Контакты для чата " + getChatName(chatStat.chatId),
           singletonList(new NodeElement("p", emptyMap(), content)));
     } catch (Exception e) {
       logger.error("Cannot create contact page for chat " + chatStat.chatId, e);
