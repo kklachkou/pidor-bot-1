@@ -64,10 +64,11 @@ public class ScheduleCommandHandler implements CommandHandler {
             chatId,
             new TextBuilder()
                 .append(
-                    new ParametizedText(
-                        "{0} ({1}-е):",
-                        new DayNameText(fixedDate.getDayOfWeek().getValue()),
-                        new IntText(fixedDate.getDayOfMonth())))
+                    new BoldText(
+                        new ParametizedText(
+                            "{0} ({1}-е):",
+                            new DayNameText(fixedDate.getDayOfWeek().getValue()),
+                            new IntText(fixedDate.getDayOfMonth()))))
                 .append(new NewLineText())
                 .append(itemsText));
       }
