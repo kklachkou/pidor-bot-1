@@ -30,6 +30,10 @@ public class ScheduleAppConfig {
 
   @Autowired private Task gameReminderTask;
 
+  @Autowired private Task hotPotatoStartTask;
+  @Autowired private Task hotPotatoCheckTask;
+  @Autowired private Task hotPotatoAutoStrikeTask;
+
   @Autowired
   @Qualifier("cachedExecutor")
   private Executor executor;
@@ -63,6 +67,12 @@ public class ScheduleAppConfig {
     executor.execute(diceStart::processTask);
     executor.execute(excludeUserGameStartTask::processTask);
     executor.execute(electionStartTask::processTask);
+    executor.execute(hotPotatoStartTask::processTask);
+  }
+
+  @Scheduled(cron = "${task.hotPotatoAutoStrike.cron}", zone = "GMT+3.00")
+  public void hotPotatoAutoStrikeTask() {
+    executor.execute(hotPotatoAutoStrikeTask::processTask);
   }
 
   @Scheduled(cron = "${task.futureAction.cron}", zone = "GMT+3.00")
@@ -80,6 +90,11 @@ public class ScheduleAppConfig {
   @Scheduled(cron = "${task.pidorOfYear.cron}", zone = "GMT+3.00")
   public void pidorOfYearTask() {
     executor.execute(pidorOfYearTask::processTask);
+  }
+
+  @Scheduled(fixedDelayString = "${task.hotPotatoCheckTask.delay}")
+  public void hotPotatoCheckTask() {
+    executor.execute(hotPotatoCheckTask::processTask);
   }
 
 }

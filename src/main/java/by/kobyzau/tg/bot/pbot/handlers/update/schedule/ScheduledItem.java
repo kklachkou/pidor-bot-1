@@ -8,7 +8,7 @@ public enum ScheduledItem {
   //Every 13 days && WEDNESDAY
   ELECTION(false),
   //SUNDAY every 2 times
-  EDITED_MESSAGE(true),
+  POTATOES(false),
   NONE(true);
 
   private final boolean requireManualStart;

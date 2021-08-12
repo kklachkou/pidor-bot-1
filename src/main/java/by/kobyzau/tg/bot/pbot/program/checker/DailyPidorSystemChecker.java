@@ -33,8 +33,7 @@ public class DailyPidorSystemChecker implements SystemChecker {
 
   @Override
   public void check() {
-    telegramService.getChatIds().stream()
-        .filter(botService::isChatValid)
+    telegramService.getChatIds()
         .forEach(chatId -> executor.execute(() -> check(chatId)));
   }
 

@@ -51,8 +51,7 @@ public class PidorOfTheYearTask implements Task {
   @Override
   public void processTask() {
     logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-    telegramService.getChatIds().stream()
-        .filter(botService::isChatValid)
+    telegramService.getChatIds()
         .forEach(chatId -> executor.execute(() -> handlePidorOfTheYear(chatId)));
   }
 

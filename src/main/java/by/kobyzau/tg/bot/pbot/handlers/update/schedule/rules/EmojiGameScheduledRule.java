@@ -22,7 +22,7 @@ public class EmojiGameScheduledRule implements ScheduledRule {
 
   private final Set<DayOfWeek> weekDays =
       new HashSet<>(
-          Arrays.asList(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY));
+          Arrays.asList(DayOfWeek.MONDAY,  DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY));
 
   @Override
   public boolean isMatch(long chatId, LocalDate localDate) {

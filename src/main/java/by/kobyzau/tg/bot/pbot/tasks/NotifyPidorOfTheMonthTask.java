@@ -47,8 +47,7 @@ public class NotifyPidorOfTheMonthTask implements Task {
     }
     logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
 
-    telegramService.getChatIds().stream()
-        .filter(botService::isChatValid)
+    telegramService.getChatIds()
         .forEach(chatId -> executor.execute(() -> processForChat(chatId)));
   }
 

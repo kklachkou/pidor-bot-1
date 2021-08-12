@@ -28,7 +28,7 @@ public class FeedbackServiceImpl implements FeedbackService {
   @Override
   public List<InlineKeyboardButton> getButtons(FeedbackType feedbackType) {
     String requestId = UUID.randomUUID().toString().substring(FEEDBACK.getIdSize());
-    return Stream.of(FeedbackEmojiType.values())
+    return feedbackType.getEmojiTypeList().stream()
         .map(
             type ->
                 InlineKeyboardButton.builder()

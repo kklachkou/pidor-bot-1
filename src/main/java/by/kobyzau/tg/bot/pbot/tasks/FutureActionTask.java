@@ -40,8 +40,12 @@ public class FutureActionTask implements Task {
     Optional<FutureActionHandler> handler = futureActionHandlerFactory.getHandler(type);
     handler.ifPresent(
         h -> {
-          List<String> futureActionData = futureActionService.getFutureActionData(type, now);
-          futureActionData.forEach(h::processAction);
+          try {
+            List<String> futureActionData = futureActionService.getFutureActionData(type, now);
+            futureActionData.forEach(h::processAction);
+          } catch (Exception e) {
+            logger.error("Error in future action " + type, e);
+          }
           futureActionService.removeFutureData(type, now);
         });
   }

@@ -22,7 +22,7 @@ bot:
 telegraph:
   token: ${TELEGRAPH_TOKEN}
 app:
-  version: 10.3 Added Telegraph support
+  version: 11.0 Hot Potato
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
@@ -31,6 +31,7 @@ app:
 
 task:
   gameStart.cron: 0 1 21 * * ?
+  hotPotatoAutoStrike.cron: 0 1 9 * * ?
   gameReminderTask.cron: 0 0 13 * * ?
   gameEnd.cron: 0 0 16 * * ?
   notifyNoPidors.cron: 0 0 17 * * ?
@@ -39,3 +40,4 @@ task:
   futureAction.cron: 0 30 20 * * ?
   updateUsername.cron: 0 0 1 * * ?
   backup.cron: 0 0 20 * * ?
+  hotPotatoCheckTask.delay: 55000

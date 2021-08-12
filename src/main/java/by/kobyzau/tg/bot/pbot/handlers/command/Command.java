@@ -65,6 +65,7 @@ public enum Command {
       Category.ACTION,
       11),
   GAME(""),
+  HOT_POTATOES(""),
   ELECTION(""),
   CURRENT_TIME("time"),
   STICKERS("stickers"),

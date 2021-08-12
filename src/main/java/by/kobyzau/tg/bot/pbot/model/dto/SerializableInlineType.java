@@ -6,6 +6,7 @@ public enum SerializableInlineType {
   CLOSE_INLINE(3, 20),
   STAT(4, 20),
   FEEDBACK(5, 20),
+  HOT_POTATOES(6, 20)
   ;
 
   private final int index;

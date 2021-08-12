@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
-public class SpanshBobOneTimePidorFunnyAction implements DateBasePidorFunnyAction {
+public class SpanshBobDateBasePidorFunnyAction implements DateBasePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;

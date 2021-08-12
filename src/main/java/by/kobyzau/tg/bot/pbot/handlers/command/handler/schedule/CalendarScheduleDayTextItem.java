@@ -37,10 +37,10 @@ public class CalendarScheduleDayTextItem implements ScheduleDayTextItem {
         return Optional.of(
             new ParametizedText(
                 "Игра {0}", new ItalicText(excludeGameService.getWordOfTheDay(localDate))));
-      case EDITED_MESSAGE:
-        return Optional.of(new SimpleText("Проверка на внимательность"));
       case ELECTION:
         return Optional.of(new SimpleText("Пидор-выборы"));
+      case POTATOES:
+        return Optional.of(new SimpleText("Горячая Картошечка"));
       default:
         return Optional.empty();
     }

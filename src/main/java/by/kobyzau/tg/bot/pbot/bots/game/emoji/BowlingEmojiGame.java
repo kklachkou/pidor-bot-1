@@ -13,11 +13,14 @@ import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class BowlingEmojiGame implements EmojiGame {
 
   @Autowired private BotActionCollector botActionCollector;

@@ -46,6 +46,8 @@ public class PidorCommandHandler implements CommandHandler {
       commandHandlerFactory.getHandler(Command.GAME).processCommand(message, text);
     } else if (isElectionDay(chatId)) {
       commandHandlerFactory.getHandler(Command.ELECTION).processCommand(message, text);
+    } else if (isPotatoesDay(chatId)) {
+      commandHandlerFactory.getHandler(Command.HOT_POTATOES).processCommand(message, text);
     } else {
       newPidorProcessor.processNewDailyPidor(message);
     }
@@ -58,6 +60,10 @@ public class PidorCommandHandler implements CommandHandler {
   private boolean isGameDay(long chatId) {
     return calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.EMOJI_GAME
         || calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.EXCLUDE_GAME;
+  }
+
+  private boolean isPotatoesDay(long chatId) {
+    return calendarSchedule.getItem(chatId, DateUtil.now()) == ScheduledItem.POTATOES;
   }
 
   @Override

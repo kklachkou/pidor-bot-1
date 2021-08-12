@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
-public class ManyTimesOneTimePidorFunnyAction implements DateBasePidorFunnyAction {
+public class ManyTimesDateBasePidorFunnyAction implements DateBasePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
@@ -109,6 +109,6 @@ public class ManyTimesOneTimePidorFunnyAction implements DateBasePidorFunnyActio
 
   @Override
   public boolean testDate(LocalDate date) {
-    return date.getDayOfYear() % 20 == 0;
+    return date.getDayOfYear() % 27 == 0;
   }
 }

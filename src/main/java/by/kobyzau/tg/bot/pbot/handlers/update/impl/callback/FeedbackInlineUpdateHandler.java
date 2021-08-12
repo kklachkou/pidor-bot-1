@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.handlers.update.CallbackUpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Feedback;
@@ -11,6 +12,11 @@ import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.action.EditMessageReplyMarkupBotAction;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,17 +27,10 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType.FEEDBACK;
 
 @Component
-public class FeedbackInlineUpdateHandler implements UpdateHandler {
+public class FeedbackInlineUpdateHandler extends CallbackUpdateHandler<FeedbackInlineDto> {
 
   @Value("${bot.pidor.username}")
   private String botUserName;
@@ -39,55 +38,45 @@ public class FeedbackInlineUpdateHandler implements UpdateHandler {
   @Autowired private FeedbackService feedbackService;
   @Autowired private BotActionCollector botActionCollector;
 
-
   @Override
-  public UpdateHandlerStage getStage() {
-    return UpdateHandlerStage.CALLBACK;
+  protected Class<FeedbackInlineDto> getDtoType() {
+    return FeedbackInlineDto.class;
   }
 
   @Override
-  public boolean handleUpdate(Update update) {
+  protected SerializableInlineType getSerializableType() {
+    return SerializableInlineType.FEEDBACK;
+  }
+
+  @Override
+  protected void handleCallback(Update update, FeedbackInlineDto dto) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
-    if (callbackQuery == null) {
-      return false;
-    }
-    Message prevMessage = callbackQuery.getMessage();
     User calledUser = callbackQuery.getFrom();
-    Optional<FeedbackInlineDto> data =
-        StringUtil.deserialize(callbackQuery.getData(), FeedbackInlineDto.class);
-    if (prevMessage == null
-        || calledUser == null
-        || prevMessage.getFrom() == null
-        || !data.isPresent()
-        || !Objects.equals(SerializableInlineType.FEEDBACK.getIndex(), data.get().getIndex())
-        || !botUserName.equalsIgnoreCase(prevMessage.getFrom().getUserName())) {
-      return false;
-    }
+    Message prevMessage = callbackQuery.getMessage();
     int messageId = prevMessage.getMessageId();
     long userId = calledUser.getId();
     long chatId = prevMessage.getChatId();
     feedbackService.addUniqueFeedback(
-        new Feedback(chatId, userId, messageId, data.get().getEmojiType(), data.get().getType()));
+            new Feedback(chatId, userId, messageId, dto.getEmojiType(), dto.getType()));
     String requestId = UUID.randomUUID().toString().substring(FEEDBACK.getIdSize());
     List<InlineKeyboardButton> buttons =
-        Stream.of(FeedbackEmojiType.values())
-            .map(
-                emojiType ->
-                    InlineKeyboardButton.builder()
-                        .text(
-                            emojiType.getEmoji()
-                                + getNumVotesCounter(
-                                    chatId, messageId, data.get().getType(), emojiType))
-                        .callbackData(
-                            StringUtil.serialize(
-                                new FeedbackInlineDto(requestId, data.get().getType(), emojiType)))
-                        .build())
-            .collect(Collectors.toList());
+            dto.getType().getEmojiTypeList().stream()
+                    .map(
+                            emojiType ->
+                                    InlineKeyboardButton.builder()
+                                            .text(
+                                                    emojiType.getEmoji()
+                                                            + getNumVotesCounter(
+                                                            chatId, messageId, dto.getType(), emojiType))
+                                            .callbackData(
+                                                    StringUtil.serialize(
+                                                            new FeedbackInlineDto(requestId, dto.getType(), emojiType)))
+                                            .build())
+                    .collect(Collectors.toList());
     InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
-        InlineKeyboardMarkup.builder().keyboardRow(buttons);
+            InlineKeyboardMarkup.builder().keyboardRow(buttons);
     botActionCollector.add(
-        new EditMessageReplyMarkupBotAction(chatId, messageId, keyboardMarkupBuilder.build()));
-    return true;
+            new EditMessageReplyMarkupBotAction(chatId, messageId, keyboardMarkupBuilder.build()));
   }
 
   private String getNumVotesCounter(

@@ -6,19 +6,19 @@ import by.kobyzau.tg.bot.pbot.model.Feedback;
 import by.kobyzau.tg.bot.pbot.model.FeedbackEmojiType;
 import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.StatType;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.LongText;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.SpaceText;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.util.StringUtil;
-import by.kobyzau.tg.bot.pbot.util.TGUtil;
+import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Chat;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class FeedbackStatHandler implements StatHandler {
@@ -30,13 +30,20 @@ public class FeedbackStatHandler implements StatHandler {
 
   @Override
   public void printStat(long chatId) {
+    printStat(chatId, FeedbackType.VERSION);
+    printStat(chatId, FeedbackType.PIDOR);
+  }
+
+  private void printStat(long chatId, FeedbackType feedbackType) {
     botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     List<Feedback> feedbacks =
         feedbackService.getFeedbacks().stream()
-            .filter(f -> f.getFeedbackType() == FeedbackType.VERSION)
+            .filter(f -> f.getFeedbackType() == feedbackType)
+            .filter(f -> f.getUpdated().isAfter(DateUtil.now().minusDays(2)))
             .collect(Collectors.toList());
     TextBuilder tx = new TextBuilder();
-    for (FeedbackEmojiType emojiType : FeedbackEmojiType.values()) {
+    tx.append(new SimpleText(feedbackType.name())).append(new NewLineText());
+    for (FeedbackEmojiType emojiType : feedbackType.getEmojiTypeList()) {
       tx.append(new NewLineText());
       tx.append(new SimpleText(emojiType.getEmoji()))
           .append(new SpaceText())

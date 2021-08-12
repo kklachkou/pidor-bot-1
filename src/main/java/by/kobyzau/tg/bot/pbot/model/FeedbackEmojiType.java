@@ -6,6 +6,8 @@ public enum FeedbackEmojiType {
   CRY("\uD83D\uDE2D"),
   EGGPLANT("\uD83C\uDF46"),
   COCK("\uD83D\uDC13"),
+  LIKE("\uD83D\uDC4D"),
+  DISLIKE("\uD83D\uDC4E"),
   ;
 
   private final String emoji;

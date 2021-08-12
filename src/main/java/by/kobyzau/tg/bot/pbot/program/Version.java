@@ -1,12 +1,27 @@
 package by.kobyzau.tg.bot.pbot.program;
 
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.BoldText;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.Text;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
-
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_11(
+      LocalDate.of(2021, 8, 14),
+      new TextBuilder(new BoldText("- Горячая Картошечка!"))
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "Новая игра - Горячая Картошечка. Лови картошечку и пытайся её перекинуть другому."))
+          .append(new NewLineText())
+          .append(new SimpleText("Если передержишь горячую картошечку - станешь пидором дня."))
+          .append(new NewLineText())
+          .append(new SimpleText("Следи за событиями через /schedule"))),
   VERSION_8(
       LocalDate.of(2021, 4, 24),
       new TextBuilder(new SimpleText("- Отзывы/предложения!"))

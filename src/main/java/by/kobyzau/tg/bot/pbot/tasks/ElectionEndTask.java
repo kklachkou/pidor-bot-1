@@ -43,7 +43,6 @@ public class ElectionEndTask implements Task {
     logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     LocalDate now = DateUtil.now();
     telegramService.getChatIds().stream()
-        .filter(botService::isChatValid)
         .filter(chatId -> electionService.isElectionDay(chatId, now))
         .forEach(chatId -> executor.execute(() -> electionFinalizer.finalize(chatId)));
   }
