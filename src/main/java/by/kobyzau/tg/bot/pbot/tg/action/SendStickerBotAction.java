@@ -37,4 +37,9 @@ public class SendStickerBotAction implements BotAction<Message> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + stickerId;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

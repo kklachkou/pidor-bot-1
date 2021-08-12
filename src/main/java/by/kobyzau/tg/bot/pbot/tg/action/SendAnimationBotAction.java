@@ -37,4 +37,9 @@ public class SendAnimationBotAction implements BotAction<Message> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + docId;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

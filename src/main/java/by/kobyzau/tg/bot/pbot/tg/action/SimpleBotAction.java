@@ -21,4 +21,9 @@ public class SimpleBotAction<T extends Serializable> implements BotAction<T> {
   public long getChatId() {
     return 0;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

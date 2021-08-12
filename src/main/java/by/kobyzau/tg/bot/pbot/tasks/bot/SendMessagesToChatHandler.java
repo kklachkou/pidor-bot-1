@@ -3,24 +3,25 @@ package by.kobyzau.tg.bot.pbot.tasks.bot;
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 public class SendMessagesToChatHandler implements Runnable {
 
   private final Lock lock = new ReentrantLock();
   private static final int THREAD_LIVE_IN_PENDING = 15;
+  private static final int LIMIT_PER_MINUTE = 20;
   private final AtomicInteger numIterationsWithPending = new AtomicInteger(0);
   private volatile BotHandlerState state;
   private final Logger logger;
   private final Bot bot;
   private final long chatId;
   private final Queue<BotAction<?>> queue = new ConcurrentLinkedQueue<>();
+  private final Queue<Long> executionTime = new ConcurrentLinkedQueue<>();
 
   public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId) {
     this.logger = logger;
@@ -51,6 +52,16 @@ public class SendMessagesToChatHandler implements Runnable {
   }
 
   private void send(BotAction<?> botAction) {
+    if (botAction.hasLimit()) {
+      while (isExceedTimeLimit()) {
+        try {
+          Thread.sleep(300);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    executionTime.add(System.currentTimeMillis());
     try {
       logger.debug("✉️ Sending new bot action:\n\n<pre>" + botAction + "</pre>");
       botAction.process(bot);
@@ -116,6 +127,16 @@ public class SendMessagesToChatHandler implements Runnable {
     }
 
     return false;
+  }
+
+  private boolean isExceedTimeLimit() {
+    long currentTime = System.currentTimeMillis();
+    boolean inLastSecond = executionTime.stream().anyMatch(l -> l > (currentTime - 600));
+    if (inLastSecond) {
+      return true;
+    }
+    return executionTime.stream().filter(l -> l > (currentTime - 1010 * 60)).count()
+        >= LIMIT_PER_MINUTE;
   }
 
   public enum BotHandlerState {

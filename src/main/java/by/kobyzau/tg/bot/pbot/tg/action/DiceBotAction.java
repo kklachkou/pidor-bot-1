@@ -37,4 +37,9 @@ public class DiceBotAction implements BotAction<Message> {
   public String toString() {
     return "DiceBotAction{" + "chatId=" + chatId + ", emoji=" + emojiGameType.name() + '}';
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

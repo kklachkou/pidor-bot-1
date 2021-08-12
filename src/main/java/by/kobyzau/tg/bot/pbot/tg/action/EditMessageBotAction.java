@@ -51,4 +51,9 @@ public class EditMessageBotAction implements BotAction<Message> {
         + " - reply:"
         + (replyKeyboard != null);
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

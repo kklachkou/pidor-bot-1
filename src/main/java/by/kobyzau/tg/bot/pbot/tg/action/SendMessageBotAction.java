@@ -63,4 +63,9 @@ public class SendMessageBotAction implements BotAction<Message> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + text;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

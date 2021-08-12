@@ -5,7 +5,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public interface BotAction<T> {
 
-    T process(Bot bot) throws TelegramApiException;
+  T process(Bot bot) throws TelegramApiException;
 
-    long getChatId();
+  long getChatId();
+
+  default boolean hasLimit() {
+    return false;
+  }
 }

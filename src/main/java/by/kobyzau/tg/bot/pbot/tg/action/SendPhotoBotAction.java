@@ -37,4 +37,9 @@ public class SendPhotoBotAction implements BotAction<Message> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + photo;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }
