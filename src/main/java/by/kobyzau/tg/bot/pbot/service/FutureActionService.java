@@ -12,6 +12,6 @@ public interface FutureActionService {
   void removeFutureData(FutureActionType type, LocalDate date);
 
   enum FutureActionType {
-    ENABLE_SETTING
+    ENABLE_SETTING, DEFAULT
   }
 }

@@ -5,13 +5,13 @@ import by.kobyzau.tg.bot.pbot.handlers.future.FutureActionHandlerFactory;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.FutureActionService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 @Component("futureActionTask")
 public class FutureActionTask implements Task {
@@ -37,9 +37,12 @@ public class FutureActionTask implements Task {
 
   private void processFutureAction(FutureActionService.FutureActionType type) {
     LocalDate now = DateUtil.now();
-    FutureActionHandler handler = futureActionHandlerFactory.getHandler(type);
-    List<String> futureActionData = futureActionService.getFutureActionData(type, now);
-    futureActionData.forEach(handler::processAction);
-    futureActionService.removeFutureData(type, now);
+    Optional<FutureActionHandler> handler = futureActionHandlerFactory.getHandler(type);
+    handler.ifPresent(
+        h -> {
+          List<String> futureActionData = futureActionService.getFutureActionData(type, now);
+          futureActionData.forEach(h::processAction);
+          futureActionService.removeFutureData(type, now);
+        });
   }
 }

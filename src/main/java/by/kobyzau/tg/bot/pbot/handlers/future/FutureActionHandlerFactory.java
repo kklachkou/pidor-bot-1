@@ -23,8 +23,7 @@ public class FutureActionHandlerFactory {
     handlers.forEach(h -> map.put(h.getType(), h));
   }
 
-  public FutureActionHandler getHandler(FutureActionService.FutureActionType type) {
-    return Optional.ofNullable(map.get(type))
-        .orElseThrow(() -> new IllegalStateException("Unsupported type: " + type));
+  public Optional<FutureActionHandler> getHandler(FutureActionService.FutureActionType type) {
+    return Optional.ofNullable(map.get(type));
   }
 }
