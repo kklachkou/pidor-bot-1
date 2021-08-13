@@ -15,7 +15,6 @@ import java.util.Optional;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 
 @Component
-@Profile("dev")
 public class StickersCommandHandler implements CommandHandler {
 
   @Autowired
