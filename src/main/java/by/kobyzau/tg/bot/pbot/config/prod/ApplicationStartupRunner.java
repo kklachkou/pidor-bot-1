@@ -69,7 +69,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     logger.info(
-        "\u2B50\u2B50\u2B50\u2B50\u2B50\nSpring Boot started\nVersion "
+        "\u2B50\u2B50\u2B50\u2B50\u2B50\nStarting Pidor Bot...\nVersion "
             + new ShortDateText(Version.getLast().getRelease())
             + ": "
             + version);

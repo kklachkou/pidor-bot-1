@@ -85,7 +85,7 @@ public class HotPotatoesServiceTest {
   public void getLastTaker_noPidor() {
     // given
     LocalDate date = DateUtil.now();
-    doReturn(Collections.singletonList(taker(USER_ID, date, 0)))
+    doReturn(Collections.singletonList(taker(10, USER_ID, date, 0)))
         .when(potatoTakerRepository)
         .getByChatAndDate(CHAT_ID, date);
     doReturn(Optional.empty()).when(pidorService).getPidor(CHAT_ID, USER_ID);
@@ -101,7 +101,13 @@ public class HotPotatoesServiceTest {
   public void getLastTaker_multipleTakers() {
     // given
     LocalDate date = DateUtil.now();
-    doReturn(Arrays.asList(taker(0, date, 10), taker(USER_ID, date, 15), taker(0, date, 13)))
+    doReturn(
+            Arrays.asList(
+                taker(100, 0, date, 10),
+                taker(8, 0, date, 15),
+                taker(10, USER_ID, date, 15),
+                taker(9, 0, date, 15),
+                taker(0, 0, date, 13)))
         .when(potatoTakerRepository)
         .getByChatAndDate(CHAT_ID, date);
     doReturn(Optional.of(new Pidor(USER_ID, CHAT_ID, "Pidor" + USER_ID)))
@@ -134,7 +140,14 @@ public class HotPotatoesServiceTest {
   public void getLastTakerDeadline_multipleTakers() {
     // given
     LocalDate date = DateUtil.now();
-    doReturn(Arrays.asList(taker(0, date, 10), taker(USER_ID, date, 15), taker(0, date, 13)))
+    doReturn(
+            Arrays.asList(
+                taker(100, 0, date, 10),
+                taker(8, 0, date, 15),
+                taker(10, USER_ID, date, 15),
+                taker(9, 0, date, 15),
+                taker(90, 0, date, 11),
+                taker(0, 0, date, 13)))
         .when(potatoTakerRepository)
         .getByChatAndDate(CHAT_ID, date);
 
@@ -164,8 +177,9 @@ public class HotPotatoesServiceTest {
         .create(new HotPotatoTaker(USER_ID, CHAT_ID, DateUtil.now(), time));
   }
 
-  private HotPotatoTaker taker(long userId, LocalDate date, int hour) {
+  private HotPotatoTaker taker(long id, long userId, LocalDate date, int hour) {
     HotPotatoTaker taker = new HotPotatoTaker();
+    taker.setId(id);
     taker.setPlayerTgId(userId);
     taker.setDate(date);
     taker.setChatId(CHAT_ID);
