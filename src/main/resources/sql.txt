@@ -1,32 +1,25 @@
 CREATE TABLE IF NOT EXISTS pidor(
     id serial PRIMARY KEY,
-    tg_id int NOT NULL,
+    tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
     username VARCHAR (100),
-    sticker VARCHAR (30),
     fullname VARCHAR (100) NOT NULL,
     nickname VARCHAR(100),
-    username_last_updated TIMESTAMP NOT NULL
+    username_last_updated TIMESTAMP NOT NULL,
+    sticker VARCHAR (30)
 );
 
 CREATE TABLE IF NOT EXISTS daily_pidor(
     id serial PRIMARY KEY,
-    player_tg_id int NOT NULL,
+    player_tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
-    caller int,
+    caller bigint,
     local_date TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS digest_usage(
-    id serial PRIMARY KEY,
-    type VARCHAR (100) NOT NULL,
-    digest VARCHAR (1000) NOT NULL,
-    date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS pidor_dice(
     id serial PRIMARY KEY,
-    player_tg_id int NOT NULL,
+    player_tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
     local_date TIMESTAMP NOT NULL,
     value int NOT NULL
@@ -35,14 +28,14 @@ CREATE TABLE IF NOT EXISTS pidor_dice(
 
 CREATE TABLE IF NOT EXISTS exclude_game(
     id serial PRIMARY KEY,
-    player_tg_id int NOT NULL,
+    player_tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
     local_date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS pidor_of_year(
     id serial PRIMARY KEY,
-    player_tg_id int NOT NULL,
+    player_tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
     year int NOT NULL
 );
@@ -56,8 +49,8 @@ CREATE TABLE IF NOT EXISTS telegraph_page(
 
 CREATE TABLE IF NOT EXISTS custom_daily_user_data(
     id serial PRIMARY KEY,
+    player_tg_id bigint NOT NULL,
     chat_id bigint NOT NULL,
-    player_tg_id int NOT NULL,
     local_date TIMESTAMP NOT NULL,
     type VARCHAR (100) NOT NULL,
     data VARCHAR (1000) NOT NULL
@@ -65,7 +58,7 @@ CREATE TABLE IF NOT EXISTS custom_daily_user_data(
 
 CREATE TABLE IF NOT EXISTS feedback(
     id serial PRIMARY KEY,
-    player_tg_id int NOT NULL,
+    player_tg_id bigint NOT NULL,
     message_id int NOT NULL,
     chat_id bigint NOT NULL,
     updated TIMESTAMP NOT NULL,
@@ -81,3 +74,17 @@ CREATE TABLE IF NOT EXISTS potato_taker(
     date TIMESTAMP NOT NULL,
     deadline TIMESTAMP NOT NULL
 );
+
+update pidor set sticker = 'PIDOR_NIKITA' where tg_id = 451337639;
+update pidor set sticker = 'PIDOR_FIL' where tg_id = 396782272;
+update pidor set sticker = 'PIDOR_SANYA' where tg_id = 562849728;
+update pidor set sticker = 'PIDOR_ARTYR' where tg_id = 607995172;
+update pidor set sticker = 'PIDOR_MAX' where tg_id = 484036310;
+update pidor set sticker = 'PIDOR_SHOHAN' where tg_id = 306519117;
+update pidor set sticker = 'PIDOR_DIMKA' where tg_id = 261011580;
+update pidor set sticker = 'PIDOR_SERGEY_JOB' where tg_id = 314157031;
+update pidor set sticker = 'PIDOR_KIRYL_KL' where tg_id = 355295587;
+
+update pidor set sticker = 'PIDOR_SAK' where tg_id = 439623248;
+update pidor set sticker = 'PIDOR_KEVAL' where tg_id = 485211392;
+update pidor set sticker = 'PIDOR_VASIA' where tg_id = 875569313;

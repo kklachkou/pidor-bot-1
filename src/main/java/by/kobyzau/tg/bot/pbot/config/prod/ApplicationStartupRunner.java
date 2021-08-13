@@ -10,6 +10,14 @@ import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.tokens.AccessTokenHolderFactory;
 import by.kobyzau.tg.bot.pbot.program.tokens.TokenType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Objects;
+import javax.sql.DataSource;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -30,6 +38,8 @@ public class ApplicationStartupRunner implements ApplicationRunner {
   @Autowired(required = false) private FeedbackBot feedbackBot;
 
   @Autowired private Environment env;
+
+  @Autowired private DataSource dataSource;
 
   @Autowired private Bot bot;
 
@@ -63,6 +73,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
             + new ShortDateText(Version.getLast().getRelease())
             + ": "
             + version);
+    initDatabase();
     TelegraphContextInitializer.init();
     TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();
@@ -103,6 +114,32 @@ public class ApplicationStartupRunner implements ApplicationRunner {
       botActionCollector.text(
           adminUserId, new SimpleText("!!!new-year profile need to be deactivated"));
       logger.warn("!!!new-year profile need to be deactivated");
+    }
+  }
+
+  private void initDatabase() {
+    List<String> queries = getSql();
+    logger.debug("Found " + queries.size() + " queries");
+    try (Connection c = dataSource.getConnection();
+         Statement s = c.createStatement()) {
+      for (String query : queries) {
+        s.addBatch(query);
+      }
+      s.executeBatch();
+    } catch (Exception e) {
+      throw new RuntimeException("Cannot execute runtime sql", e);
+    }
+  }
+
+
+  private List<String> getSql() {
+    InputStream is = getClass().getClassLoader().getResourceAsStream("sql.txt");
+    Objects.requireNonNull(is, "Cannot find sql file");
+    try {
+      return Arrays.asList(
+              String.join("", IOUtils.readLines(is, Charset.defaultCharset())).split(";"));
+    } catch (Exception e) {
+      throw new RuntimeException("Cannot read sql file", e);
     }
   }
 }
