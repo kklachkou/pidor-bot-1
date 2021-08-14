@@ -16,7 +16,7 @@ public class ExcludeGameCleanupHandler implements CleanupHandler {
 
   @Override
   public void cleanup() {
-    LocalDate startDate = DateUtil.now().minusWeeks(1);
+    LocalDate startDate = DateUtil.now().minusDays(2);
     excludeGameRepository.getAll().stream()
         .filter(d -> d.getLocalDate().isBefore(startDate))
         .map(ExcludeGameUserValue::getId)

@@ -15,7 +15,7 @@ public class HotPotatoCleanupHandler implements CleanupHandler {
 
   @Override
   public void cleanup() {
-    LocalDate startDate = DateUtil.now().minusWeeks(1);
+    LocalDate startDate = DateUtil.now().minusDays(2);
     repository.getAll().stream()
         .filter(d -> d.getDate().isBefore(startDate))
         .map(HotPotatoTaker::getId)

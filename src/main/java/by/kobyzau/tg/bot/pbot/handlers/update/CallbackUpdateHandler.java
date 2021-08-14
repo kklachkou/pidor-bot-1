@@ -19,7 +19,9 @@ public abstract class CallbackUpdateHandler<T extends SerializableInlineObject>
   @Override
   public boolean handleUpdate(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
-    if (callbackQuery == null || callbackQuery.getMessage() == null) {
+    if (callbackQuery == null
+        || callbackQuery.getMessage() == null
+        || StringUtil.isBlank(callbackQuery.getId())) {
       return false;
     }
     String data = callbackQuery.getData();

@@ -46,7 +46,7 @@ public class PidorCleanupChatHandler implements CleanupHandler {
     long chatId = pidor.getChatId();
     LocalDate startDate = dateService.getNow().minusDays(NOTIFY_DAYS);
     if (startDate.isEqual(pidor.getUsernameLastUpdated())) {
-      logger.info(
+      logger.debug(
           new ParametizedText(
                   "Notify inactive pidor {0} from chat {1}",
                   new FullNamePidorText(pidor), new SimpleText(String.valueOf(chatId)))

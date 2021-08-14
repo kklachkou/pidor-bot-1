@@ -25,7 +25,7 @@ public class CustomDailyUserDataCleanupHandler implements CleanupHandler {
 
   @Override
   public void cleanup() {
-    LocalDate startDate = DateUtil.now().minusWeeks(1);
+    LocalDate startDate = DateUtil.now().minusDays(2);
     dailyDataRepository.getAll().stream()
         .filter(d -> cleanupTypes.contains(d.getType()))
         .filter(d -> d.getLocalDate().isBefore(startDate))
