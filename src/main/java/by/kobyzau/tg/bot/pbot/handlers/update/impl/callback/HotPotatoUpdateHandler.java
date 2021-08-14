@@ -10,8 +10,8 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.TimeLeftText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
+import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
@@ -81,7 +81,12 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
               EditMessageText.builder()
                   .messageId(message.getMessageId())
                   .chatId(String.valueOf(chatId))
-                  .text("Карочешка переброшена")
+                  .text(
+                      new ParametizedText(
+                              "Карочешка переброшена с {0} на {1}",
+                              new ShortNamePidorText(lastTaker.get()),
+                              new ShortNamePidorText(newTaker))
+                          .text())
                   .replyMarkup(InlineKeyboardMarkup.builder().clearKeyboard().build())
                   .build()));
       botActionCollector.add(
