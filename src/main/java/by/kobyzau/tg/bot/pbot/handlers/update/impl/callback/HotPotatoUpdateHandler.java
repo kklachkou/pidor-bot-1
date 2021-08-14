@@ -74,6 +74,14 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
           pidorService.getByChat(chatId).stream()
               .filter(p -> p.getTgId() != lastTaker.get().getTgId())
               .collect(Collectors.toList());
+      if (CollectionUtil.isEmpty(pidors)) {
+        botActionCollector.add(
+            new AnswerCallbackBotAction(
+                chatId,
+                update.getCallbackQuery().getId(),
+                new SimpleText("Не вижу других пидоров")));
+        return;
+      }
       Pidor newTaker = CollectionUtil.getRandomValue(pidors);
       LocalDateTime newDeadline = hotPotatoesService.setNewTaker(newTaker);
       botActionCollector.add(
@@ -110,7 +118,8 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
           new AnswerCallbackBotAction(
               chatId,
               update.getCallbackQuery().getId(),
-              new SimpleText("Горячая картошечка не у тебя")));
+              new SimpleText("Горячая картошечка не у тебя"),
+              true));
     }
   }
 }
