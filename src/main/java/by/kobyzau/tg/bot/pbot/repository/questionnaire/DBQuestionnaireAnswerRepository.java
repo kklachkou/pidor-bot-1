@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-//@Component
-//@Profile("prod")
+@Component
+@Profile("prod")
 public class DBQuestionnaireAnswerRepository implements QuestionnaireAnswerRepository {
   @Autowired private IQuestionnaireAnswerRepository repository;
 
@@ -20,30 +20,27 @@ public class DBQuestionnaireAnswerRepository implements QuestionnaireAnswerRepos
 
   @Override
   public long create(QuestionnaireAnswer obj) {
-  //  return repository.save(obj).getId();
-    return 1l;
+    return repository.save(obj).getId();
   }
 
   @Override
   public void update(QuestionnaireAnswer obj) {
-  //  repository.save(obj);
+    repository.save(obj);
   }
 
   @Override
   public QuestionnaireAnswer get(long id) {
-   // return repository.findById(id).orElse(null);
-    return null;
+    return repository.findById(id).orElse(null);
   }
 
   @Override
   public List<QuestionnaireAnswer> getAll() {
-//    return StreamSupport.stream(repository.findAll().spliterator(), false)
-//        .collect(Collectors.toList());
-    return null;
+    return StreamSupport.stream(repository.findAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 
   @Override
   public void delete(long id) {
- //   repository.deleteById(id);
+    repository.deleteById(id);
   }
 }
