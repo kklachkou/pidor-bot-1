@@ -68,12 +68,12 @@ public class ApplicationStartupRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
+    initDatabase();
     logger.info(
         "\u2B50\u2B50\u2B50\u2B50\u2B50\nStarting Pidor Bot...\nVersion "
             + new ShortDateText(Version.getLast().getRelease())
             + ": "
             + version);
-    initDatabase();
     TelegraphContextInitializer.init();
     TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();
