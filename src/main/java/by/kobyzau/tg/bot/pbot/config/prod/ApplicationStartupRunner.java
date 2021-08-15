@@ -6,7 +6,11 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.sync.CommandSyncer;
 import by.kobyzau.tg.bot.pbot.program.Version;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.ShortDateText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.program.tokens.AccessTokenHolderFactory;
 import by.kobyzau.tg.bot.pbot.program.tokens.TokenType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -14,6 +18,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.sql.DataSource;
@@ -23,19 +28,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 import org.telegram.telegraph.ExecutorOptions;
 import org.telegram.telegraph.TelegraphContext;
 import org.telegram.telegraph.TelegraphContextInitializer;
 
 @Component
 @Profile("prod")
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApplicationStartupRunner implements ApplicationRunner {
 
-  @Autowired(required = false) private FeedbackBot feedbackBot;
+  @Autowired(required = false)
+  private FeedbackBot feedbackBot;
 
   @Autowired private Environment env;
 
@@ -121,7 +128,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
     List<String> queries = getSql();
     logger.debug("Found " + queries.size() + " queries");
     try (Connection c = dataSource.getConnection();
-         Statement s = c.createStatement()) {
+        Statement s = c.createStatement()) {
       for (String query : queries) {
         s.addBatch(query);
       }
@@ -131,13 +138,12 @@ public class ApplicationStartupRunner implements ApplicationRunner {
     }
   }
 
-
   private List<String> getSql() {
     InputStream is = getClass().getClassLoader().getResourceAsStream("sql.txt");
     Objects.requireNonNull(is, "Cannot find sql file");
     try {
       return Arrays.asList(
-              String.join("", IOUtils.readLines(is, Charset.defaultCharset())).split(";"));
+          String.join("", IOUtils.readLines(is, Charset.defaultCharset())).split(";"));
     } catch (Exception e) {
       throw new RuntimeException("Cannot read sql file", e);
     }
