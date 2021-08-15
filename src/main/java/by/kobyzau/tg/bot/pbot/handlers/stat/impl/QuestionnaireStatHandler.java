@@ -5,8 +5,10 @@ import by.kobyzau.tg.bot.pbot.handlers.stat.StatHandler;
 import by.kobyzau.tg.bot.pbot.model.QuestionnaireAnswer;
 import by.kobyzau.tg.bot.pbot.model.QuestionnaireType;
 import by.kobyzau.tg.bot.pbot.model.StatType;
+import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.LongText;
 import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.SpaceText;
 import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
@@ -38,11 +40,13 @@ public class QuestionnaireStatHandler implements StatHandler {
     List<String> options = type.getOptions();
     for (int i = 0; i < options.size(); i++) {
       final int optionId = i;
+      long count = answers.stream().filter(a -> a.getOption() == optionId).count();
       String option = options.get(i);
       tx.append(new NewLineText());
       tx.append(new SimpleText(option))
           .append(new SpaceText())
-          .append(new LongText(answers.stream().filter(a -> a.getOption() == optionId).count()));
+          .append(new LongText(count))
+          .append(new ParametizedText(" ({0})", new IntText((int) (100 * count / options.size()))));
     }
 
     botActionCollector.text(chatId, tx);
