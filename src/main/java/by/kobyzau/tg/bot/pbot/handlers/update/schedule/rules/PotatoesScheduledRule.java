@@ -14,7 +14,8 @@ public class PotatoesScheduledRule implements ScheduledRule {
 
   @Override
   public boolean isMatch(long chatId, LocalDate localDate) {
-    return localDate.getDayOfWeek() == DayOfWeek.SATURDAY && localDate.getDayOfYear() % 2 == 0;
+    return localDate.getDayOfWeek() == DayOfWeek.TUESDAY
+        || localDate.getDayOfWeek() == DayOfWeek.SATURDAY && localDate.getDayOfYear() % 2 == 0;
   }
 
   @Override

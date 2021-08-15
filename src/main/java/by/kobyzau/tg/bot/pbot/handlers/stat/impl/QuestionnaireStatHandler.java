@@ -46,7 +46,7 @@ public class QuestionnaireStatHandler implements StatHandler {
       tx.append(new SimpleText(option))
           .append(new SpaceText())
           .append(new LongText(count))
-          .append(new ParametizedText(" ({0})", new IntText((int) (100 * count / answers.size()))));
+          .append(new ParametizedText(" ({0}%)", new IntText((int) (100 * count / answers.size()))));
     }
 
     botActionCollector.text(chatId, tx);
