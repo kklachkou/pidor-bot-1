@@ -30,8 +30,9 @@ public class FeedbackStatHandler implements StatHandler {
 
   @Override
   public void printStat(long chatId) {
-    printStat(chatId, FeedbackType.VERSION);
-    printStat(chatId, FeedbackType.PIDOR);
+    for (FeedbackType feedbackType : FeedbackType.values()) {
+      printStat(chatId, feedbackType);
+    }
   }
 
   private void printStat(long chatId, FeedbackType feedbackType) {

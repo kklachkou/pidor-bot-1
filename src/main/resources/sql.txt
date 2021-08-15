@@ -75,6 +75,15 @@ CREATE TABLE IF NOT EXISTS potato_taker(
     deadline TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS questionnaire_answer(
+    id serial PRIMARY KEY,
+    player_tg_id bigint NOT NULL,
+    chat_id bigint NOT NULL,
+    type VARCHAR (100) NOT NULL,
+    option int NOT NULL,
+    date TIMESTAMP NOT NULL
+);
+
 update pidor set sticker = 'PIDOR_NIKITA' where tg_id = 451337639;
 update pidor set sticker = 'PIDOR_FIL' where tg_id = 396782272;
 update pidor set sticker = 'PIDOR_SANYA' where tg_id = 562849728;

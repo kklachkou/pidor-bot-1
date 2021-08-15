@@ -20,9 +20,9 @@ bot:
     username: ${BOT_USERNAME}
     token: ${BOT_TOKEN}
 telegraph:
-  token: ${TELEGRAPH_TOKEN}
+  token: ${TELEGRAPH_TOKEN:None}
 app:
-  version: 11.2.1 Hot Potato
+  version: 11.2.2 Hot Potato
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:

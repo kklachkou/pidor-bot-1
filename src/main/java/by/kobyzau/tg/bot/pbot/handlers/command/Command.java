@@ -68,6 +68,7 @@ public enum Command {
   HOT_POTATOES(""),
   ELECTION(""),
   CURRENT_TIME("time"),
+  QUESTIONNAIRE("questionnaire"),
   STICKERS("stickers"),
   GIF("gif"),
   STAT("stat"),
