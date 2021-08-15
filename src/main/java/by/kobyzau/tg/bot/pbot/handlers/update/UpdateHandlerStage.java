@@ -4,6 +4,7 @@ import org.springframework.core.Ordered;
 
 public enum UpdateHandlerStage implements Ordered {
   VALIDATE,
+  TRACE_USER,
   COMMAND,
   CALLBACK,
   GAME,
