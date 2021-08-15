@@ -48,6 +48,7 @@ public class QuestionnaireCommandHandler implements CommandHandler {
     }
     botActionCollector.add(
         new SimpleBotAction<>(
+            chatId,
             SendMessage.builder()
                 .chatId(String.valueOf(chatId))
                 .text(buildMessage(type))

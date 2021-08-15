@@ -50,6 +50,7 @@ public class QuestionnaireUpdateHandler extends CallbackUpdateHandler<Questionna
     if (hasSameAnswer(chatId, userId, dto.getType(), dto.getOption())) {
       botActionCollector.add(
           new SimpleBotAction<>(
+              chatId,
               AnswerCallbackQuery.builder().callbackQueryId(callbackQuery.getId()).build()));
       return;
     }

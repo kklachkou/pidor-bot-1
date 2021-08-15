@@ -6,10 +6,16 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class SimpleBotAction<T extends Serializable> implements BotAction<T> {
+  private final long chatId;
   private final BotApiMethod<T> botApiMethod;
 
   public SimpleBotAction(BotApiMethod<T> botApiMethod) {
+    this(0, botApiMethod);
+  }
+
+  public SimpleBotAction(long chatId, BotApiMethod<T> botApiMethod) {
     this.botApiMethod = botApiMethod;
+    this.chatId = chatId;
   }
 
   @Override
@@ -19,7 +25,7 @@ public class SimpleBotAction<T extends Serializable> implements BotAction<T> {
 
   @Override
   public long getChatId() {
-    return 0;
+    return chatId;
   }
 
   @Override

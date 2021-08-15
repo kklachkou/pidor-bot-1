@@ -86,6 +86,7 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
       LocalDateTime newDeadline = hotPotatoesService.setNewTaker(newTaker);
       botActionCollector.add(
           new SimpleBotAction<>(
+              chatId,
               EditMessageText.builder()
                   .messageId(message.getMessageId())
                   .chatId(String.valueOf(chatId))
