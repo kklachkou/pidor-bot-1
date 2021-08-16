@@ -18,16 +18,18 @@ public class SendMessagesToChatHandler implements Runnable {
   private final AtomicInteger numIterationsWithPending = new AtomicInteger(0);
   private volatile BotHandlerState state;
   private final Logger logger;
+  private final boolean isAdmin;
   private final Bot bot;
   private final long chatId;
   private final Queue<BotAction<?>> queue = new ConcurrentLinkedQueue<>();
   private final Queue<Long> executionTime = new ConcurrentLinkedQueue<>();
 
-  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId) {
+  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId, boolean isAdmin) {
     this.logger = logger;
     this.bot = bot;
     this.chatId = chatId;
     this.state = BotHandlerState.PENDING;
+    this.isAdmin = isAdmin;
   }
 
   @Override
@@ -130,6 +132,9 @@ public class SendMessagesToChatHandler implements Runnable {
   }
 
   private boolean isExceedTimeLimit() {
+    if (isAdmin) {
+      return false;
+    }
     long currentTime = System.currentTimeMillis();
     boolean inLastSecond = executionTime.stream().anyMatch(l -> l > (currentTime - 600));
     if (inLastSecond) {
