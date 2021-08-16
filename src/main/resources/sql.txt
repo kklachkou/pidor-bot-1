@@ -84,6 +84,15 @@ CREATE TABLE IF NOT EXISTS questionnaire_answer(
     date TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS pidor_yearly_stat(
+    id serial PRIMARY KEY,
+    player_tg_id bigint NOT NULL,
+    chat_id bigint NOT NULL,
+    year int NOT NULL,
+    count int NOT NULL,
+    last_date TIMESTAMP NOT NULL
+);
+
 update pidor set sticker = 'PIDOR_NIKITA' where tg_id = 451337639;
 update pidor set sticker = 'PIDOR_FIL' where tg_id = 396782272;
 update pidor set sticker = 'PIDOR_SANYA' where tg_id = 562849728;

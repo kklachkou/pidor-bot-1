@@ -64,21 +64,23 @@ public enum Command {
       "Регистрация в игре в качестве пидора",
       Category.ACTION,
       11),
+  YEARLY_STAT("yearly_stat", "Fill in Yearly Stat"),
+  CURRENT_TIME("time", "Print Server Time"),
+  QUESTIONNAIRE("questionnaire", "Send Questionnaire"),
+  STICKERS("stickers", "Show Stickers"),
+  GIF("gif", "Show Gif"),
+  STAT("stat", "Get Statistic"),
+  NOTIFY("notify", "Send notification"),
+  TEST("test", "Test command"),
+  CLEANUP("cleanup", "Start cleanup"),
+  SYSTEM_CHECK("system_check", "Start System Checks"),
+  SQL("sql", "Execute sql"),
+  LOGGER("logger", "Set Logger Level"),
+  VERSION("version", "Send version info"),
   GAME(""),
   HOT_POTATOES(""),
   ELECTION(""),
-  CURRENT_TIME("time"),
-  QUESTIONNAIRE("questionnaire"),
-  STICKERS("stickers"),
-  GIF("gif"),
-  STAT("stat"),
-  NOTIFY("notify"),
-  TEST("test"),
-  CLEANUP("cleanup"),
-  SYSTEM_CHECK("system_check"),
-  VERSION("version"),
-  SQL("sql"),
-  LOGGER("logger"),
+
   BACKUP("backup");
 
   private final String name;
@@ -89,6 +91,10 @@ public enum Command {
 
   Command(String name) {
     this(name, null, null, Category.NONE, Integer.MAX_VALUE);
+  }
+
+  Command(String name, String shortDesc) {
+    this(name, shortDesc, null, Category.NONE, Integer.MAX_VALUE);
   }
 
   Command(String name, String shortDesc, String desc, Category category, int order) {

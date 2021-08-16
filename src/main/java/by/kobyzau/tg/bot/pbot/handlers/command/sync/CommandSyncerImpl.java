@@ -31,7 +31,7 @@ public class CommandSyncerImpl implements CommandSyncer {
   public void sync() {
     List<BotCommand> defaultCommands =
         Arrays.stream(Command.values())
-            .filter(c -> c.getShortDesc() != null)
+            .filter(c -> c.getDesc() != null)
             .sorted(Comparator.comparing(Command::getOrder))
             .map(this::map)
             .collect(Collectors.toList());

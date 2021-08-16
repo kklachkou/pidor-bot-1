@@ -1,21 +1,35 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
-import by.kobyzau.tg.bot.pbot.model.*;
+import by.kobyzau.tg.bot.pbot.model.DailyPidor;
+import by.kobyzau.tg.bot.pbot.model.Pair;
+import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.model.PidorStatus;
+import by.kobyzau.tg.bot.pbot.model.PidorYearlyStat;
+import by.kobyzau.tg.bot.pbot.model.PidotStatusPosition;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.PidorStatusService;
+import by.kobyzau.tg.bot.pbot.service.PidorYearlyStatService;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class PidorStatusServiceImpl implements PidorStatusService {
 
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private PidorService pidorService;
+  @Autowired private PidorYearlyStatService pidorYearlyStatService;
 
   @Override
   public PidorStatus getPidorStatus(long chatId, int year) {
@@ -26,7 +40,7 @@ public class PidorStatusServiceImpl implements PidorStatusService {
             .collect(Collectors.toList());
     List<Pair<Pidor, Integer>> simpleStatus =
         pidors.stream()
-            .map(p -> new Pair<>(p, getNumWins(p, dailyPidors)))
+            .map(p -> new Pair<>(p, getNumWins(p, dailyPidors, year)))
             .sorted(Comparator.comparingInt(Pair::getRight))
             .collect(Collectors.toList());
     Map<Integer, Set<Pidor>> pidorTop = new TreeMap<>((o1, o2) -> Integer.compare(o2, o1));
@@ -44,7 +58,7 @@ public class PidorStatusServiceImpl implements PidorStatusService {
       if (numWins == 0) {
         pidotStatusPosition.setSecondaryPidors(new ArrayList<>(localPidors));
       } else {
-        Pidor primaryPidor = getPrimaryPidor(localPidors, dailyPidors);
+        Pidor primaryPidor = getPrimaryPidor(localPidors, dailyPidors, year);
         pidotStatusPosition.setPrimaryPidor(primaryPidor);
         pidotStatusPosition.setSecondaryPidors(getSecondaryPidors(localPidors, primaryPidor));
       }
@@ -55,16 +69,20 @@ public class PidorStatusServiceImpl implements PidorStatusService {
     return result;
   }
 
-  private int getNumWins(Pidor pidor, List<DailyPidor> dailyPidors) {
+  private int getNumWins(Pidor pidor, List<DailyPidor> dailyPidors, int year) {
     long tgId = pidor.getTgId();
-    return (int) dailyPidors.stream().filter(d -> d.getPlayerTgId() == tgId).count();
+    Optional<PidorYearlyStat> yearlyStat =
+        pidorYearlyStatService.getStat(pidor.getChatId(), tgId, year);
+    return yearlyStat
+        .map(PidorYearlyStat::getCount)
+        .orElseGet(() -> (int) dailyPidors.stream().filter(d -> d.getPlayerTgId() == tgId).count());
   }
 
-  private Pidor getPrimaryPidor(Set<Pidor> pidors, List<DailyPidor> dailyPidors) {
+  private Pidor getPrimaryPidor(Set<Pidor> pidors, List<DailyPidor> dailyPidors, int year) {
     Pidor primaryPidor = null;
     LocalDate primaryPidorLastDate = LocalDate.MIN;
     for (Pidor pidor : pidors) {
-      LocalDate lastPidorDate = getLastPidorDate(pidor, dailyPidors);
+      LocalDate lastPidorDate = getLastPidorDate(pidor, dailyPidors, year);
       if (primaryPidor == null) {
         primaryPidor = pidor;
         primaryPidorLastDate = lastPidorDate;
@@ -78,7 +96,11 @@ public class PidorStatusServiceImpl implements PidorStatusService {
     return primaryPidor;
   }
 
-  private LocalDate getLastPidorDate(Pidor pidor, List<DailyPidor> dailyPidors) {
+  private LocalDate getLastPidorDate(Pidor pidor, List<DailyPidor> dailyPidors, int year) {
+    Optional<PidorYearlyStat> stat = pidorYearlyStatService.getStat(pidor.getChatId(), pidor.getTgId(), year);
+    if (stat.isPresent()) {
+      return stat.get().getLastDate();
+    }
     return dailyPidors.stream()
         .filter(d -> d.getPlayerTgId() == pidor.getTgId())
         .map(DailyPidor::getLocalDate)
