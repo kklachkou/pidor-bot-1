@@ -27,7 +27,13 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
 
   private static final List<String> KEYWORDS =
       Arrays.asList(
-          "Чур не я", "Я не пидор", "Не пидор я", "Не тронь меня", "Боже упаси", "Отвали");
+          "Чур не я",
+          "Я не пидор",
+          "Не пидор я",
+          "Не тронь меня",
+          "Боже упаси",
+          "Отвали",
+          "Вжух, вжух и не петух");
 
   @Override
   public boolean isExcludeGameDay(long chatId, LocalDate localDate) {

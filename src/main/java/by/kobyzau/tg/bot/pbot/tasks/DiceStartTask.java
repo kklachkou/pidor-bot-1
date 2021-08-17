@@ -3,6 +3,7 @@ package by.kobyzau.tg.bot.pbot.tasks;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
+import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
@@ -46,7 +47,7 @@ public class DiceStartTask implements Task {
   private void sendDice(long chatId) {
     EmojiGame game = diceService.getGame(chatId, DateUtil.now()).orElseThrow(IllegalStateException::new);
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.text(chatId, new SimpleText("Всем здарова!"));
+    botActionCollector.text(chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     game.printIntro(chatId);
     botActionCollector.add(

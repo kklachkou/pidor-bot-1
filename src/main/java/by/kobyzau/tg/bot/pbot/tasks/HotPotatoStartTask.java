@@ -52,7 +52,7 @@ public class HotPotatoStartTask implements Task {
             new SendMessageBotAction(
                 chatId,
                 new SimpleText(
-                    "Сегодня день <b>горячей картошечки</b>\uD83E\uDD54!\n"
+                    "Сегодня день <b>горячей картошечки</b>\uD83E\uDD54\uD83D\uDD25!\n"
                         + "Перекидывай картошечку с пидора на пидора, пока она не сгорит!\n"
                         + "Жми /pidor чтобы закинуть картошечку в чат!")),
             botService.canPinMessage(chatId)));

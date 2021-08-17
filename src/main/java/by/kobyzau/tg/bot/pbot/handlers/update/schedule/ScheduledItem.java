@@ -1,13 +1,13 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.schedule;
 
 public enum ScheduledItem {
-  //MONDAY, THURSDAY
+  //MONDAY, WEDNESDAY, THURSDAY, FRIDAY
   EMOJI_GAME(false),
   //SATURDAY
   EXCLUDE_GAME(false),
-  //Every 13 days && WEDNESDAY
+  //SUNDAY
   ELECTION(false),
-  //SUNDAY every 2 times
+  //TUESDAY, SATURDAY every 2 times
   POTATOES(false),
   NONE(true);
 

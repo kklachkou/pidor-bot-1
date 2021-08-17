@@ -4,6 +4,7 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
@@ -51,7 +52,7 @@ public class ExcludeUserGameStartTask implements Task {
       int numPidorsToExclude = gameService.getNumPidorsToExclude(chatId);
       botActionCollector.wait(chatId, ChatAction.TYPING);
       String wordOfTheDay = gameService.getWordOfTheDay(DateUtil.now());
-      botActionCollector.text(chatId, new SimpleText("Всем здарова!"));
+      botActionCollector.text(chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.text(
           chatId, new SimpleText("Сегодня пидором будет самая медленная рука Дикого Запада"));
