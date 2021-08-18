@@ -7,7 +7,8 @@ public enum SerializableInlineType {
   STAT(4, 20),
   FEEDBACK(5, 20),
   HOT_POTATOES(6, 20),
-  QUESTIONNAIRE(7, 20)
+  QUESTIONNAIRE(7, 20),
+  ALERT(8, 20),
   ;
 
   private final int index;

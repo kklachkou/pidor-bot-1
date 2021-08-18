@@ -1,10 +1,12 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
+import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.CallbackUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.HotPotatoDto;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
+import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.BoldText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
@@ -14,6 +16,7 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
@@ -29,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -44,6 +48,8 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private HotPotatoUtil hotPotatoUtil;
+  @Autowired private Logger logger;
+  @Autowired private Bot bot;
 
   @Override
   protected Class<HotPotatoDto> getDtoType() {
@@ -61,11 +67,17 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
     Message message = update.getCallbackQuery().getMessage();
     long chatId = message.getChatId();
     if (dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent()) {
-      botActionCollector.add(
-          new AnswerCallbackBotAction(
-              chatId,
-              update.getCallbackQuery().getId(),
-              new SimpleText("Пидора сегодня уже нашли")));
+      try {
+        bot.execute(
+            AnswerCallbackQuery.builder()
+                .text("Пидора сегодня уже нашли")
+                .cacheTime(60)
+                .showAlert(true)
+                .callbackQueryId(update.getCallbackQuery().getId())
+                .build());
+      } catch (Exception e) {
+        logger.error("Cannot answer callback", e);
+      }
       return;
     }
     Optional<Pidor> lastTaker = hotPotatoesService.getLastTaker(DateUtil.now(), chatId);
@@ -97,7 +109,9 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
                               new ShortNamePidorText(newTaker))
                           .text())
                   .replyMarkup(InlineKeyboardMarkup.builder().clearKeyboard().build())
-                  .build()));
+                  .build(),
+              true));
+      botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new SendMessageBotAction(
                   chatId,
@@ -115,12 +129,17 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
                                   .build()))
                       .build()));
     } else if (lastTaker.isPresent()) {
-      botActionCollector.add(
-          new AnswerCallbackBotAction(
-              chatId,
-              update.getCallbackQuery().getId(),
-              new SimpleText("Горячая картошечка не у тебя"),
-              true));
+      try {
+        bot.execute(
+            AnswerCallbackQuery.builder()
+                .text("Горячая картошечка не у тебя")
+                .cacheTime(10)
+                .showAlert(true)
+                .callbackQueryId(update.getCallbackQuery().getId())
+                .build());
+      } catch (Exception e) {
+        logger.error("Cannot answer callback", e);
+      }
     }
   }
 }

@@ -54,7 +54,8 @@ public class QuestionnaireCommandHandler implements CommandHandler {
                 .text(buildMessage(type))
                 .parseMode("html")
                 .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
-                .build()));
+                .build(),
+            true));
   }
 
   private String buildMessage(QuestionnaireType type) {

@@ -63,7 +63,9 @@ public class SendMessagesToChatHandler implements Runnable {
         }
       }
     }
-    executionTime.add(System.currentTimeMillis());
+    if (botAction.hasLimit()) {
+      executionTime.add(System.currentTimeMillis());
+    }
     try {
       logger.debug("✉️ Sending new bot action:\n\n<pre>" + botAction + "</pre>");
       botAction.process(bot);

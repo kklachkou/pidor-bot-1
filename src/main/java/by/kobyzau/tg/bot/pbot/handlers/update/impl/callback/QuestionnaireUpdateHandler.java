@@ -1,14 +1,15 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
+import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.CallbackUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.QuestionnaireAnswer;
 import by.kobyzau.tg.bot.pbot.model.QuestionnaireType;
 import by.kobyzau.tg.bot.pbot.model.dto.QuestionnaireInlineDto;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
+import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.QuestionnaireService;
 import by.kobyzau.tg.bot.pbot.tg.action.EditMessageReplyMarkupBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 public class QuestionnaireUpdateHandler extends CallbackUpdateHandler<QuestionnaireInlineDto> {
   @Autowired private QuestionnaireService questionnaireService;
   @Autowired private BotActionCollector botActionCollector;
+  @Autowired private Bot bot;
+  @Autowired private Logger logger;
 
   @Override
   protected Class<QuestionnaireInlineDto> getDtoType() {
@@ -48,10 +51,11 @@ public class QuestionnaireUpdateHandler extends CallbackUpdateHandler<Questionna
     long userId = calledUser.getId();
     long chatId = prevMessage.getChatId();
     if (hasSameAnswer(chatId, userId, dto.getType(), dto.getOption())) {
-      botActionCollector.add(
-          new SimpleBotAction<>(
-              chatId,
-              AnswerCallbackQuery.builder().callbackQueryId(callbackQuery.getId()).build()));
+      try {
+        bot.execute(AnswerCallbackQuery.builder().callbackQueryId(callbackQuery.getId()).build());
+      } catch (Exception e) {
+        logger.error("Cannot answer callback", e);
+      }
       return;
     }
     questionnaireService.addUniqueAnswer(
