@@ -1,23 +1,25 @@
 package by.kobyzau.tg.bot.pbot.util;
 
-import org.telegram.telegrambots.meta.api.objects.User;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 public class TGUtil {
   public static String getUsername(User user) {
-    return StringUtil.isBlank(user.getUserName(), "").trim();
+    return StringUtil.isBlank(user.getUserName(), "")
+        .trim()
+        .replaceAll("\uD83C\uDDE7\uD83C\uDDFE", "\uD83D\uDCA9");
   }
 
   public static String getFullName(User user) {
     return (StringUtil.isBlank(user.getFirstName(), "")
             + " "
             + StringUtil.isBlank(user.getLastName(), ""))
-        .trim();
+        .trim()
+        .replaceAll("\uD83C\uDDE7\uD83C\uDDFE", "\uD83D\uDCA9");
   }
 
   public static boolean isChatMember(Optional<ChatMember> chatMember) {
