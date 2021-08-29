@@ -22,7 +22,7 @@ bot:
 telegraph:
   token: ${TELEGRAPH_TOKEN:None}
 app:
-  version: 11.3.4 Long Live Belarus
+  version: 11.3.5 Long Live Belarus
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
