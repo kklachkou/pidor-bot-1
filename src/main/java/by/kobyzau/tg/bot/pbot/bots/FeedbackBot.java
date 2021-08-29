@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.CopyMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -42,11 +43,9 @@ public class FeedbackBot extends TelegramLongPollingBot {
   @Override
   public void onUpdateReceived(Update update) {
     try {
-      boolean feedbackHandled = false;
       if (update.hasMessage()) {
         Message message = update.getMessage();
         if (message.hasText() && message.getChat().isUserChat()) {
-          feedbackHandled = true;
           String text = message.getText();
           User user = message.getFrom();
           if ("/start".equals(text)) {
@@ -59,8 +58,9 @@ public class FeedbackBot extends TelegramLongPollingBot {
                     .build());
           } else {
             sendApiMethod(
-                SendMessage.builder()
-                    .text("Спасибо, фидбек получен")
+                CopyMessage.builder()
+                    .fromChatId(message.getChatId().toString())
+                    .messageId(message.getMessageId())
                     .parseMode("html")
                     .chatId(String.valueOf(user.getId()))
                     .build());
@@ -79,14 +79,6 @@ public class FeedbackBot extends TelegramLongPollingBot {
                     .text());
           }
         }
-      }
-      if (!feedbackHandled) {
-        sendApiMethod(
-            SendMessage.builder()
-                .text("Пишите мне только текст")
-                .parseMode("html")
-                .chatId(String.valueOf(adminUserId))
-                .build());
       }
     } catch (Exception e) {
       logger.error("Cannot handle feedback", e);
