@@ -9,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
+import by.kobyzau.tg.bot.pbot.tg.action.CallbackBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.DicePostActionWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -40,20 +41,24 @@ public class DiceStartTask implements Task {
     LocalDate now = DateUtil.now();
     logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
     telegramService.getChatIds().stream()
-            .filter(chatId -> diceService.getGame(chatId, now).isPresent())
-            .forEach(chatId -> executor.execute(() -> sendDice(chatId)));
+        .filter(chatId -> diceService.getGame(chatId, now).isPresent())
+        .forEach(chatId -> executor.execute(() -> sendDice(chatId)));
   }
 
   private void sendDice(long chatId) {
-    EmojiGame game = diceService.getGame(chatId, DateUtil.now()).orElseThrow(IllegalStateException::new);
+    EmojiGame game =
+        diceService.getGame(chatId, DateUtil.now()).orElseThrow(IllegalStateException::new);
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    botActionCollector.text(chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
+    botActionCollector.text(
+        chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     game.printIntro(chatId);
     botActionCollector.add(
+        new CallbackBotAction<>(
             new PingMessageWrapperBotAction(
-                    new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
-                    botService.canPinMessage(chatId)));
+                new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
+                botService.canPinMessage(chatId)),
+            r -> logger.info("#DiceEnd for chat " + chatId)));
     botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
   }
 }
