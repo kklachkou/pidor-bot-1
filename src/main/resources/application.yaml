@@ -22,12 +22,12 @@ bot:
 telegraph:
   token: ${TELEGRAPH_TOKEN:None}
 app:
-  version: 11.3.5 Long Live Belarus
+  version: 11.3.6 Hot Potato
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
-    sendMessages: 15
-    tasks: 5
+    sendMessages: 25
+    tasks: 20
 
 task:
   gameStart.cron: 0 1 21 * * ?

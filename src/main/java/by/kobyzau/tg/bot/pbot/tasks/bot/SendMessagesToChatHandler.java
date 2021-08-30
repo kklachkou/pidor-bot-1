@@ -3,17 +3,19 @@ package by.kobyzau.tg.bot.pbot.tasks.bot;
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
+import by.kobyzau.tg.bot.pbot.util.ThreadUtil;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 public class SendMessagesToChatHandler implements Runnable {
 
   private final Lock lock = new ReentrantLock();
-  private static final int THREAD_LIVE_IN_PENDING = 15;
+  private static final int THREAD_LIVE_IN_PENDING = 3;
   private static final int LIMIT_PER_MINUTE = 20;
   private final AtomicInteger numIterationsWithPending = new AtomicInteger(0);
   private volatile BotHandlerState state;
@@ -45,26 +47,15 @@ public class SendMessagesToChatHandler implements Runnable {
       if (applyState(BotHandlerState.DEAD)) {
         logger.debug("\uD83D\uDEE0 Killing Chat Handler for chat " + chatId);
       }
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        logger.error("Cannot sleep in sendMessagesToChat", e);
-      }
+      ThreadUtil.sleep(500);
     }
   }
 
   private void send(BotAction<?> botAction) {
     if (botAction.hasLimit()) {
       while (isExceedTimeLimit()) {
-        try {
-          Thread.sleep(300);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+        ThreadUtil.sleep(300);
       }
-    }
-    if (botAction.hasLimit()) {
-      executionTime.add(System.currentTimeMillis());
     }
     try {
       logger.debug("✉️ Sending new bot action:\n\n<pre>" + botAction + "</pre>");
@@ -73,6 +64,9 @@ public class SendMessagesToChatHandler implements Runnable {
       logger.error("Cannot send message:\n\n " + botAction + "\n\n" + tgEx.getApiResponse(), tgEx);
     } catch (Exception e) {
       logger.error("Cannot send message:\n\n " + botAction, e);
+    }
+    if (botAction.hasLimit()) {
+      executionTime.add(System.currentTimeMillis());
     }
   }
 
@@ -113,7 +107,7 @@ public class SendMessagesToChatHandler implements Runnable {
               this.state = BotHandlerState.WORKING;
               return true;
             case DEAD:
-              if (numIterationsWithPending.get() > THREAD_LIVE_IN_PENDING * 2) {
+              if (numIterationsWithPending.get() > THREAD_LIVE_IN_PENDING) {
                 this.state = BotHandlerState.DEAD;
                 return true;
               }

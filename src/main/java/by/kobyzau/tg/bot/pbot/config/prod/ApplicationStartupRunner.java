@@ -6,22 +6,12 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.sync.CommandSyncer;
 import by.kobyzau.tg.bot.pbot.program.Version;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.ShortDateText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.program.tokens.AccessTokenHolderFactory;
 import by.kobyzau.tg.bot.pbot.program.tokens.TokenType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +25,15 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegraph.ExecutorOptions;
 import org.telegram.telegraph.TelegraphContext;
 import org.telegram.telegraph.TelegraphContextInitializer;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @Profile("prod")
@@ -58,15 +57,6 @@ public class ApplicationStartupRunner implements ApplicationRunner {
   @Value("${app.version}")
   private String version;
 
-  @Value("${spring.datasource.url}")
-  private String url;
-
-  @Value("${spring.datasource.username}")
-  private String username;
-
-  @Value("${spring.datasource.password}")
-  private String password;
-
   @Autowired private Logger logger;
 
   @Autowired private BotActionCollector botActionCollector;
@@ -75,32 +65,19 @@ public class ApplicationStartupRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    initDatabase();
     logger.info(
         "\u2B50\u2B50\u2B50\u2B50\u2B50\nStarting Pidor Bot...\nVersion "
             + new ShortDateText(Version.getLast().getRelease())
             + ": "
             + version);
+    initDatabase();
     TelegraphContextInitializer.init();
     TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();
     if (feedbackBot != null) {
       feedbackBot.botConnect();
     }
-    logger.info("Bot started " + bot.getBotUsername());
     commandSyncer.sync();
-    logger.info(
-        new TextBuilder(new SimpleText("Credentials: "))
-            .append(new NewLineText())
-            .append(new NewLineText())
-            .append(new SimpleText(url))
-            .append(new NewLineText())
-            .append(new NewLineText())
-            .append(new SimpleText(username))
-            .append(new NewLineText())
-            .append(new NewLineText())
-            .append(new SimpleText(password))
-            .text());
     Arrays.stream(TokenType.values())
         .map(tokenHolderFactory::getTokenHolder)
         .map(
@@ -122,6 +99,7 @@ public class ApplicationStartupRunner implements ApplicationRunner {
           adminUserId, new SimpleText("!!!new-year profile need to be deactivated"));
       logger.warn("!!!new-year profile need to be deactivated");
     }
+    logger.info("Bot started " + bot.getBotUsername());
   }
 
   private void initDatabase() {
