@@ -67,16 +67,6 @@ public class StringUtil {
     return s1.trim().equals(s2.trim());
   }
 
-  public static boolean equalsIgnoreCase(String s1, String s2) {
-    if (s1 == null && s2 == null) {
-      return true;
-    }
-    if (s1 == null || s2 == null) {
-      return false;
-    }
-    return s1.trim().equalsIgnoreCase(s2.trim());
-  }
-
   public static String substringBefore(final String str, final String separator) {
     if (isBlank(str) || separator == null) {
       return str;

@@ -32,7 +32,7 @@ public class CoronaOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
 
   @Override
   public LocalDate getDate() {
-    return LocalDate.of(2020, 10, 15);
+    return LocalDate.of(2021, 9, 3);
   }
 
   @Override

@@ -17,6 +17,12 @@ public class DbPidorRepository implements PidorRepository {
 
   @Autowired private IRepoPidorRepository pidorRepository;
 
+
+  @Override
+  public List<Long> getChatIdsWithPidors() {
+    return pidorRepository.getChatIds();
+  }
+
   @Override
   public Optional<Pidor> getByChatAndPlayerTgId(long chatId, long tgId) {
     return pidorRepository.findByChatId(chatId).stream()

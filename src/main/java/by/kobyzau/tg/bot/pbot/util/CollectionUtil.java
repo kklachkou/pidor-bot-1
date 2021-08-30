@@ -12,13 +12,6 @@ public class CollectionUtil {
 
   private static final Random RANDOM = new Random();
 
-  public static <T> List<T> join(List<T> c1, List<T> c2) {
-    List<T> list = new ArrayList<>();
-    list.addAll(c1);
-    list.addAll(c2);
-    return list;
-  }
-
   public static int size(Collection<?> c) {
     if (isEmpty(c)) {
       return 0;

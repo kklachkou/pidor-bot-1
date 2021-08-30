@@ -8,21 +8,21 @@ import by.kobyzau.tg.bot.pbot.repository.exclude.ExcludeGameRepository;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ExcludeGameServiceImpl implements ExcludeGameService {
 
   @Autowired private ExcludeGameRepository repository;
   @Autowired private PidorService pidorService;
-
   @Autowired private CalendarSchedule calendarSchedule;
 
   private static final List<String> KEYWORDS =
@@ -43,8 +43,7 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
   @Override
   public Optional<ExcludeGameUserValue> getExcludeGameUserValue(
       long chatId, long userId, LocalDate date) {
-    return repository.getAll().stream()
-        .filter(d -> d.getChatId() == chatId)
+    return repository.getByChatId(chatId).stream()
         .filter(d -> d.getPlayerTgId() == userId)
         .filter(d -> d.getLocalDate().isEqual(date))
         .findFirst();
@@ -52,8 +51,7 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
 
   @Override
   public List<ExcludeGameUserValue> getExcludeGameUserValues(long chatId, LocalDate date) {
-    return repository.getAll().stream()
-        .filter(d -> d.getChatId() == chatId)
+    return repository.getByChatId(chatId).stream()
         .filter(d -> d.getLocalDate().isEqual(date))
         .collect(Collectors.toList());
   }
@@ -72,7 +70,10 @@ public class ExcludeGameServiceImpl implements ExcludeGameService {
   @Override
   public int getNumPidorsToExclude(long chatId) {
     int numPidors = pidorService.getByChat(chatId).size();
-    if (numPidors <= 5) {
+    if (numPidors == 0) {
+      return 0;
+    }
+    if (numPidors <= 6) {
       return numPidors - 1;
     }
     return (int) (numPidors * 0.8);

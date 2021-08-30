@@ -7,10 +7,7 @@ import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.HotPotatoDto;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
-import by.kobyzau.tg.bot.pbot.program.text.BoldText;
-import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.TimeLeftText;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
@@ -24,12 +21,6 @@ import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.HotPotatoUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -39,6 +30,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> {
@@ -104,7 +102,12 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
                   .chatId(String.valueOf(chatId))
                   .text(
                       new ParametizedText(
-                              "Карочешка переброшена с {0} на {1}",
+                              new RandomText(
+                                  "Была картошечка у {0}, стала у {1}",
+                                  "{0} перекинул картошечку на {1}",
+                                  "{0} скинул картошечку на {1}",
+                                  "Горячая картошечка переброшена с {0} на {1}",
+                                  "Картошечка переброшена с {0} на {1}"),
                               new ShortNamePidorText(lastTaker.get()),
                               new ShortNamePidorText(newTaker))
                           .text())

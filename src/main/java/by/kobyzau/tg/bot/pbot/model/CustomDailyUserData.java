@@ -1,10 +1,17 @@
 package by.kobyzau.tg.bot.pbot.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "custom_daily_user_data")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomDailyUserData {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

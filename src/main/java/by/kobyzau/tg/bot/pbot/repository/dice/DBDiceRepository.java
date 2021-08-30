@@ -1,20 +1,24 @@
 package by.kobyzau.tg.bot.pbot.repository.dice;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
+import by.kobyzau.tg.bot.pbot.model.PidorDice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import by.kobyzau.tg.bot.pbot.model.PidorDice;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Component
 @Profile("prod")
 public class DBDiceRepository implements DiceRepository {
 
   @Autowired private IDiceRepository diceRepository;
+
+  @Override
+  public List<PidorDice> getByChatId(long chatId) {
+    return diceRepository.findByChatId(chatId);
+  }
 
   @Override
   public long create(PidorDice obj) {

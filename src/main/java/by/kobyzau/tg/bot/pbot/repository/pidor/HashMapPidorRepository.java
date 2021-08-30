@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-
 @Profile({"dev", "integration-test"})
 public class HashMapPidorRepository implements PidorRepository {
 
@@ -25,6 +24,11 @@ public class HashMapPidorRepository implements PidorRepository {
   @Override
   public List<Pidor> getByChat(long chatId) {
     return getAll().stream().filter(p -> chatId == p.getChatId()).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Long> getChatIdsWithPidors() {
+    return getAll().stream().map(Pidor::getChatId).distinct().collect(Collectors.toList());
   }
 
   @Override

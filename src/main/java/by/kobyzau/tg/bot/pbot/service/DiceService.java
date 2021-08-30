@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface DiceService {
 
-  List<PidorDice> getDices();
-
   List<PidorDice> getDices(long chatId, LocalDate date);
 
   void saveDice(PidorDice dice);

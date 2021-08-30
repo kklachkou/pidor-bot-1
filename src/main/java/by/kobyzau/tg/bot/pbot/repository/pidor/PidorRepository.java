@@ -11,4 +11,6 @@ public interface PidorRepository extends CrudRepository<Pidor> {
   Optional<Pidor> getByChatAndPlayerTgId(long chatId, long tgId);
 
   List<Pidor> getByChat(long chatId);
+
+  List<Long> getChatIdsWithPidors();
 }

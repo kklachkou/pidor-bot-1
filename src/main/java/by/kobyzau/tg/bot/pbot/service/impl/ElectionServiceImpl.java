@@ -1,6 +1,5 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
-import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.CustomDailyUserData;
@@ -21,7 +20,6 @@ public class ElectionServiceImpl implements ElectionService {
   @Autowired private CustomDailyDataRepository dailyDataRepository;
 
   @Autowired private PidorService pidorService;
-  @Autowired private BotActionCollector botActionCollector;
 
   @Override
   public boolean isElectionDay(long chatId, LocalDate localDate) {
@@ -41,6 +39,9 @@ public class ElectionServiceImpl implements ElectionService {
     if (numPidors <= 5) {
       return numPidors;
     }
+    if (numPidors == 6) {
+      return 5;
+    }
     return (int) (numPidors * 0.8);
   }
 
@@ -58,7 +59,7 @@ public class ElectionServiceImpl implements ElectionService {
         dailyDataRepository.getByChatAndDate(chatId, date).stream()
             .filter(d -> d.getType() == CustomDailyUserData.Type.ELECTION_VOTE)
             .map(CustomDailyUserData::getData)
-            .map(id -> StringUtil.parseInt(id, 0))
+            .map(id -> StringUtil.parseLong(id, 0))
             .filter(id -> id == userId)
             .count();
   }

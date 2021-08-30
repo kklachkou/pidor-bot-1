@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 
+import by.kobyzau.tg.bot.pbot.bots.PidorBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.model.Pair;
@@ -14,7 +15,6 @@ import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -26,9 +26,7 @@ public class ChancesCommandHandler implements CommandHandler {
   @Autowired private PidorChanceService pidorChanceService;
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
-
-  @Value("${bot.pidor.token}")
-  private String botToken;
+  @Autowired private PidorBot pidorBot;
 
   @Override
   public void processCommand(Message message, String text) {
@@ -42,7 +40,7 @@ public class ChancesCommandHandler implements CommandHandler {
     }
     botActionCollector.wait(chatId, 1, ChatAction.UPLOAD_PHOTO);
     botActionCollector.animation(
-        chatId, GifFile.CALCULATION.getRandom(StringUtil.substringBefore(botToken, ":")));
+        chatId, GifFile.CALCULATION.getRandom(StringUtil.substringBefore(pidorBot.getBotToken(), ":")));
     botActionCollector.typing(chatId);
     List<Pair<Pidor, Double>> pairs =
         pidorChanceService.calcChances(chatId, DateUtil.now().getYear());

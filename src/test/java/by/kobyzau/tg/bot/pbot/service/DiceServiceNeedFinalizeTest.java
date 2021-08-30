@@ -87,7 +87,7 @@ public class DiceServiceNeedFinalizeTest {
   public void needToFinalize() {
     // given
     doReturn(getPidors()).when(pidorService).getByChat(chatId);
-    doReturn(getDices()).when(diceRepository).getAll();
+    doReturn(getDices()).when(diceRepository).getByChatId(chatId);
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
 
     // when

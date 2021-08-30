@@ -76,7 +76,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
   public void handleUpdate_messageNotValid_noMessage() {
     // given
     Update update = new Update();
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -96,7 +96,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(false).when(botService).isChatValid(chatId);
+    doReturn(false).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -116,7 +116,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
     doReturn(Optional.empty()).when(pidorService).getPidor(chatId, userId);
@@ -137,7 +137,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getTextMessage("some text"));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -157,7 +157,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, "anotherDice"));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -177,7 +177,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.of(new DailyPidor()))
         .when(dailyPidorRepository)
         .getByChatAndDate(chatId, DateUtil.now());
@@ -199,7 +199,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.of(new PidorDice()))
         .when(diceService)
@@ -221,7 +221,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -251,7 +251,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 1;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
 
@@ -282,7 +282,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
     doReturn(false).when(diceService).needToFinalize(chatId);

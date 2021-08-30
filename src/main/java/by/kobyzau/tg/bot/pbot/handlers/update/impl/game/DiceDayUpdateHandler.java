@@ -177,7 +177,7 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     if (!message.hasDice()) {
       return false;
     }
-    return botService.isChatValid(message.getChatId())
+    return botService.isChatValid(message.getChat())
         && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
   }
 }

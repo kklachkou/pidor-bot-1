@@ -12,4 +12,7 @@ public interface IRepoPidorRepository extends CrudRepository<Pidor, Long> {
 
   @Query("SELECT p FROM Pidor p WHERE p.chatId = ?1")
   List<Pidor> findByChatId(long chatId);
+
+  @Query("SELECT distinct p.chatId FROM Pidor p")
+  List<Long> getChatIds();
 }

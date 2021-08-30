@@ -10,6 +10,7 @@ import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.model.dto.VoteInlineMessageInlineDto;
+import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
@@ -54,6 +55,7 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
 
   @Mock private ElectionService electionService;
   @Mock private PidorService pidorService;
+  @Mock private Logger logger;
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private ElectionFinalizer electionFinalizer;
   @Mock private ChatSettingsService chatSettingsService;
@@ -129,37 +131,7 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     assertNotPrinter();
     assertFalse(result);
   }
-
-  @Test
-  public void handleUpdate_anotherCaller() {
-    // given
-    setupPidorOfTheDay();
-    Update update = new Update();
-    CallbackQuery callbackQuery = new CallbackQuery();
-    Message prevMessage = new Message();
-    prevMessage.setChat(new Chat(chatId, "group"));
-    prevMessage.setFrom(bot);
-    User calledUser = new User(targetId, "caller", false);
-    User callerUser = new User(callerId, "caller", false);
-    Message replyMessage = new Message();
-    replyMessage.setFrom(callerUser);
-    prevMessage.setReplyToMessage(replyMessage);
-    callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
-    callbackQuery.setMessage(prevMessage);
-    update.setCallbackQuery(callbackQuery);
-
-    // when
-    boolean result = handler.handleUpdate(update);
-
-    // then
-    checkActions(new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
-    assertNotFinalized();
-    assertNotPrinter();
-    assertNotSavedVote();
-    assertTrue(result);
-  }
-
+  
   @Test
   public void handleUpdate_anotherIndex() {
     // given
@@ -277,102 +249,6 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
     assertNotSavedVote();
     assertTrue(result);
   }
-
-  @Test
-  public void handleUpdate_hiddenElection_notFinalized() {
-    // given
-    Update update = new Update();
-    CallbackQuery callbackQuery = new CallbackQuery();
-    Message prevMessage = new Message();
-    prevMessage.setChat(new Chat(chatId, "group"));
-    prevMessage.setFrom(bot);
-    User calledUser = new User(callerId, "caller", false);
-    Message replyMessage = new Message();
-    replyMessage.setFrom(calledUser);
-    prevMessage.setReplyToMessage(replyMessage);
-    callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
-    callbackQuery.setMessage(prevMessage);
-    update.setCallbackQuery(callbackQuery);
-    doReturn(5).when(electionService).getNumToVote(chatId);
-    doReturn(true).when(chatSettingsService).isEnabled(ELECTION_HIDDEN, chatId );
-
-    // when
-    boolean result = handler.handleUpdate(update);
-
-    // then
-    checkActions(
-            new BotTypeBotActionChecker(EditMessageBotAction.class),
-            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
-    assertNotFinalized();
-    assertPrinted(true);
-    assertSavedVote();
-    assertTrue(result);
-  }
-
-
-  @Test
-  public void handleUpdate_notFinalized() {
-    // given
-    Update update = new Update();
-    CallbackQuery callbackQuery = new CallbackQuery();
-    Message prevMessage = new Message();
-    prevMessage.setChat(new Chat(chatId, "group"));
-    prevMessage.setFrom(bot);
-    User calledUser = new User(callerId, "caller", false);
-    Message replyMessage = new Message();
-    replyMessage.setFrom(calledUser);
-    prevMessage.setReplyToMessage(replyMessage);
-    callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
-    callbackQuery.setMessage(prevMessage);
-    update.setCallbackQuery(callbackQuery);
-    doReturn(5).when(electionService).getNumToVote(chatId);
-    doReturn(false).when(chatSettingsService).isEnabled(ELECTION_HIDDEN, chatId );
-
-    // when
-    boolean result = handler.handleUpdate(update);
-
-    // then
-    checkActions(
-            new BotTypeBotActionChecker(EditMessageBotAction.class),
-            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
-    assertNotFinalized();
-    assertPrinted(false);
-    assertSavedVote();
-    assertTrue(result);
-  }
-
-  @Test
-  public void handleUpdate_finalized() {
-    // given
-    Update update = new Update();
-    CallbackQuery callbackQuery = new CallbackQuery();
-    Message prevMessage = new Message();
-    prevMessage.setChat(new Chat(chatId, "group"));
-    prevMessage.setFrom(bot);
-    User calledUser = new User(callerId, "caller", false);
-    Message replyMessage = new Message();
-    replyMessage.setFrom(calledUser);
-    prevMessage.setReplyToMessage(replyMessage);
-    callbackQuery.setFrom(calledUser);
-    callbackQuery.setData(StringUtil.serialize(new VoteInlineMessageInlineDto("id", targetId)));
-    callbackQuery.setMessage(prevMessage);
-    update.setCallbackQuery(callbackQuery);
-
-    // when
-    boolean result = handler.handleUpdate(update);
-
-    // then
-    checkActions(
-            new BotTypeBotActionChecker(EditMessageBotAction.class),
-            new BotTypeBotActionChecker(AnswerCallbackBotAction.class));
-    assertFinalized();
-    assertNotPrinter();
-    assertSavedVote();
-    assertTrue(result);
-  }
-
 
   @Test
   public void handleUpdate_notElectionDay() {

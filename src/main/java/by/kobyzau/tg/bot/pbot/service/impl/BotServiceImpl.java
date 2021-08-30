@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
+import by.kobyzau.tg.bot.pbot.bots.PidorBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.service.BotService;
@@ -22,8 +23,6 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricte
 @Service
 public class BotServiceImpl implements BotService {
 
-  @Value("${bot.pidor.token}")
-  private String botToken;
 
   @Value("${app.admin.userId}")
   private long adminUserId;
@@ -33,6 +32,7 @@ public class BotServiceImpl implements BotService {
   @Autowired private BotActionCollector botActionCollector;
 
   @Autowired private Logger logger;
+  @Autowired private PidorBot pidorBot;
 
   @Override
   public boolean canPinMessage(long chatId) {
@@ -113,7 +113,7 @@ public class BotServiceImpl implements BotService {
     if (!canPinMessage(chatId)) {
       return;
     }
-    String botId = StringUtil.substringBefore(botToken, ":");
+    String botId = StringUtil.substringBefore(pidorBot.getBotToken(), ":");
     telegramService
         .getChat(chatId)
         .map(Chat::getPinnedMessage)

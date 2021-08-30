@@ -16,6 +16,11 @@ public class DBExcludeGameRepository implements ExcludeGameRepository {
   @Autowired private IExcludeGameRepository repository;
 
   @Override
+  public List<ExcludeGameUserValue> getByChatId(long chatId) {
+    return repository.findByChatId(chatId);
+  }
+
+  @Override
   public long create(ExcludeGameUserValue obj) {
     return repository.save(obj).getId();
   }

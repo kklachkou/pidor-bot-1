@@ -19,7 +19,7 @@ public class DateUtil {
       return true;
     }
     if (d1 == null || d2 == null) {
-      return true;
+      return false;
     }
     return d1.isEqual(d2);
   }

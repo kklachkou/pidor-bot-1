@@ -72,7 +72,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(null, adminId));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
 
     // when
     boolean result = handler.handleUpdate(update);
@@ -87,7 +87,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, null));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
 
     // when
     boolean result = handler.handleUpdate(update);
@@ -102,7 +102,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, adminId));
-    doReturn(false).when(botService).isChatValid(chatId);
+    doReturn(false).when(botService).isChatValid(new Chat(chatId, "group"));
 
     // when
     boolean result = handler.handleUpdate(update);
@@ -117,7 +117,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, adminId));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(new ParsedCommand(Command.TEST, commandText))
         .when(commandParser)
         .parseCommand(anyString());
@@ -136,7 +136,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, adminId + 1));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(new ParsedCommand(Command.TEST, commandText))
         .when(commandParser)
         .parseCommand(anyString());
@@ -155,7 +155,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, adminId));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
 
     // when
     boolean result = handler.handleUpdate(update);
@@ -170,7 +170,7 @@ public class CommandUpdateHandlerTest extends BotActionAbstractTest {
     // given
     Update update = new Update();
     update.setMessage(getMessage(messageText, adminId + 1));
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
 
     // when
     boolean result = handler.handleUpdate(update);

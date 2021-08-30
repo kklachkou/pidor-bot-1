@@ -44,8 +44,4 @@ public class PidorUtil {
         .findFirst()
         .map(DailyPidor::getPlayerTgId);
   }
-
-  public static String getUserName(String message, int offset, int length) {
-    return message.substring(offset + 1, offset + length);
-  }
 }

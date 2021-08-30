@@ -8,12 +8,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Profile({"dev", "integration-test"})
 public class HashMapExcludeGameRepository implements ExcludeGameRepository {
 
   private final Map<Long, ExcludeGameUserValue> map = new HashMap<>();
+
+  @Override
+  public List<ExcludeGameUserValue> getByChatId(long chatId) {
+    return getAll().stream().filter(c -> c.getChatId() == chatId).collect(Collectors.toList());
+  }
 
   @Override
   public long create(ExcludeGameUserValue obj) {

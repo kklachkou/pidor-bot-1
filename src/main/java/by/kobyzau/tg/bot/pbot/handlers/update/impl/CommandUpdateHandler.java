@@ -91,7 +91,7 @@ public class CommandUpdateHandler implements UpdateHandler {
       return Command.NONE;
     }
     if (parsedCommand.getCommand() != Command.NONE) {
-      if (!botService.isChatValid(message.getChatId())) {
+      if (!botService.isChatValid(message.getChat())) {
         return Command.NONE;
       }
       botActionCollector.typing(message.getChatId());

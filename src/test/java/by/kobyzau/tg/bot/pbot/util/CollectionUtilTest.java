@@ -1,14 +1,11 @@
 package by.kobyzau.tg.bot.pbot.util;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import java.time.LocalDate;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class CollectionUtilTest {
 
@@ -22,6 +19,70 @@ public class CollectionUtilTest {
 
     // then
     assertEquals("1", value);
+  }
+
+  @Test
+  public void isNotEmpty_null() {
+    // when
+    boolean result = CollectionUtil.isNotEmpty(null);
+
+    // then
+    assertFalse(result);
+  }
+
+  @Test
+  public void isNotEmpty_empty() {
+    // when
+    Collection<Object> c = Collections.emptyList();
+    // when
+    boolean result = CollectionUtil.isNotEmpty(c);
+
+    // then
+    assertFalse(result);
+  }
+
+  @Test
+  public void isNotEmpty_notEmpty() {
+    // when
+    Collection<Object> c = Arrays.asList("a", "b");
+    // when
+    boolean result = CollectionUtil.isNotEmpty(c);
+
+    // then
+    assertTrue(result);
+  }
+
+  @Test
+  public void size_null_zero() {
+    // when
+    int size = CollectionUtil.size(null);
+
+    // then
+    assertEquals(0, size);
+  }
+
+  @Test
+  public void size_empty_zero() {
+    // given
+    List<Object> list = Collections.emptyList();
+
+    // when
+    int size = CollectionUtil.size(list);
+
+    // then
+    assertEquals(0, size);
+  }
+
+  @Test
+  public void size_notEmpty() {
+    // given
+    List<Object> list = Arrays.asList("one", "two");
+
+    // when
+    int size = CollectionUtil.size(list);
+
+    // then
+    assertEquals(2, size);
   }
 
   @Test

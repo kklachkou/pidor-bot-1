@@ -1,14 +1,10 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
 import by.kobyzau.tg.bot.pbot.bots.PidorBot;
-import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -21,6 +17,10 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class TelegramServiceImpl implements TelegramService {
@@ -51,8 +51,7 @@ public class TelegramServiceImpl implements TelegramService {
 
   @Override
   public List<Long> getChatIds() {
-    return pidorRepository.getAll().stream()
-        .map(Pidor::getChatId)
+    return pidorRepository.getChatIdsWithPidors().stream()
         .distinct()
         .filter(botService::isBotPartOfChat)
         .collect(Collectors.toList());

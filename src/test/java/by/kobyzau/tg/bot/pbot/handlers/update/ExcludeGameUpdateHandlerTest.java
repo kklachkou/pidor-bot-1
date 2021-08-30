@@ -67,7 +67,7 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
     doReturn(userId).when(pidor).getTgId();
     doReturn(chatId).when(pidor).getChatId();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(chatId, userId);
-    doReturn(true).when(botService).isChatValid(chatId);
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
     doReturn(excludeWord).when(excludeGameService).getWordOfTheDay(any());
     doReturn(userId).when(savedValue).getPlayerTgId();
     doReturn(chatId).when(savedValue).getChatId();
@@ -114,7 +114,7 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
            .when(excludeGameService)
            .getExcludeGameUserValue(chatId, userId, DateUtil.now());
    doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
-   doReturn(false).when(botService).isChatValid(chatId);
+   doReturn(false).when(botService).isChatValid(new Chat(chatId, "group"));
 
    // when
     boolean result = handler.handleUpdate(update);

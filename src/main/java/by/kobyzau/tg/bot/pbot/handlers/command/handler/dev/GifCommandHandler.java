@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler.dev;
 
+import by.kobyzau.tg.bot.pbot.bots.PidorBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.CommandHandler;
@@ -8,23 +9,18 @@ import by.kobyzau.tg.bot.pbot.tg.action.SendAnimationBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.GifFile;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.games.Animation;
 
 import java.util.Optional;
-import org.telegram.telegrambots.meta.api.objects.games.Animation;
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 
 @Component
 public class GifCommandHandler implements CommandHandler {
 
-  @Value("${bot.pidor.token}")
-  private String botToken;
+  @Autowired private PidorBot pidorBot;
 
-  @Autowired
-  private BotActionCollector botActionCollector;
+  @Autowired private BotActionCollector botActionCollector;
 
   @Override
   public void processCommand(Message message, String text) {
@@ -32,10 +28,11 @@ public class GifCommandHandler implements CommandHandler {
     Message replyToMessage = message.getReplyToMessage();
     if (replyToMessage != null && replyToMessage.hasAnimation()) {
       Animation animation = replyToMessage.getAnimation();
-      botActionCollector.text(chatId, new SimpleText(animation.getFileId()), replyToMessage.getMessageId());
+      botActionCollector.text(
+          chatId, new SimpleText(animation.getFileId()), replyToMessage.getMessageId());
       return;
     }
-    String botId = StringUtil.substringBefore(botToken, ":");
+    String botId = StringUtil.substringBefore(pidorBot.getBotToken(), ":");
     Optional<GifFile> gif = GifFile.parseGif(text);
     if (gif.isPresent()) {
       for (String fileId : gif.get().getFiles(botId)) {

@@ -1,16 +1,18 @@
 package by.kobyzau.tg.bot.pbot.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 @Entity
 @Table(name = "pidor_dice")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PidorDice {
 
   @Id
@@ -21,8 +23,6 @@ public class PidorDice {
   private long chatId;
   private LocalDate localDate;
   private int value;
-
-  public PidorDice() {}
 
   public PidorDice(long tgId, long chatId, LocalDate localDate, int value) {
     this.playerTgId = tgId;

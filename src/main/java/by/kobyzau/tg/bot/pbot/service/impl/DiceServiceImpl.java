@@ -29,14 +29,8 @@ public class DiceServiceImpl implements DiceService {
   @Autowired private CalendarSchedule calendarSchedule;
 
   @Override
-  public List<PidorDice> getDices() {
-    return diceRepository.getAll();
-  }
-
-  @Override
   public List<PidorDice> getDices(long chatId, LocalDate date) {
-    return diceRepository.getAll().stream()
-        .filter(d -> d.getChatId() == chatId)
+    return diceRepository.getByChatId(chatId).stream()
         .filter(d -> d.getLocalDate().isEqual(date))
         .collect(Collectors.toList());
   }
@@ -52,8 +46,7 @@ public class DiceServiceImpl implements DiceService {
 
   @Override
   public Optional<PidorDice> getUserDice(long chatId, long userId, LocalDate date) {
-    return diceRepository.getAll().stream()
-        .filter(d -> d.getChatId() == chatId)
+    return diceRepository.getByChatId(chatId).stream()
         .filter(d -> d.getPlayerTgId() == userId)
         .filter(d -> d.getLocalDate().isEqual(date))
         .findFirst();
@@ -77,6 +70,9 @@ public class DiceServiceImpl implements DiceService {
     if (numPidors <= 5) {
       return numPidors;
     }
+    if (numPidors == 6) {
+      return 5;
+    }
     return (int) (numPidors * 0.8);
   }
 
@@ -84,11 +80,7 @@ public class DiceServiceImpl implements DiceService {
   public boolean needToFinalize(long chatId) {
     LocalDate now = DateUtil.now();
     int numPidorsToPlay = getNumPidorsToPlay(chatId);
-    long diceNumber =
-        getDices().stream()
-            .filter(d -> d.getChatId() == chatId)
-            .filter(d -> d.getLocalDate().isEqual(now))
-            .count();
+    int diceNumber = getDices(chatId, now).size();
     return (diceNumber >= numPidorsToPlay)
         && !dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent();
   }

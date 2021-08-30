@@ -8,12 +8,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Profile({"dev", "integration-test"})
 public class HashMapDiceRepository implements DiceRepository {
 
   private final Map<Long, PidorDice> map = new HashMap<>();
+
+  @Override
+  public List<PidorDice> getByChatId(long chatId) {
+    return getAll().stream().filter(d -> d.getChatId() == chatId).collect(Collectors.toList());
+  }
 
   @Override
   public long create(PidorDice obj) {
