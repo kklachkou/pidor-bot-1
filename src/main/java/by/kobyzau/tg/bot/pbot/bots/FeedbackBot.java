@@ -14,8 +14,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+import java.util.Collections;
 
 @Profile("prod")
 @Component
@@ -62,6 +66,15 @@ public class FeedbackBot extends TelegramLongPollingBot {
                     .messageId(message.getMessageId())
                     .parseMode("html")
                     .chatId(String.valueOf(adminUserId))
+                    .replyMarkup(
+                        InlineKeyboardMarkup.builder()
+                            .keyboardRow(
+                                Collections.singletonList(
+                                    InlineKeyboardButton.builder()
+                                        .text(String.valueOf(chatId))
+                                        .url("tg://user?id=" + chatId)
+                                        .build()))
+                            .build())
                     .build());
             logger.info(
                 new TextBuilder()
