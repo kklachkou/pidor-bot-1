@@ -6,6 +6,7 @@ import by.kobyzau.tg.bot.pbot.model.api.github.CommitResponseDto;
 import by.kobyzau.tg.bot.pbot.model.dto.AppVersionDto;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class GithubServiceImpl implements GithubService {
   @Value("${api.github.branch}")
   private String branchName;
 
-  private final GithubClient githubClient;
+  @Autowired
+  private GithubClient githubClient;
 
   private static final Pattern COMMIT_PATTERN =
       Pattern.compile("^(\\d+\\.\\d+\\.\\d+) ?(.+)?\n?(.+)?$");

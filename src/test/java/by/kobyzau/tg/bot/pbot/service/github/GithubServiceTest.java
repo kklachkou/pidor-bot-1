@@ -7,6 +7,7 @@ import by.kobyzau.tg.bot.pbot.model.dto.AppVersionDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -26,11 +27,11 @@ public class GithubServiceTest {
 
   @Mock private GithubClient githubClient;
 
-  private GithubService service;
+  @InjectMocks
+  private GithubService service = new GithubServiceImpl();
 
   @Before
   public void init() {
-    service = new GithubServiceImpl(githubClient);
     ReflectionTestUtils.setField(service, "user", USER);
     ReflectionTestUtils.setField(service, "repositoryName", REPO);
     ReflectionTestUtils.setField(service, "branchName", BRANCH);
