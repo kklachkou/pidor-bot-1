@@ -1,6 +1,5 @@
 package by.kobyzau.tg.bot.pbot.bots;
 
-import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
@@ -23,7 +22,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class FeedbackBot extends TelegramLongPollingBot {
 
   @Autowired private Logger logger;
-  @Autowired private BotActionCollector botActionCollector;
 
   @Value("${app.time.bot.reconnect}")
   private int reconnectTime;
@@ -48,21 +46,22 @@ public class FeedbackBot extends TelegramLongPollingBot {
         if (message.hasText() && message.getChat().isUserChat()) {
           String text = message.getText();
           User user = message.getFrom();
+          long chatId = user.getId();
           if ("/start".equals(text)) {
             sendApiMethod(
                 SendMessage.builder()
                     .text(
                         "Приветствую! Пришли мне предложения либо отзывы по боту @" + pidorBotName)
                     .parseMode("html")
-                    .chatId(String.valueOf(user.getId()))
+                    .chatId(String.valueOf(chatId))
                     .build());
           } else {
             sendApiMethod(
                 CopyMessage.builder()
-                    .fromChatId(message.getChatId().toString())
+                    .fromChatId(String.valueOf(chatId))
                     .messageId(message.getMessageId())
                     .parseMode("html")
-                    .chatId(String.valueOf(user.getId()))
+                    .chatId(String.valueOf(adminUserId))
                     .build());
             logger.info(
                 new TextBuilder()
@@ -72,16 +71,22 @@ public class FeedbackBot extends TelegramLongPollingBot {
                         new ParametizedText(
                             "{0}: {1}",
                             new SimpleText(TGUtil.escapeHTML(user.getFirstName())),
-                            new LongText(user.getId())))
+                            new LongText(chatId)))
                     .append(new NewLineText())
                     .append(new NewLineText())
                     .append(new SimpleText(TGUtil.escapeHTML(text)))
                     .text());
+            execute(
+                SendMessage.builder()
+                    .chatId(String.valueOf(chatId))
+                    .text("Спасибо, отзыв получен")
+                    .replyToMessageId(message.getMessageId())
+                    .build());
           }
         }
       }
     } catch (Exception e) {
-      logger.error("Cannot handle feedback", e);
+      logger.error("Cannot handle feedback: " + e.getMessage(), e);
     }
   }
 
