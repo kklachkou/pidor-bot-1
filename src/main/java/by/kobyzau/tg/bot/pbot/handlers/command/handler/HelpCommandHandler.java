@@ -3,7 +3,9 @@ package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 import by.kobyzau.tg.bot.pbot.bots.FeedbackBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
+import by.kobyzau.tg.bot.pbot.model.dto.AppVersionDto;
 import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.service.github.GithubService;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +21,10 @@ import java.util.Optional;
 @Profile("prod")
 public class HelpCommandHandler implements CommandHandler {
 
-  @Value("${app.version}")
-  private String version;
+  @Value("${app.admin.userId}")
+  private long adminUserId;
+
+  @Autowired private GithubService githubService;
 
   @Autowired(required = false)
   private FeedbackBot feedbackBot;
@@ -29,10 +33,11 @@ public class HelpCommandHandler implements CommandHandler {
 
   @Override
   public void processCommand(Message message, String text) {
-    botActionCollector.text(message.getChatId(), buildHelpMessage());
+    botActionCollector.text(message.getChatId(), buildHelpMessage(message.getChatId()));
   }
 
-  private Text buildHelpMessage() {
+  private Text buildHelpMessage(long chatId) {
+    AppVersionDto appVersion = githubService.getAppVersion();
     return new TextBuilder(new SimpleText("Что умеет данный бот:"))
         .append(new NewLineText())
         .append(new NewLineText())
@@ -48,7 +53,17 @@ public class HelpCommandHandler implements CommandHandler {
                         .orElse("None")))
         .append(new NewLineText())
         .append(new NewLineText())
-        .append(new ItalicText(new ParametizedText("Версия {0}", new SimpleText(version))));
+        .append(
+            new ItalicText(
+                new ParametizedText(
+                    "Версия {0} {1}{2}",
+                    new SimpleText(appVersion.getNumber()),
+                    new SimpleText(appVersion.getName()),
+                    StringUtil.isBlank(appVersion.getDesc()) || chatId != adminUserId
+                        ? new EmptyText()
+                        : new TextBuilder()
+                            .append(new NewLineText())
+                            .append(new SimpleText(appVersion.getDesc())))));
   }
 
   private Text buildCommandsMessage(Command.Category category) {

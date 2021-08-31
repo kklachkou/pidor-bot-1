@@ -33,9 +33,6 @@ public class DevApplicationStartupRunner implements ApplicationRunner {
 
   @Autowired private Bot bot;
 
-  @Value("${app.version}")
-  private String version;
-
   @Value("${app.admin.userId}")
   private long adminUserId;
 
@@ -52,7 +49,6 @@ public class DevApplicationStartupRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    logger.info("\u2B50\u2B50\u2B50\u2B50\u2B50\nDev DevApp started\nVersion " + version);
     TelegraphContextInitializer.init();
     TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());
     bot.botConnect();

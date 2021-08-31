@@ -4,13 +4,13 @@ import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.bots.FeedbackBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.sync.CommandSyncer;
-import by.kobyzau.tg.bot.pbot.program.Version;
+import by.kobyzau.tg.bot.pbot.model.dto.AppVersionDto;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.ShortDateText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.tokens.AccessTokenHolderFactory;
 import by.kobyzau.tg.bot.pbot.program.tokens.TokenType;
+import by.kobyzau.tg.bot.pbot.service.github.GithubService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +50,10 @@ public class ApplicationStartupRunner implements ApplicationRunner {
   @Autowired private Bot bot;
 
   @Autowired private CommandSyncer commandSyncer;
+  @Autowired private GithubService githubService;
 
   @Value("${app.admin.userId}")
   private long adminUserId;
-
-  @Value("${app.version}")
-  private String version;
 
   @Autowired private Logger logger;
 
@@ -65,11 +63,14 @@ public class ApplicationStartupRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
+    AppVersionDto appVersion = githubService.getAppVersion();
     logger.info(
         "\u2B50\u2B50\u2B50\u2B50\u2B50\nStarting Pidor Bot...\nVersion "
-            + new ShortDateText(Version.getLast().getRelease())
-            + ": "
-            + version);
+            + appVersion.getNumber()
+            + " "
+            + appVersion.getName()
+            + "\n"
+            + appVersion.getDesc());
     initDatabase();
     TelegraphContextInitializer.init();
     TelegraphContext.registerInstance(ExecutorOptions.class, new ExecutorOptions());

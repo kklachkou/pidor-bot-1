@@ -22,13 +22,17 @@ bot:
 telegraph:
   token: ${TELEGRAPH_TOKEN:None}
 app:
-  version: 11.3.8 Hot Potato
   admin.userId: ${ADMIN_USER_ID}
   time.bot.reconnect: 10000
   threadNum:
     sendMessages: 25
     tasks: 20
-
+api:
+  github:
+    user: ${GITHUB_USER:None}
+    repo: ${GITHUB_REPO:pidor-bot}
+    branch: ${GITHUB_BRANCH:main}
+    token: ${GITHUB_TOKEN:None}
 task:
   gameStart.cron: 0 1 21 * * ?
   hotPotatoAutoStrike.cron: 0 1 9 * * ?
