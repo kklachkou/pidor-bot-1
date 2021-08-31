@@ -1,7 +1,9 @@
 package by.kobyzau.tg.bot.pbot.bots;
 
+import by.kobyzau.tg.bot.pbot.model.dto.AlertDto;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,7 +74,9 @@ public class FeedbackBot extends TelegramLongPollingBot {
                                 Collections.singletonList(
                                     InlineKeyboardButton.builder()
                                         .text(String.valueOf(chatId))
-                                        .url("tg://user?id=" + chatId)
+                                        .callbackData(
+                                            StringUtil.serialize(
+                                                new AlertDto(String.valueOf(chatId), true, 10)))
                                         .build()))
                             .build())
                     .build());
