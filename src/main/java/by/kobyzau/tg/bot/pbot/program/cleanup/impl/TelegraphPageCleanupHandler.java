@@ -4,12 +4,13 @@ import by.kobyzau.tg.bot.pbot.model.TelegraphPage;
 import by.kobyzau.tg.bot.pbot.program.cleanup.CleanupHandler;
 import by.kobyzau.tg.bot.pbot.repository.telegraph.TelegraphPageRepository;
 import by.kobyzau.tg.bot.pbot.telegraph.TelegraphType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class TelegraphPageCleanupHandler implements CleanupHandler {
@@ -21,6 +22,10 @@ public class TelegraphPageCleanupHandler implements CleanupHandler {
 
   @Override
   public void cleanup() {
+    cleanupTempPages();
+  }
+
+  private void cleanupTempPages() {
     List<TelegraphPage> pages = telegraphPageRepository.getAll();
     for (TelegraphPage page : pages) {
       String linkedId = page.getLinkedId();

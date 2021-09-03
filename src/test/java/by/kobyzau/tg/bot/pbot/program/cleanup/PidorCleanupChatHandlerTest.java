@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -43,6 +44,7 @@ public class PidorCleanupChatHandlerTest extends BotActionAbstractTest {
   public void setUp() {
     now = LocalDate.of(2021, 10, 11);
     doReturn(now).when(dateService).getNow();
+    doReturn(Optional.empty()).when(telegramService).getChat(chatId);
   }
 
   @Test

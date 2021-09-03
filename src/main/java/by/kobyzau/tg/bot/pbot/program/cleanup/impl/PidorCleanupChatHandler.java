@@ -11,6 +11,7 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNameLinkedPidorText;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.DateService;
+import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class PidorCleanupChatHandler implements CleanupHandler {
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private PidorRepository pidorRepository;
   @Autowired private DateService dateService;
+  @Autowired private TelegramService telegramService;
 
   @Override
   public void cleanup() {
@@ -69,10 +71,15 @@ public class PidorCleanupChatHandler implements CleanupHandler {
     long chatId = pidor.getChatId();
     LocalDate startDate = dateService.getNow().minusDays(CLEAR_DAYS);
     if (startDate.isAfter(pidor.getUsernameLastUpdated())) {
+      String chatName =
+          telegramService
+              .getChat(chatId)
+              .map(c -> chatId + ": " + c.getTitle())
+              .orElse(String.valueOf(chatId));
       logger.warn(
           new ParametizedText(
                   "Deleting inactive pidor {0} from chat {1}",
-                  new FullNamePidorText(pidor), new SimpleText(String.valueOf(chatId)))
+                  new FullNamePidorText(pidor), new SimpleText(chatName))
               .text());
       pidorRepository.delete(pidor.getId());
     }

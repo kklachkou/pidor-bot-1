@@ -16,7 +16,7 @@ public class FeedbackCleanupHandler implements CleanupHandler {
 
   @Override
   public void cleanup() {
-    LocalDate startDate = DateUtil.now().minusWeeks(1);
+    LocalDate startDate = DateUtil.now().minusDays(3);
     feedbackRepository.getAll().stream()
         .filter(c -> startDate.isAfter(c.getUpdated()))
         .mapToLong(Feedback::getId)

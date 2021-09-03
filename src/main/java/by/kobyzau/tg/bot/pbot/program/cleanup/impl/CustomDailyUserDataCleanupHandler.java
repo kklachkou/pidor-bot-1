@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static by.kobyzau.tg.bot.pbot.model.CustomDailyUserData.Type.ELECTION_VOTE;
-import static by.kobyzau.tg.bot.pbot.model.CustomDailyUserData.Type.FUTURE_ACTION;
+import static by.kobyzau.tg.bot.pbot.model.CustomDailyUserData.Type.*;
 
 @Component
 public class CustomDailyUserDataCleanupHandler implements CleanupHandler {
@@ -21,7 +20,7 @@ public class CustomDailyUserDataCleanupHandler implements CleanupHandler {
   @Autowired private CustomDailyDataRepository dailyDataRepository;
 
   private final Set<CustomDailyUserData.Type> cleanupTypes =
-      new HashSet<>(Arrays.asList(ELECTION_VOTE, FUTURE_ACTION));
+      new HashSet<>(Arrays.asList(ELECTION_VOTE, FUTURE_ACTION, CHAT_CHECKBOX_SETTING));
 
   @Override
   public void cleanup() {
