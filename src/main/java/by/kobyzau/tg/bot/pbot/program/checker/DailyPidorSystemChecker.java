@@ -23,8 +23,6 @@ public class DailyPidorSystemChecker implements SystemChecker {
 
   @Autowired private TelegramService telegramService;
 
-  @Autowired private BotService botService;
-
   @Autowired private DailyPidorRepository dailyPidorRepository;
 
   @Autowired

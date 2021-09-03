@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS pidor_yearly_stat(
     last_date TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS chat_setting(
+    id serial PRIMARY KEY,
+    chat_id bigint NOT NULL,
+    auto_register_users BOOLEAN NOT NULL,
+    election_anonymous BOOLEAN NOT NULL,
+    emoji_game_frequent VARCHAR (100) NOT NULL,
+    election_frequent VARCHAR (100) NOT NULL,
+    created TIMESTAMP NOT NULL
+);
+
 update pidor set sticker = 'PIDOR_NIKITA' where tg_id = 451337639;
 update pidor set sticker = 'PIDOR_FIL' where tg_id = 396782272;
 update pidor set sticker = 'PIDOR_SANYA' where tg_id = 562849728;

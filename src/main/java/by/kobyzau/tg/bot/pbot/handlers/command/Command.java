@@ -64,24 +64,23 @@ public enum Command {
       "Регистрация в игре в качестве пидора",
       Category.ACTION,
       11),
-  YEARLY_STAT("yearly_stat", "Fill in Yearly Stat"),
-  CURRENT_TIME("time", "Print Server Time"),
-  QUESTIONNAIRE("questionnaire", "Send Questionnaire"),
-  STICKERS("stickers", "Show Stickers"),
-  GIF("gif", "Show Gif"),
-  STAT("stat", "Get Statistic"),
-  NOTIFY("notify", "Send notification"),
+  YEARLY_STAT("yearly_stat", "Yearly Stat"),
+  CURRENT_TIME("time", "Time and Date"),
+  QUESTIONNAIRE("questionnaire", "Questionnaire"),
+  STICKERS("stickers", "Stickers"),
+  GIF("gif", "Gif"),
+  STAT("stat", "Statistic"),
+  NOTIFY("notify", "Notify"),
   TEST("test", "Test command"),
-  CLEANUP("cleanup", "Start cleanup"),
-  SYSTEM_CHECK("system_check", "Start System Checks"),
+  CLEANUP("cleanup", "Cleanup"),
+  SYSTEM_CHECK("system_check", "System Checks"),
   SQL("sql", "Execute sql"),
   LOGGER("logger", "Set Logger Level"),
   VERSION("version", "Send version info"),
+  BACKUP("backup"),
   GAME(""),
   HOT_POTATOES(""),
-  ELECTION(""),
-
-  BACKUP("backup");
+  ELECTION("");
 
   private final String name;
   private final String shortDesc;

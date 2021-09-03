@@ -1,8 +1,9 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
-import by.kobyzau.tg.bot.pbot.model.CustomDailyUserData;
+import by.kobyzau.tg.bot.pbot.model.ChatSetting;
 import by.kobyzau.tg.bot.pbot.model.dto.ChatCheckboxSettingCommandDto;
-import by.kobyzau.tg.bot.pbot.repository.custom.CustomDailyDataRepository;
+import by.kobyzau.tg.bot.pbot.model.type.GameFrequent;
+import by.kobyzau.tg.bot.pbot.repository.chat.ChatSettingRepository;
 import by.kobyzau.tg.bot.pbot.service.ChatSettingsService;
 import by.kobyzau.tg.bot.pbot.service.FutureActionService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -14,33 +15,32 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
-import static by.kobyzau.tg.bot.pbot.model.CustomDailyUserData.Type.CHAT_CHECKBOX_SETTING;
 import static by.kobyzau.tg.bot.pbot.service.FutureActionService.FutureActionType.ENABLE_SETTING;
 
 @Service
 public class ChatSettingsServiceImpl implements ChatSettingsService {
 
-  private static final String DISABLED_KEY = ":DISABLED";
-
-  @Autowired private CustomDailyDataRepository repository;
+  @Autowired private ChatSettingRepository chatSettingRepository;
   @Autowired private FutureActionService futureActionService;
 
   @Override
   public boolean isEnabled(ChatCheckboxSettingType type, long chatId) {
-
-    boolean isEnabled =
-        repository.getByChat(chatId).stream()
-            .filter(s -> s.getType() == CHAT_CHECKBOX_SETTING)
-            .anyMatch(s -> Objects.equals(s.getData(), type.name()));
-    if (isEnabled) {
-      return true;
+    Optional<ChatSetting> settings = chatSettingRepository.getByChatId(chatId);
+    if (!settings.isPresent()) {
+      return type.getDefaultValue();
     }
-    String disabledKey = type.name() + DISABLED_KEY;
-    boolean isDisabled =
-        repository.getByChat(chatId).stream()
-            .filter(s -> s.getType() == CHAT_CHECKBOX_SETTING)
-            .anyMatch(s -> Objects.equals(s.getData(), disabledKey));
-    return !isDisabled && type.getDefaultValue();
+    switch (type) {
+      case ELECTION_HIDDEN:
+        return settings.get().isElectionAnonymous();
+      case GAMES_FREQUENT:
+        return settings.get().getEmojiGameFrequent() == GameFrequent.FREQUENT;
+      case AUTO_REGISTER_USERS:
+        return settings.get().isAutoRegisterUsers();
+      case ELECTION_FREQUENT:
+        return settings.get().getElectionFrequent() == GameFrequent.FREQUENT;
+      default:
+        return type.getDefaultValue();
+    }
   }
 
   @Override
@@ -60,37 +60,50 @@ public class ChatSettingsServiceImpl implements ChatSettingsService {
 
   @Override
   public void setEnabled(ChatCheckboxSettingType type, long chatId, boolean enabled) {
-    if (enabled) {
-      enable(chatId, type);
+    ChatSetting chatSetting =
+        chatSettingRepository.getByChatId(chatId).orElseGet(() -> creteNewSetting(chatId));
+    switch (type) {
+      case ELECTION_HIDDEN:
+        chatSetting.setElectionAnonymous(enabled);
+        break;
+      case GAMES_FREQUENT:
+        chatSetting.setEmojiGameFrequent(enabled ? GameFrequent.FREQUENT : GameFrequent.RARE);
+        break;
+      case AUTO_REGISTER_USERS:
+        chatSetting.setAutoRegisterUsers(enabled);
+        break;
+      case ELECTION_FREQUENT:
+        chatSetting.setElectionFrequent(enabled ? GameFrequent.FREQUENT : GameFrequent.RARE);
+        break;
+    }
+    if (chatSetting.getId() == 0) {
+      chatSettingRepository.create(chatSetting);
     } else {
-      disable(chatId, type);
+      chatSettingRepository.update(chatSetting);
     }
   }
 
-  private void enable(long chatId, ChatCheckboxSettingType type) {
-    CustomDailyUserData data = new CustomDailyUserData();
-    data.setType(CHAT_CHECKBOX_SETTING);
-    data.setLocalDate(DateUtil.now());
-    int defaultId = 0;
-    data.setPlayerTgId(defaultId);
-    data.setChatId(chatId);
-    data.setData(type.name());
-    repository.create(data);
-  }
-
-  private void disable(long chatId, ChatCheckboxSettingType type) {
-    repository.getByChat(chatId).stream()
-        .filter(s -> s.getType() == CHAT_CHECKBOX_SETTING)
-        .filter(s -> Objects.equals(s.getData(), type.name()))
-        .map(CustomDailyUserData::getId)
-        .forEach(repository::delete);
-    CustomDailyUserData data = new CustomDailyUserData();
-    data.setType(CHAT_CHECKBOX_SETTING);
-    data.setLocalDate(DateUtil.now());
-    int defaultId = 0;
-    data.setPlayerTgId(defaultId);
-    data.setChatId(chatId);
-    data.setData(type.name() + DISABLED_KEY);
-    repository.create(data);
+  private ChatSetting creteNewSetting(long chatId) {
+    ChatSetting.ChatSettingBuilder builder =
+        ChatSetting.builder().chatId(chatId).created(DateUtil.now());
+    for (ChatCheckboxSettingType type : ChatCheckboxSettingType.values()) {
+      switch (type) {
+        case ELECTION_HIDDEN:
+          builder.electionAnonymous(type.getDefaultValue());
+          break;
+        case GAMES_FREQUENT:
+          builder.emojiGameFrequent(
+              type.getDefaultValue() ? GameFrequent.FREQUENT : GameFrequent.RARE);
+          break;
+        case AUTO_REGISTER_USERS:
+          builder.autoRegisterUsers(type.getDefaultValue());
+          break;
+        case ELECTION_FREQUENT:
+          builder.electionFrequent(
+              type.getDefaultValue() ? GameFrequent.FREQUENT : GameFrequent.RARE);
+          break;
+      }
+    }
+    return builder.build();
   }
 }
