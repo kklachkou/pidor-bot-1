@@ -16,12 +16,14 @@ import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
+
+import java.util.Optional;
 
 import static by.kobyzau.tg.bot.pbot.service.ChatSettingsService.ChatCheckboxSettingType.AUTO_REGISTER_USERS;
 
@@ -37,6 +39,8 @@ public class RegPidorUpdateHandler implements UpdateHandler {
           "Ага, попался, {0}\nТеперь ты в игре, хочет ты этого или нет",
           "{0}, зря ты заговорил\nТеперь ты в игре",
           "Добавлю ка я {0} в игру",
+          "{0} - добро пожаловать в семью!",
+          "Приветствуйте нового члена клана - {0}",
           "Теперь {0} участвует в игре");
 
   @Override
@@ -50,10 +54,11 @@ public class RegPidorUpdateHandler implements UpdateHandler {
       return false;
     }
 
-    return updateUser(update.getMessage().getChatId(), update.getMessage().getFrom());
+    return updateUser(update.getMessage().getChat(), update.getMessage().getFrom());
   }
 
-  private boolean updateUser(long chatId, User user) {
+  private boolean updateUser(Chat chat, User user) {
+    long chatId = chat.getId();
     if (!chatSettingsService.isEnabled(AUTO_REGISTER_USERS, chatId)) {
       return false;
     }
@@ -75,6 +80,8 @@ public class RegPidorUpdateHandler implements UpdateHandler {
             + chatMember.get().getStatus()
             + " for chat "
             + chatId
+            + ":"
+            + chat.getTitle()
             + ":\n\n"
             + new UserPrinter(user));
 

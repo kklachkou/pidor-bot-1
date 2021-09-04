@@ -27,11 +27,9 @@ public class ChatPrinter {
         String title = TGUtil.escapeHTML(chat.getTitle());
         final int newLevel = level +2;
         sb.append(StringUtil.repeat("\t", level)).append("<i>Chat</i>:\n");
-        if (id != null) {
-            sb.append(StringUtil.repeat("\t", newLevel)).append("<i>id:</i> ");
-            sb.append(id);
-            sb.append("\n");
-        }
+        sb.append(StringUtil.repeat("\t", newLevel)).append("<i>id:</i> ");
+        sb.append(id);
+        sb.append("\n");
         if (StringUtil.isNotBlank(firstName)) {
             sb.append(StringUtil.repeat("\t", newLevel)).append("<i>firstName:</i> ");
             sb.append(firstName);

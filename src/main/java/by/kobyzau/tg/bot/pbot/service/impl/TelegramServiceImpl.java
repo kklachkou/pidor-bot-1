@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.GetMe;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMembersCount;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMemberCount;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -63,7 +63,7 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.of(
           pidorBot.execute(GetChat.builder().chatId(String.valueOf(chatId)).build()));
     } catch (TelegramApiException e) {
-      logger.error("Cannot get Chat for chat " + chatId, e);
+      logger.debug("Cannot get Chat for chat " + chatId + ":\n" + e.getMessage());
       return Optional.empty();
     }
   }
@@ -72,9 +72,9 @@ public class TelegramServiceImpl implements TelegramService {
   public Optional<Integer> getChatMemberCount(long chatId) {
     try {
       return Optional.of(
-          pidorBot.execute(GetChatMembersCount.builder().chatId(String.valueOf(chatId)).build()));
+          pidorBot.execute(GetChatMemberCount.builder().chatId(String.valueOf(chatId)).build()));
     } catch (TelegramApiException e) {
-      logger.error("Cannot get Chat Member Count for chat " + chatId, e);
+      logger.debug("Cannot get Chat Member Count for chat " + chatId + "\n\n" + e.getMessage());
       return Optional.empty();
     }
   }
@@ -96,7 +96,8 @@ public class TelegramServiceImpl implements TelegramService {
       pidorBot.execute(
           DeleteMessage.builder().chatId(String.valueOf(chatId)).messageId(messageId).build());
     } catch (Exception e) {
-      logger.error("Cannot delete message " + messageId + " from chat " + chatId, e);
+      logger.debug(
+          "Cannot delete message " + messageId + " from chat " + chatId + "\n\n" + e.getMessage());
     }
   }
 }
