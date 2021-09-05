@@ -1,26 +1,21 @@
 package by.kobyzau.tg.bot.pbot.games.election.stat.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.games.election.ElectionPidorComparator;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.text.DoubleText;
-import by.kobyzau.tg.bot.pbot.program.text.IntText;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
-import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.RandomText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("anotherNamesWithNumLeftElectionStatPrinter")
 public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatPrinter {
@@ -73,11 +68,9 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
                 "Предварительная информация голосования:"));
     textBuilder.append(new NewLineText());
     textBuilder.append(new NewLineText());
-    Comparator<Pidor> comparator =
-        Comparator.comparingInt(p -> electionService.getNumVotes(chatId, now, p.getTgId()));
     List<Pidor> pidors =
         pidorService.getByChat(chatId).stream()
-            .sorted(comparator.reversed())
+            .sorted(new ElectionPidorComparator(electionService))
             .collect(Collectors.toList());
     int totalVotes = electionService.getNumVotes(chatId, now);
     int numToVote = electionService.getNumToVote(chatId);

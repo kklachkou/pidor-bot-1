@@ -38,13 +38,14 @@ public class TelegramServiceImpl implements TelegramService {
           pidorBot.execute(
               GetChatMember.builder().chatId(String.valueOf(chatId)).userId(userId).build()));
     } catch (TelegramApiException e) {
-      logger.debug(
+      logger.error(
           "Cannot get Chat Member for chat "
               + chatId
               + " and user "
               + userId
               + ":\n"
-              + e.getMessage());
+              + e.getMessage(),
+          e);
       return Optional.empty();
     }
   }

@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.games.election.stat.impl;
 
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
+import by.kobyzau.tg.bot.pbot.games.election.ElectionPidorComparator;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.text.*;
@@ -37,11 +38,9 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
                 "Предварительная информация голосования:"));
     textBuilder.append(new NewLineText());
     textBuilder.append(new NewLineText());
-    Comparator<Pidor> comparator =
-        Comparator.comparingInt(p -> electionService.getNumVotes(chatId, now, p.getTgId()));
     List<Pidor> pidors =
         pidorService.getByChat(chatId).stream()
-            .sorted(comparator.reversed())
+            .sorted(new ElectionPidorComparator(electionService))
             .collect(Collectors.toList());
     int totalVotes = electionService.getNumVotes(chatId, now);
     textBuilder

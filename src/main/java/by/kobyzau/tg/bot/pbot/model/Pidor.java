@@ -1,6 +1,9 @@
 package by.kobyzau.tg.bot.pbot.model;
 
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,6 +12,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "pidor")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pidor{
 
   @Id
@@ -25,9 +31,6 @@ public class Pidor{
 
   @Transient
   private List<PidorMark> pidorMarks;
-
-
-  public Pidor() {}
 
   public Pidor(long tgId, long chatId, String fullname) {
     this.tgId = tgId;
