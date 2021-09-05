@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,27 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.of(
           pidorBot.execute(
               GetChatMember.builder().chatId(String.valueOf(chatId)).userId(userId).build()));
+    } catch (TelegramApiRequestException e) {
+      Integer errorCode = e.getErrorCode();
+      if (errorCode != null && errorCode.equals(400)) {
+        logger.debug(
+            "Cannot get Chat Member for chat "
+                + chatId
+                + " and user "
+                + userId
+                + ":\n"
+                + e.getMessage());
+      } else {
+        logger.error(
+            "Cannot get Chat Member for chat "
+                + chatId
+                + " and user "
+                + userId
+                + ":\n"
+                + e.getMessage(),
+            e);
+      }
+      return Optional.empty();
     } catch (TelegramApiException e) {
       logger.error(
           "Cannot get Chat Member for chat "
