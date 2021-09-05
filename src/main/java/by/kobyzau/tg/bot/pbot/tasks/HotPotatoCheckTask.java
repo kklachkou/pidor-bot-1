@@ -7,20 +7,22 @@ import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
+import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 @Component("hotPotatoCheckTask")
 public class HotPotatoCheckTask implements Task {
@@ -33,6 +35,7 @@ public class HotPotatoCheckTask implements Task {
   @Autowired private BotService botService;
 
   @Autowired private Logger logger;
+  @Autowired private PidorRepository pidorRepository;
 
   @Autowired private DailyPidorRepository dailyPidorRepository;
 
@@ -46,7 +49,8 @@ public class HotPotatoCheckTask implements Task {
   public void processTask() {
     LocalDate now = DateUtil.now();
     logger.debug("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-    telegramService.getChatIds().stream()
+    pidorRepository.getChatIdsWithPidors().stream()
+        .distinct()
         .filter(chatId -> hotPotatoesService.isHotPotatoesDay(chatId, now))
         .forEach(chatId -> executor.execute(() -> sendMessage(chatId)));
   }
