@@ -9,6 +9,7 @@ public enum SerializableInlineType {
   HOT_POTATOES(6, 20),
   QUESTIONNAIRE(7, 20),
   ALERT(8, 20),
+  KILL_CHAT(9, 20),
   ;
 
   private final int index;

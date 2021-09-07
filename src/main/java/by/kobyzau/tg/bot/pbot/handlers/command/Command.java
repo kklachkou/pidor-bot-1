@@ -76,6 +76,7 @@ public enum Command {
   SYSTEM_CHECK("system_check", "System Checks"),
   SQL("sql", "Execute sql"),
   LOGGER("logger", "Set Logger Level"),
+  KILL_CHAT("kill_chat", "Kill Chat"),
   VERSION("version", "Send version info"),
   BACKUP("backup"),
   GAME(""),
