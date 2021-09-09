@@ -1,11 +1,14 @@
 package by.kobyzau.tg.bot.pbot.util;
 
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 public class TGUtil {
   public static String getUsername(User user) {
@@ -49,5 +52,49 @@ public class TGUtil {
       }
     }
     return sb.toString().replaceAll("m̎͐", "m");
+  }
+
+  public static boolean canPinMessage(ChatMember chatMember) {
+    String status = chatMember.getStatus();
+    switch (status) {
+      case "creator":
+        return true;
+      case "administrator":
+        ChatMemberAdministrator chatMemberAdministrator = (ChatMemberAdministrator) chatMember;
+        return chatMemberAdministrator.getCanPinMessages();
+      case "restricted":
+        ChatMemberRestricted chatMemberRestricted = (ChatMemberRestricted) chatMember;
+        return chatMemberRestricted.getCanPinMessages();
+      default:
+        return false;
+    }
+  }
+
+  public static boolean canDeleteMessage(ChatMember chatMember) {
+    String status = chatMember.getStatus();
+    switch (status) {
+      case "creator":
+        return true;
+      case "administrator":
+        ChatMemberAdministrator chatMemberAdministrator = (ChatMemberAdministrator) chatMember;
+        return chatMemberAdministrator.getCanDeleteMessages();
+      default:
+        return false;
+    }
+  }
+
+  public static boolean canSendOtherMessages(ChatMember chatMember) {
+    String status = chatMember.getStatus();
+    switch (status) {
+      case "creator":
+      case "administrator":
+      case "member":
+        return true;
+      case "restricted":
+        ChatMemberRestricted chatMemberRestricted = (ChatMemberRestricted) chatMember;
+        return chatMemberRestricted.getCanSendOtherMessages();
+      default:
+        return false;
+    }
   }
 }

@@ -7,7 +7,6 @@ import by.kobyzau.tg.bot.pbot.program.text.BoldText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
@@ -23,7 +22,6 @@ import java.util.Optional;
 public class SherlokOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotService botService;
 
   @Override
   public LocalDate getDate() {
@@ -96,8 +94,7 @@ public class SherlokOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
     if (pidorSticker.isPresent()) {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
     } else {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
@@ -105,8 +102,7 @@ public class SherlokOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
                   chatId,
                   new ParametizedText(
                       "После этого дела {0} стал лучшим агентом пидор-патруля",
-                      new FullNamePidorText(pidorOfTheDay))),
-              botService.canPinMessage(chatId)));
+                      new FullNamePidorText(pidorOfTheDay)))));
       botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());
     }
   }

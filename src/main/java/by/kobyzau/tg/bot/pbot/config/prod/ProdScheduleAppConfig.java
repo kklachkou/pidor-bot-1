@@ -21,6 +21,7 @@ public class ProdScheduleAppConfig {
   @Autowired private Task backupTask;
   @Autowired private Task cleanupChatTask;
   @Autowired private Task systemCheckTask;
+  @Autowired private Task askForPermissionTask;
 
   @Autowired
   @Qualifier("cachedExecutor")
@@ -38,6 +39,7 @@ public class ProdScheduleAppConfig {
           backupTask.processTask();
           cleanupChatTask.processTask();
           systemCheckTask.processTask();
+          askForPermissionTask.processTask();
         });
   }
 

@@ -5,7 +5,6 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
@@ -30,7 +29,6 @@ public class DiceStartTask implements Task {
   @Autowired private DiceService diceService;
 
   @Autowired private Logger logger;
-  @Autowired private BotService botService;
 
   @Autowired
   @Qualifier("taskExecutor")
@@ -56,8 +54,7 @@ public class DiceStartTask implements Task {
     botActionCollector.add(
         new CallbackBotAction<>(
             new PingMessageWrapperBotAction(
-                new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {}),
-                botService.canPinMessage(chatId)),
+                new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {})),
             r -> logger.info("#DiceEnd for chat " + chatId)));
     botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
   }

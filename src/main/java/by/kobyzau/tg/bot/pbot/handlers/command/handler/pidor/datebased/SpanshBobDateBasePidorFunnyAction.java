@@ -5,7 +5,6 @@ import by.kobyzau.tg.bot.pbot.model.FeedbackType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -23,7 +22,6 @@ import java.util.Optional;
 public class SpanshBobDateBasePidorFunnyAction implements DateBasePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotService botService;
   @Autowired private FeedbackService feedbackService;
 
   @Override
@@ -85,8 +83,7 @@ public class SpanshBobDateBasePidorFunnyAction implements DateBasePidorFunnyActi
     if (pidorSticker.isPresent()) {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

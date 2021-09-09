@@ -88,8 +88,7 @@ public class NewYearCombinedPidorFunnyAction implements PidorFunnyAction {
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     } else {
       botActionCollector.add(
@@ -100,8 +99,7 @@ public class NewYearCombinedPidorFunnyAction implements PidorFunnyAction {
                   InlineKeyboardMarkup.builder()
                       .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
                       .build(),
-                  null),
-              botService.canPinMessage(chatId)));
+                  null)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

@@ -9,7 +9,6 @@ import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -30,8 +29,6 @@ import java.util.Optional;
 public class MessagesPidorFunnyAction implements PidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
-
-  @Autowired private BotService botService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private FeedbackService feedbackService;
 
@@ -138,8 +135,7 @@ public class MessagesPidorFunnyAction implements PidorFunnyAction {
           botActionCollector.wait(chatId, ChatAction.TYPING);
           botActionCollector.add(
               new PingMessageWrapperBotAction(
-                  new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-                  botService.canPinMessage(chatId)));
+                  new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
           botActionCollector.wait(chatId, ChatAction.TYPING);
         } else {
           botActionCollector.add(
@@ -152,8 +148,7 @@ public class MessagesPidorFunnyAction implements PidorFunnyAction {
                       InlineKeyboardMarkup.builder()
                           .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
                           .build(),
-                      null),
-                  botService.canPinMessage(chatId)));
+                      null)));
           botActionCollector.wait(chatId, ChatAction.TYPING);
         }
         botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

@@ -4,18 +4,18 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import java.time.LocalDate;
-import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.concurrent.Executor;
 
 @Component("hotPotatoStartTask")
 public class HotPotatoStartTask implements Task {
@@ -26,7 +26,6 @@ public class HotPotatoStartTask implements Task {
   @Autowired private HotPotatoesService hotPotatoesService;
 
   @Autowired private Logger logger;
-  @Autowired private BotService botService;
 
   @Autowired
   @Qualifier("taskExecutor")
@@ -54,7 +53,6 @@ public class HotPotatoStartTask implements Task {
                 new SimpleText(
                     "Сегодня день <b>горячей картошечки</b>\uD83E\uDD54\uD83D\uDD25!\n"
                         + "Перекидывай картошечку с пидора на пидора, пока она не сгорит!\n"
-                        + "Жми /pidor чтобы закинуть картошечку в чат!")),
-            botService.canPinMessage(chatId)));
+                        + "Жми /pidor чтобы закинуть картошечку в чат!"))));
   }
 }

@@ -12,7 +12,6 @@ import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.UserLinkText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -41,7 +40,6 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
   @Autowired private FeedbackService feedbackService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotService botService;
 
   public NewYearLinkedWordPidorFunnyAction() {
     this.finalMessage =
@@ -101,8 +99,7 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     } else {
       botActionCollector.add(
@@ -115,8 +112,7 @@ public class NewYearLinkedWordPidorFunnyAction implements PidorFunnyAction {
                   InlineKeyboardMarkup.builder()
                       .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
                       .build(),
-                  null),
-              botService.canPinMessage(chatId)));
+                  null)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

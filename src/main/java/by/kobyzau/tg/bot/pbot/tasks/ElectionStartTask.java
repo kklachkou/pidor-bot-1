@@ -6,7 +6,6 @@ import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
@@ -31,8 +30,6 @@ public class ElectionStartTask implements Task {
 
   @Autowired private Logger logger;
 
-  @Autowired private BotService botService;
-
   @Autowired
   @Qualifier("taskExecutor")
   private Executor executor;
@@ -56,8 +53,7 @@ public class ElectionStartTask implements Task {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
               new SendMessageBotAction(
-                  chatId, new SimpleText("Сегодня проходит великий День Пидор-Выборов!")),
-              botService.canPinMessage(chatId)));
+                  chatId, new SimpleText("Сегодня проходит великий День Пидор-Выборов!"))));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.text(
           chatId,

@@ -6,20 +6,20 @@ import by.kobyzau.tg.bot.pbot.program.text.IntText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.RandomText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import java.time.LocalDate;
-import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
+import java.time.LocalDate;
+import java.util.concurrent.Executor;
 
 @Component("excludeUserGameStartTask")
 public class ExcludeUserGameStartTask implements Task {
@@ -31,8 +31,6 @@ public class ExcludeUserGameStartTask implements Task {
   @Autowired private ExcludeGameService gameService;
 
   @Autowired private Logger logger;
-
-  @Autowired private BotService botService;
 
   @Autowired
   @Qualifier("taskExecutor")
@@ -52,7 +50,8 @@ public class ExcludeUserGameStartTask implements Task {
       int numPidorsToExclude = gameService.getNumPidorsToExclude(chatId);
       botActionCollector.wait(chatId, ChatAction.TYPING);
       String wordOfTheDay = gameService.getWordOfTheDay(DateUtil.now());
-      botActionCollector.text(chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
+      botActionCollector.text(
+          chatId, new RandomText("Всем здарова!", "Алоха!", "Всем привет!", "Вечер в хату!"));
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.text(
           chatId, new SimpleText("Сегодня пидором будет самая медленная рука Дикого Запада"));
@@ -78,8 +77,7 @@ public class ExcludeUserGameStartTask implements Task {
                           .resizeKeyboard(true)
                           .oneTimeKeyboard(true)
                           .keyboardRow(replyButton)
-                          .build()),
-              botService.canPinMessage(chatId)));
+                          .build())));
     } catch (Exception e) {
       logger.error("Cannot start exclude user game for chat " + chatId, e);
     }

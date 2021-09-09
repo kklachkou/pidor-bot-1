@@ -10,19 +10,19 @@ import by.kobyzau.tg.bot.pbot.program.selection.Selection;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.UserLinkText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+
+import java.util.Optional;
 
 @Profile("!new-year")
 @Component
@@ -37,7 +37,6 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
 
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotService botService;
   @Autowired private FeedbackService feedbackService;
 
   public LinkedWordPidorFunnyAction() {
@@ -100,8 +99,7 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
       botActionCollector.wait(chatId, ChatAction.TYPING);
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     } else {
       botActionCollector.add(
@@ -114,8 +112,7 @@ public class LinkedWordPidorFunnyAction implements PidorFunnyAction {
                   InlineKeyboardMarkup.builder()
                       .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
                       .build(),
-                  null),
-              botService.canPinMessage(chatId)));
+                  null)));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

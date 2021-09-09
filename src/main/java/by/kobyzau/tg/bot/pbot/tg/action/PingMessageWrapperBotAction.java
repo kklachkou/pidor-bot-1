@@ -2,24 +2,33 @@ package by.kobyzau.tg.bot.pbot.tg.action;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.TGUtil;
+import lombok.RequiredArgsConstructor;
+import org.telegram.telegrambots.meta.api.methods.GetMe;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.pinnedmessages.PinChatMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@RequiredArgsConstructor
 public class PingMessageWrapperBotAction implements BotAction<Message> {
 
   private final BotAction<Message> botAction;
-  private final boolean pinMessage;
-
-  public PingMessageWrapperBotAction(BotAction<Message> botAction, boolean pinMessage) {
-    this.botAction = botAction;
-    this.pinMessage = pinMessage;
-  }
 
   @Override
   public Message process(Bot bot) throws TelegramApiException {
+
     Message message = botAction.process(bot);
-    if (pinMessage) {
+    User botUser = bot.execute(GetMe.builder().build());
+    ChatMember botMember =
+        bot.execute(
+            GetChatMember.builder()
+                .chatId(String.valueOf(botAction.getChatId()))
+                .userId(botUser.getId())
+                .build());
+    if (TGUtil.canPinMessage(botMember)) {
       PinChatMessage pinChatMessage =
           PinChatMessage.builder()
               .chatId(String.valueOf(message.getChatId()))

@@ -12,7 +12,6 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNameLinkedPidorText;
 import by.kobyzau.tg.bot.pbot.repository.pidorofyear.PidorOfYearRepository;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.PidorStatusService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
@@ -38,8 +37,6 @@ public class PidorOfTheYearTask implements Task {
 
   @Autowired private Logger logger;
 
-  @Autowired private BotService botService;
-
   @Autowired private PidorOfYearRepository pidorOfYearRepository;
 
   @Autowired private PidorStatusService pidorStatusService;
@@ -51,7 +48,8 @@ public class PidorOfTheYearTask implements Task {
   @Override
   public void processTask() {
     logger.info("\uD83D\uDCC6 Task " + this.getClass().getSimpleName() + " is started");
-    telegramService.getChatIds()
+    telegramService
+        .getChatIds()
         .forEach(chatId -> executor.execute(() -> handlePidorOfTheYear(chatId)));
   }
 
@@ -127,8 +125,8 @@ public class PidorOfTheYearTask implements Task {
             new SendMessageBotAction(
                 chatId,
                 new ParametizedText(
-                    "{0} - ты наш главный Пидор этого года!", new ShortNameLinkedPidorText(pidor))),
-            botService.canPinMessage(chatId)));
+                    "{0} - ты наш главный Пидор этого года!",
+                    new ShortNameLinkedPidorText(pidor)))));
 
     botActionCollector.wait(chatId, 2, ChatAction.TYPING);
     botActionCollector.sticker(chatId, StickerType.CONGRATULATION.getRandom());

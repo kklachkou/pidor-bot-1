@@ -8,7 +8,6 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.FeedbackService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -26,7 +25,6 @@ import java.util.Optional;
 public class ManyTimesDateBasePidorFunnyAction implements DateBasePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotService botService;
 
   @Autowired private FeedbackService feedbackService;
   @Autowired private RepeatPidorProcessor repeatPidorProcessor;
@@ -43,8 +41,7 @@ public class ManyTimesDateBasePidorFunnyAction implements DateBasePidorFunnyActi
         stickerType ->
             botActionCollector.add(
                 new PingMessageWrapperBotAction(
-                    new SendStickerBotAction(chatId, stickerType.getRandom()),
-                    botService.canPinMessage(chatId))));
+                    new SendStickerBotAction(chatId, stickerType.getRandom()))));
     botActionCollector.wait(chatId, 5, ChatAction.TYPING);
     botActionCollector.text(chatId, new SimpleText("Блин, а красиво звучит!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
@@ -98,8 +95,7 @@ public class ManyTimesDateBasePidorFunnyAction implements DateBasePidorFunnyActi
                   InlineKeyboardMarkup.builder()
                       .keyboardRow(feedbackService.getButtons(FeedbackType.PIDOR))
                       .build(),
-                  null),
-              botService.canPinMessage(chatId)));
+                  null)));
     }
 
     botActionCollector.wait(chatId, ChatAction.TYPING);

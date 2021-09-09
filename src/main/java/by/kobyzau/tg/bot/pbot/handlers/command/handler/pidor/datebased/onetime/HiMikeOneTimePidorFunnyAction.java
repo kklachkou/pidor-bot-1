@@ -8,7 +8,6 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
@@ -28,7 +27,6 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
 
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;
-  @Autowired private BotService botService;
 
   @Override
   public LocalDate getDate() {
@@ -87,8 +85,7 @@ public class HiMikeOneTimePidorFunnyAction implements OneTimePidorFunnyAction {
     if (pidorSticker.isPresent()) {
       botActionCollector.add(
           new PingMessageWrapperBotAction(
-              new SendStickerBotAction(chatId, pidorSticker.get().getRandom()),
-              botService.canPinMessage(chatId)));
+              new SendStickerBotAction(chatId, pidorSticker.get().getRandom())));
       botActionCollector.wait(chatId, ChatAction.TYPING);
     }
     botActionCollector.sticker(chatId, StickerType.PIDOR.getRandom());

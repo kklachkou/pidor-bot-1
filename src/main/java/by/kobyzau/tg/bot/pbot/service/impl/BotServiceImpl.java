@@ -8,7 +8,6 @@ import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.action.UnpinBotAction;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,13 +15,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
-import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator;
-import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted;
 
 @Service
 public class BotServiceImpl implements BotService {
-
 
   @Value("${app.admin.userId}")
   private long adminUserId;
@@ -36,51 +31,22 @@ public class BotServiceImpl implements BotService {
 
   @Override
   public boolean canPinMessage(long chatId) {
-    Optional<ChatMember> chatMember =
-        telegramService
-            .getMe()
-            .map(User::getId)
-            .flatMap(botId -> telegramService.getChatMember(chatId, botId));
-    if (!chatMember.isPresent()) {
-      return false;
-    }
-    String status = chatMember.get().getStatus();
-    switch (status) {
-      case "creator":
-        return true;
-      case "administrator":
-        ChatMemberAdministrator chatMemberAdministrator =
-            (ChatMemberAdministrator) chatMember.get();
-        return chatMemberAdministrator.getCanPinMessages();
-      case "restricted":
-        ChatMemberRestricted chatMemberRestricted = (ChatMemberRestricted) chatMember.get();
-        return chatMemberRestricted.getCanPinMessages();
-      default:
-        return false;
-    }
+    return telegramService
+        .getMe()
+        .map(User::getId)
+        .flatMap(botId -> telegramService.getChatMember(chatId, botId))
+        .filter(TGUtil::canPinMessage)
+        .isPresent();
   }
 
   @Override
   public boolean canDeleteMessage(long chatId) {
-    Optional<ChatMember> chatMember =
-        telegramService
-            .getMe()
-            .map(User::getId)
-            .flatMap(botId -> telegramService.getChatMember(chatId, botId));
-    if (!chatMember.isPresent()) {
-      return false;
-    }
-    String status = chatMember.get().getStatus();
-    switch (status) {
-      case "creator":
-        return true;
-      case "administrator":
-        ChatMemberAdministrator chatMemberAdministrator =
-            (ChatMemberAdministrator) chatMember.get();
-        return chatMemberAdministrator.getCanDeleteMessages();
-      default:
-        return false;
-    }
+    return telegramService
+        .getMe()
+        .map(User::getId)
+        .flatMap(botId -> telegramService.getChatMember(chatId, botId))
+        .filter(TGUtil::canDeleteMessage)
+        .isPresent();
   }
 
   @Override
