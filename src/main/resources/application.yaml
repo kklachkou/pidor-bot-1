@@ -1,4 +1,11 @@
+management:
+  endpoint.health.show-details: always
+  health:
+    diskSpace.enabled: false
+    refresh.enabled: false
+    ping.enabled: false
 spring:
+  cloud.discovery.client.composite-indicator.enabled: false
   task:
     scheduling:
       pool:
