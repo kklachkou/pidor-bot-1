@@ -2,8 +2,9 @@ package by.kobyzau.tg.bot.pbot.util;
 
 import by.kobyzau.tg.bot.pbot.program.selection.ConsistentSelection;
 import by.kobyzau.tg.bot.pbot.program.selection.Selection;
-import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class HotPotatoUtil {
@@ -38,5 +39,14 @@ public class HotPotatoUtil {
         fromTime.getDayOfMonth(),
         deadlineHour,
         deadlineMinute);
+  }
+
+  public boolean shouldRemind(LocalDateTime deadline, LocalDateTime currentTime) {
+    if (currentTime.getHour() >= 18 || currentTime.getSecond() < 30) {
+      return false;
+    }
+    LocalDateTime remindTime = deadline.minusMinutes(5);
+    return currentTime.getHour() == remindTime.getHour()
+        && currentTime.getMinute() == remindTime.getMinute();
   }
 }

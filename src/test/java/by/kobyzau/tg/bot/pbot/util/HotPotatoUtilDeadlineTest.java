@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class HotPotatoUtilTest {
+public class HotPotatoUtilDeadlineTest {
 
   private static final int YEAR = 2021;
   private static final int MONTH = 5;

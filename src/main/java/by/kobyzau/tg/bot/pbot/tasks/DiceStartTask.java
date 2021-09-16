@@ -8,7 +8,6 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.tg.action.CallbackBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.DicePostActionWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.PingMessageWrapperBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -52,10 +51,8 @@ public class DiceStartTask implements Task {
     botActionCollector.wait(chatId, ChatAction.TYPING);
     game.printIntro(chatId);
     botActionCollector.add(
-        new CallbackBotAction<>(
-            new PingMessageWrapperBotAction(
-                new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {})),
-            r -> logger.info("#DiceEnd for chat " + chatId)));
+        new PingMessageWrapperBotAction(
+            new DicePostActionWrapperBotAction(chatId, game.getType(), value -> {})));
     botActionCollector.text(chatId, new SimpleText("Ну всё! Игра началась!!"));
   }
 }
