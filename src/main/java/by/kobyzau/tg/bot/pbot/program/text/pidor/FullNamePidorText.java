@@ -38,6 +38,9 @@ public class FullNamePidorText implements Text {
     if (isPidorOfDay()) {
       sb.append(" \uD83D\uDC13");
     }
+    if (hasCovid()) {
+      sb.append(" \uD83E\uDDA0");
+    }
     return sb.toString();
   }
 
@@ -50,9 +53,16 @@ public class FullNamePidorText implements Text {
 
   private boolean isPidorOfDay() {
     return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.LAST_PIDOR_OF_DAY))
-            .isPresent();
+        .map(Pidor::getPidorMarks)
+        .filter(m -> m.contains(PidorMark.LAST_PIDOR_OF_DAY))
+        .isPresent();
+  }
+
+  private boolean hasCovid() {
+    return Optional.ofNullable(pidor)
+        .map(Pidor::getPidorMarks)
+        .filter(m -> m.contains(PidorMark.COVID))
+        .isPresent();
   }
 
   @Override

@@ -7,8 +7,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static by.kobyzau.tg.bot.pbot.model.PidorMark.LAST_PIDOR_OF_DAY;
-import static by.kobyzau.tg.bot.pbot.model.PidorMark.PIDOR_OF_YEAR;
+import static by.kobyzau.tg.bot.pbot.model.PidorMark.*;
 import static org.junit.Assert.assertEquals;
 
 public class FullNamePidorTextTest {
@@ -245,6 +244,24 @@ public class FullNamePidorTextTest {
 
     // then
     assertEquals(text.text(), text.toString());
+  }
+
+
+  @Test
+  public void text_withUserNameWithNickname_allMarks() {
+    // given
+    Pidor pidor = new Pidor();
+    pidor.setFullName("Bob Jones");
+    pidor.setUsername("Username");
+    pidor.setNickname("Nickname");
+    pidor.setPidorMarks(Arrays.asList(PIDOR_OF_YEAR, LAST_PIDOR_OF_DAY, COVID));
+    Text text = new FullNamePidorText(pidor);
+
+    // when
+    String result = text.text();
+
+    // then
+    assertEquals("@Username (Nickname) \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0", result);
   }
 
   @Test
