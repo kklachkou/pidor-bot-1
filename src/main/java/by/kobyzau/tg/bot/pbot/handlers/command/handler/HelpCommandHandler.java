@@ -47,7 +47,12 @@ public class HelpCommandHandler implements CommandHandler {
         .append(new NewLineText())
         .append(buildCommandsMessage(Command.Category.INFO))
         .append(new NewLineText())
+        .append(new NewLineText())
+        .append(new SimpleText("\t"))
+        .append(new BoldText("Артефакты"))
+        .append(new NewLineText())
         .append(buildArtefactsMessage())
+        .append(new NewLineText())
         .append(new NewLineText())
         .append(
             new SimpleText(
@@ -98,7 +103,7 @@ public class HelpCommandHandler implements CommandHandler {
             .map(
                 a ->
                     new ParametizedText(
-                        "{0} {1}: {2}",
+                        "\t\t▫ {0} {1}: {2}",
                         new ItalicText(a.getName()),
                         new SimpleText(a.getEmoji()),
                         new SimpleText(a.getDesc())))
