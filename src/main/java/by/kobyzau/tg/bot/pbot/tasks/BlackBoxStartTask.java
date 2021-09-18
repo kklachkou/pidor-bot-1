@@ -47,7 +47,9 @@ public class BlackBoxStartTask implements Task {
   private void sendBlackBox(long chatId) {
     userArtifactService.clearUserArtifacts(chatId);
     DayOfWeek dayOfWeek = dateHelper.now().getDayOfWeek();
-    if (dayOfWeek != DayOfWeek.WEDNESDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+    if (dayOfWeek != DayOfWeek.WEDNESDAY
+        && dayOfWeek != DayOfWeek.SUNDAY
+        && dayOfWeek != DayOfWeek.SATURDAY) {
       return;
     }
     botActionCollector.text(

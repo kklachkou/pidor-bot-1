@@ -46,7 +46,9 @@ public class BlackBoxStartTaskTest extends BotActionAbstractTest {
     LocalDate date = LocalDate.of(2021, 9, 5);
     for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
       date = date.plusDays(1);
-      if (dayOfWeek == DayOfWeek.SUNDAY || dayOfWeek == DayOfWeek.WEDNESDAY) {
+      if (dayOfWeek == DayOfWeek.SUNDAY
+          || dayOfWeek == DayOfWeek.WEDNESDAY
+          || dayOfWeek == DayOfWeek.SATURDAY) {
         continue;
       }
       // given
@@ -95,6 +97,28 @@ public class BlackBoxStartTaskTest extends BotActionAbstractTest {
 
     // then
     assertEquals(DayOfWeek.WEDNESDAY, dateHelper.now().getDayOfWeek());
+    checkActions(
+        new TextBotActionChecker(
+            CHAT_ID,
+            new SimpleText(
+                "Это <b>черный ящик</b>!"
+                    + "\nДостанеться он только ОДНОМУ!"
+                    + "\nВнутри лежит артефакт, бонус или анти-бонус")),
+        new SimpleStickerActionChecker(CHAT_ID, StickerType.GIFT));
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID);
+  }
+
+  @Test
+  public void processTask_saturday() {
+    // given
+    doReturn(LocalDate.of(2021, 9, 18)).when(dateHelper).now();
+    doReturn(Collections.singletonList(CHAT_ID)).when(telegramService).getChatIds();
+
+    // when
+    task.processTask();
+
+    // then
+    assertEquals(DayOfWeek.SATURDAY, dateHelper.now().getDayOfWeek());
     checkActions(
         new TextBotActionChecker(
             CHAT_ID,

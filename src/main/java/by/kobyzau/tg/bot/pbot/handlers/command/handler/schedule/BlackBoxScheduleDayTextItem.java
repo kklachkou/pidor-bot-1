@@ -13,6 +13,7 @@ public class BlackBoxScheduleDayTextItem implements ScheduleDayTextItem {
   @Override
   public Optional<Text> getTextItem(long chatId, LocalDate localDate) {
     if (localDate.getDayOfWeek() == DayOfWeek.SUNDAY
+        || localDate.getDayOfWeek() == DayOfWeek.SATURDAY
         || localDate.getDayOfWeek() == DayOfWeek.WEDNESDAY) {
       return Optional.of(new SimpleText("Черный ящик с артефактом"));
     }
