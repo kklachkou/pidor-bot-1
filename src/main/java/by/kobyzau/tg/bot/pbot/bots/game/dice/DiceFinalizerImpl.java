@@ -16,6 +16,8 @@ import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayServiceFactory;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -33,7 +35,7 @@ public class DiceFinalizerImpl implements DiceFinalizer {
 
   @Autowired private DiceService diceService;
 
-  @Autowired private TelegramService telegramService;
+  @Autowired private PidorOfDayServiceFactory pidorOfDayServiceFactory;
 
   @Autowired private PidorService pidorService;
 
@@ -57,6 +59,7 @@ public class DiceFinalizerImpl implements DiceFinalizer {
     if (CollectionUtil.isEmpty(pidors)) {
       return;
     }
+    PidorOfDayService pidorOfDayService = pidorOfDayServiceFactory.getService(PidorOfDayService.Type.DICE);
     List<Pidor> pidorsToPlay = new ArrayList<>();
     for (Pidor pidor : pidors) {
       int userDice = getUserDice(pidor);
@@ -78,9 +81,8 @@ public class DiceFinalizerImpl implements DiceFinalizer {
       botActionCollector.text(
           chatId,
           new SimpleText("Сегодня нет проигравших, так что в пидор-рулетке участвуют все!"));
-      pidorsToPlay.addAll(pidors);
     }
-    Pidor pidorOfTheDay = CollectionUtil.getRandomValue(pidorsToPlay);
+    Pidor pidorOfTheDay = pidorOfDayService.findPidorOfDay(chatId);
     saveDailyPidor(pidorOfTheDay, pidorOfTheDay.getTgId());
     TextBuilder listOfPidorsText =
         new TextBuilder()

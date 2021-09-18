@@ -18,7 +18,7 @@ public class BootApp {
 
   @GetMapping("/")
   public String hello() {
-    return "hello";
+    return "P-Bot";
   }
 
   public static void main(String[] args) {

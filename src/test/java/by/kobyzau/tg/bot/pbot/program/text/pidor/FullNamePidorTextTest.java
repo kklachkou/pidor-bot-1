@@ -1,11 +1,15 @@
 package by.kobyzau.tg.bot.pbot.program.text.pidor;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.model.PidorMark;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 import static by.kobyzau.tg.bot.pbot.model.PidorMark.*;
 import static org.junit.Assert.assertEquals;
@@ -254,7 +258,7 @@ public class FullNamePidorTextTest {
     pidor.setFullName("Bob Jones");
     pidor.setUsername("Username");
     pidor.setNickname("Nickname");
-    pidor.setPidorMarks(Arrays.asList(PIDOR_OF_YEAR, LAST_PIDOR_OF_DAY, COVID));
+    pidor.setPidorMarks(Arrays.asList(PidorMark.values()));
     Text text = new FullNamePidorText(pidor);
 
     // when
@@ -262,6 +266,45 @@ public class FullNamePidorTextTest {
 
     // then
     assertEquals("@Username (Nickname) \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0", result);
+  }
+
+
+  @Test
+  public void text_withUserNameWithNickname_allArtifacts() {
+    // given
+    Pidor pidor = new Pidor();
+    pidor.setFullName("Bob Jones");
+    pidor.setUsername("Username");
+    pidor.setNickname("Nickname");
+    pidor.setArtifacts(new TreeSet<>(Arrays.asList(ArtifactType.values())));
+    Text text = new FullNamePidorText(pidor);
+
+    // when
+    String result = text.text();
+
+    // then
+    assertEquals("@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂", result);
+  }
+
+
+  @Test
+  public void text_withUserNameWithNickname_allMarks_allArtifacts() {
+    // given
+    Pidor pidor = new Pidor();
+    pidor.setFullName("Bob Jones");
+    pidor.setUsername("Username");
+    pidor.setNickname("Nickname");
+    pidor.setPidorMarks(Arrays.asList(PidorMark.values()));
+    pidor.setArtifacts(new TreeSet<>(Arrays.asList(ArtifactType.values())));
+    Text text = new FullNamePidorText(pidor);
+
+    // when
+    String result = text.text();
+
+    // then
+    assertEquals(
+        "@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
+        result);
   }
 
   @Test

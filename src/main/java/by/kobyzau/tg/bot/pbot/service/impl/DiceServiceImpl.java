@@ -84,4 +84,9 @@ public class DiceServiceImpl implements DiceService {
     return (diceNumber >= numPidorsToPlay)
         && !dailyPidorRepository.getByChatAndDate(chatId, DateUtil.now()).isPresent();
   }
+
+  @Override
+  public void deleteDice(long diceId) {
+    diceRepository.delete(diceId);
+  }
 }

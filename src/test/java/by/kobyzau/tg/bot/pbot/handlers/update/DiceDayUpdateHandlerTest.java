@@ -1,16 +1,18 @@
 package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.dice.DiceFinalizer;
-import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
-import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
-import by.kobyzau.tg.bot.pbot.checker.ContainsTextBotActionChecker;
-import by.kobyzau.tg.bot.pbot.checker.RandomTextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.*;
 import by.kobyzau.tg.bot.pbot.handlers.update.impl.game.DiceDayUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.DiceService;
@@ -48,6 +50,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
 
   @InjectMocks private DiceDayUpdateHandler handler = new DiceDayUpdateHandler();
 
+  @Mock private UserArtifactService userArtifactService;
   @Mock private DiceService diceService;
   @Mock private PidorService pidorService;
   @Mock private DailyPidorRepository dailyPidorRepository;
@@ -194,8 +197,11 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
   }
 
   @Test
-  public void handleUpdate_nonProcessed_alreadyProcessed() {
+  public void handleUpdate_nonProcessed_alreadyProcessed_noArtifacts() {
     // given
+    doReturn(Optional.empty())
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
@@ -213,6 +219,84 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     assertFinalized(false);
     assertDiceNotSaved();
     checkNoAnyActions();
+  }
+
+  @Test
+  public void handleUpdate_nonProcessed_alreadyProcessed_hasArtifacts_better() {
+    // given
+    long userArtefactId = 234;
+    doReturn(Optional.of(UserArtifact.builder().id(userArtefactId).build()))
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+    int oldDiceValue = 4;
+    int newDiceValue = 5;
+    Update update = new Update();
+    update.setMessage(getMessage(newDiceValue, diceEmoji));
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.of(PidorDice.builder().value(oldDiceValue).build()))
+        .when(diceService)
+        .getUserDice(chatId, userId, DateUtil.now());
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    verify(userArtifactService).deleteArtifact(userArtefactId);
+    assertTrue(result);
+    assertFinalized(true);
+    assertDiceSaved(newDiceValue);
+    checkActions(
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new TextBotActionChecker(
+            chatId,
+            new ParametizedText(
+                "Второй бросок вышел лучше. Артефакт {0} использован",
+                new SimpleText(ArtifactType.SECOND_CHANCE.getName()))),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new RandomTextBotActionChecker(
+            "Окей, твоё очко задействовано!",
+            "Я тебя понял!",
+            "Спасибо!",
+            "Вижу!",
+            "Неплохо!",
+            "Отлично!"),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
+  }
+
+  @Test
+  public void handleUpdate_nonProcessed_alreadyProcessed_hasArtifacts_worse() {
+    // given
+    long userArtefactId = 234;
+    doReturn(Optional.of(UserArtifact.builder().id(userArtefactId).build()))
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+    int oldDiceValue = 5;
+    int newDiceValue = 4;
+    Update update = new Update();
+    update.setMessage(getMessage(newDiceValue, diceEmoji));
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.of(PidorDice.builder().value(oldDiceValue).build()))
+        .when(diceService)
+        .getUserDice(chatId, userId, DateUtil.now());
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    verify(userArtifactService).deleteArtifact(userArtefactId);
+    assertTrue(result);
+    assertFinalized(false);
+    assertDiceNotSaved();
+    checkActions(
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new TextBotActionChecker(
+            chatId,
+            new ParametizedText(
+                "Второй бросок тебе не помог. Артефакт {0} использован",
+                new SimpleText(ArtifactType.SECOND_CHANCE.getName()))));
   }
 
   @Test

@@ -1,5 +1,8 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.game;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameResult;
 import by.kobyzau.tg.bot.pbot.bots.game.dice.DiceFinalizer;
@@ -8,10 +11,7 @@ import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
-import by.kobyzau.tg.bot.pbot.program.text.RandomText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
@@ -41,6 +41,7 @@ public class DiceDayUpdateHandler implements UpdateHandler {
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private DiceFinalizer diceFinalizer;
   @Autowired private BotService botService;
+  @Autowired private UserArtifactService userArtifactService;
 
   @Autowired
   @Qualifier("cachedExecutor")
@@ -73,16 +74,39 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     if (!isUserSendValidEmoji(game, message.get())) {
       return false;
     }
+    long userId = message.get().getFrom().getId();
+    Optional<PidorDice> userDice = diceService.getUserDice(chatId, userId, now);
 
-    Optional<PidorDice> userDice =
-        diceService.getUserDice(chatId, message.get().getFrom().getId(), now);
+    int newDiceUserValue = message.get().getDice().getValue();
     if (userDice.isPresent()) {
-      return false;
+      Optional<UserArtifact> userArtifact =
+          userArtifactService.getUserArtifact(
+              chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+      if (!userArtifact.isPresent()) {
+        return false;
+      }
+      botActionCollector.wait(chatId, 1, ChatAction.TYPING);
+      userArtifactService.deleteArtifact(userArtifact.get().getId());
+      if (newDiceUserValue > userDice.get().getValue()) {
+        botActionCollector.text(
+            chatId,
+            new ParametizedText(
+                "Второй бросок вышел лучше. Артефакт {0} использован",
+                new SimpleText(ArtifactType.SECOND_CHANCE.getName())),
+            message.get().getMessageId());
+        diceService.deleteDice(userDice.get().getId());
+      } else {
+        botActionCollector.text(
+            chatId,
+            new ParametizedText(
+                "Второй бросок тебе не помог. Артефакт {0} использован",
+                new SimpleText(ArtifactType.SECOND_CHANCE.getName())),
+            message.get().getMessageId());
+        return true;
+      }
     }
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    int newDiceUserValue = message.get().getDice().getValue();
-    diceService.saveDice(
-        new PidorDice(message.get().getFrom().getId(), chatId, now, newDiceUserValue));
+    diceService.saveDice(new PidorDice(userId, chatId, now, newDiceUserValue));
     RandomText thanksText =
         new RandomText(
             "Окей, твоё очко задействовано!",

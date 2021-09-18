@@ -2,12 +2,18 @@ package by.kobyzau.tg.bot.pbot.tg.sticker;
 
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
 public enum StickerType {
+  GIFT(
+      "CAACAgIAAxkBAAEEQ6phRE6qc04AAYA3GTJy6gwQVFw-ByQAAhoAAztgJBSGOmsn7rOOZSAE",
+      "CAACAgIAAxkBAAEEQ61hRE7RVweixez-kDx1WkTGMWb1KwACIwEAAhZCawp-NnTeDKR6FyAE",
+      "CAACAgEAAxkBAAEEQ7BhRE7nlSTsbRMzS6WGSZgbzrPdEwACVQADOA6CEXbfCtRArFpyIAQ",
+      "CAACAgIAAxkBAAEEQ7NhRE8LbqR_Wx-FUnFj0Cxw8Q9u3QACMQADwDZPE3y7uI-AL53eIAQ"),
   SPAM(
       "CAACAgIAAxkBAAN8YQbW8yxJXKQFoQ2HRCW0kjxgDyEAAgUAAwKkJwuLVWIe3gegcyAE",
       "CAACAgIAAxkBAAN9YQbXA3LQWhb0qW5AjNRQGTk5w2kAAg8AAwKkJwvGlkE3rBJ_9yAE",

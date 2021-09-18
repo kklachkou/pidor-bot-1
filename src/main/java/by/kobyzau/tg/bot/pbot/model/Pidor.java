@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.model;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "pidor")
@@ -31,6 +33,8 @@ public class Pidor{
 
   @Transient
   private List<PidorMark> pidorMarks;
+  @Transient
+  private Set<ArtifactType> artifacts;
 
   public Pidor(long tgId, long chatId, String fullname) {
     this.tgId = tgId;
@@ -119,6 +123,14 @@ public class Pidor{
 
   public void setPidorMarks(List<PidorMark> pidorMarks) {
     this.pidorMarks = pidorMarks;
+  }
+
+  public Set<ArtifactType> getArtifacts() {
+    return artifacts;
+  }
+
+  public void setArtifacts(Set<ArtifactType> artifacts) {
+    this.artifacts = artifacts;
   }
 
   @Override

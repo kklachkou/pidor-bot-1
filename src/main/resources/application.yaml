@@ -18,7 +18,6 @@ logger:
     chat: ${LOGGER_CHAT}
     level: INFO
     token: ${LOGGER_TOKEN}
-
 bot:
   feedback:
     username: ${BOT_FEEDBACK_USERNAME:None}
@@ -46,6 +45,7 @@ task:
   gameReminderTask.cron: 0 0 13 * * ?
   gameEnd.cron: 0 0 16 * * ?
   notifyNoPidors.cron: 0 0 17 * * ?
+  blackBoxStartTask.cron: 0 30 17 * * ?
   notifyPidorOfTheMonthTask.cron: 0 0 18 * * ?
   pidorOfYear.cron: 0 0 19 31 12 ?
   futureAction.cron: 0 30 20 * * ?

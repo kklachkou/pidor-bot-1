@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.bots.FeedbackBot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @Profile("prod")
@@ -44,6 +46,8 @@ public class HelpCommandHandler implements CommandHandler {
         .append(buildCommandsMessage(Command.Category.ACTION))
         .append(new NewLineText())
         .append(buildCommandsMessage(Command.Category.INFO))
+        .append(new NewLineText())
+        .append(buildArtefactsMessage())
         .append(new NewLineText())
         .append(
             new SimpleText(
@@ -86,6 +90,20 @@ public class HelpCommandHandler implements CommandHandler {
         .append(new SpaceText())
         .append(new NotBlankText(command.getDesc()))
         .append(new NewLineText());
+  }
+
+  private Text buildArtefactsMessage() {
+    return new SimpleText(
+        Arrays.asList(ArtifactType.values()).stream()
+            .map(
+                a ->
+                    new ParametizedText(
+                        "{0} {1}: {2}",
+                        new ItalicText(a.getName()),
+                        new SimpleText(a.getEmoji()),
+                        new SimpleText(a.getDesc())))
+            .map(ParametizedText::text)
+            .collect(Collectors.joining("\n")));
   }
 
   protected boolean filterCommand(Command command) {

@@ -5,6 +5,7 @@ import by.kobyzau.tg.bot.pbot.model.api.github.CommitInfoDto;
 import by.kobyzau.tg.bot.pbot.model.api.github.CommitResponseDto;
 import by.kobyzau.tg.bot.pbot.model.dto.AppVersionDto;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import com.jasongoodwin.monads.Try;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,17 +27,19 @@ public class GithubServiceImpl implements GithubService {
   @Value("${api.github.branch}")
   private String branchName;
 
-  @Autowired
-  private GithubClient githubClient;
+  @Autowired private GithubClient githubClient;
 
   private static final Pattern COMMIT_PATTERN =
       Pattern.compile("^(\\d+\\.\\d+\\.\\d+) ?(.+)?\n?(.+)?$");
 
   @Override
   public AppVersionDto getAppVersion() {
+
     Optional<String> commitMessage =
-        githubClient
-            .getCommit(user, repositoryName, branchName)
+        Try.ofFailable(() -> githubClient.getCommit(user, repositoryName, branchName))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toOptional()
             .map(CommitResponseDto::getCommit)
             .map(CommitInfoDto::getMessage);
     AppVersionDto.AppVersionDtoBuilder appVersionBuilder =

@@ -111,6 +111,11 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jason-goodwin</groupId>
+            <artifactId>better-monads</artifactId>
+            <version>0.4.1</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

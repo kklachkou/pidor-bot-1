@@ -1,15 +1,12 @@
 package by.kobyzau.tg.bot.pbot.program.text.pidor;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorMark;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.Text;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
-import by.kobyzau.tg.bot.pbot.program.text.TrimmedText;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class ShortNameLinkedPidorText implements Text {
 
@@ -29,39 +26,18 @@ public class ShortNameLinkedPidorText implements Text {
     } else {
       textBuilder.append(fullName);
     }
-    if (isPidorOfYear()) {
-      textBuilder.append(new SimpleText(" \uD83D\uDC51"));
+    Set<ArtifactType> artifacts =
+        Optional.of(pidor).map(Pidor::getArtifacts).orElseGet(Collections::emptySet);
+    for (ArtifactType artifact : artifacts) {
+      textBuilder.append(new SpaceText()).append(new SimpleText(artifact.getEmoji()));
     }
-    if (isPidorOfDay()) {
-      textBuilder.append(new SimpleText(" \uD83D\uDC13"));
-    }
-    if (hasCovid()) {
-      textBuilder.append(new SimpleText(" \uD83E\uDDA0"));
+    List<PidorMark> pidorMarks =
+        Optional.of(pidor).map(Pidor::getPidorMarks).orElseGet(Collections::emptyList);
+    for (PidorMark pidorMark : pidorMarks) {
+      textBuilder.append(new SpaceText()).append(new SimpleText(pidorMark.getEmoji()));
     }
     return new UserLinkText(pidor.getTgId(), textBuilder).text();
   }
-
-  private boolean isPidorOfYear() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.PIDOR_OF_YEAR))
-            .isPresent();
-  }
-
-  private boolean isPidorOfDay() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.LAST_PIDOR_OF_DAY))
-            .isPresent();
-  }
-
-  private boolean hasCovid() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.COVID))
-            .isPresent();
-  }
-
 
   @Override
   public String toString() {

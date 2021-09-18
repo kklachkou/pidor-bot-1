@@ -1,4 +1,5 @@
 .idea/
 *.iml
 target/
+src/main/java/by/kobyzau/tg/bot/pbot/DevApp.java
 *.log

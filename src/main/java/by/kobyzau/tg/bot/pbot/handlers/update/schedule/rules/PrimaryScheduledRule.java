@@ -7,7 +7,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Profile("dev")
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class PrimaryScheduledRule implements ScheduledRule {

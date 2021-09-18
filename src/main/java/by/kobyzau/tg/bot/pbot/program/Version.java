@@ -1,16 +1,53 @@
 package by.kobyzau.tg.bot.pbot.program;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.program.text.BoldText;
-import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
-import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
-import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
-import by.kobyzau.tg.bot.pbot.program.text.Text;
-import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
+import by.kobyzau.tg.bot.pbot.program.text.*;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
+
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_12(
+      LocalDate.of(2021, 9, 20),
+      new TextBuilder(new BoldText("Артефакты!"))
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "Теперь можно находить артефакты. Они могут давать бонусы или анти-бонусы"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("Первые виды артефактов:"))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t- {0} {1}: {2}",
+                  new ItalicText(ArtifactType.SECOND_CHANCE.getName()),
+                  new SimpleText(ArtifactType.SECOND_CHANCE.getEmoji()),
+                  new SimpleText(ArtifactType.SECOND_CHANCE.getDesc())))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t- {0} {1}: {2}",
+                  new ItalicText(ArtifactType.PIDOR_MAGNET.getName()),
+                  new SimpleText(ArtifactType.PIDOR_MAGNET.getEmoji()),
+                  new SimpleText(ArtifactType.PIDOR_MAGNET.getDesc())))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("Текущие способы получить артефакт:"))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  new SimpleText(
+                      "\t- {0}! Пару раз в неделю бот будет присылать черный ящик. Открыть его сможет лишь один человек."
+                          + " В ящике будет либо бонус, либо анти-бонус. Решать тебе, идти на риск или нет"),
+                  new ItalicText("Черный ящик🎁")))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(
+              new SimpleText(
+                  "Артефакты действуют лишь 1 раз на следующий день."
+                      + " Наличие артефакта можно проверить по emoji рядом с именем"))),
   VERSION_11(
       LocalDate.of(2021, 8, 14),
       new TextBuilder(new BoldText("- Горячая Картошечка!"))

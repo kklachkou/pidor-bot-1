@@ -16,15 +16,15 @@ import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayServiceFactory;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
-import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +32,11 @@ import java.util.stream.Collectors;
 public class ElectionFinalizer {
 
   @Autowired private ElectionService electionService;
-
-  @Autowired private PidorService pidorService;
+  @Autowired private PidorOfDayServiceFactory pidorOfDayServiceFactory;
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
   @Autowired private ElectionStatPrinter fullElectionStatPrinter;
-
   @Autowired private List<PidorFunnyAction> allPidorFunnyActions;
 
   private Selection<PidorFunnyAction> pidorFunnyActions;
@@ -58,23 +56,18 @@ public class ElectionFinalizer {
       return;
     }
     botActionCollector.wait(chatId, ChatAction.TYPING);
-    List<Pidor> pidors = pidorService.getByChat(chatId);
+
     int totalVotes = electionService.getNumVotes(chatId, now);
     botActionCollector.text(
         chatId, new ParametizedText("Сегодня я получил {0} голосов", new IntText(totalVotes)));
     botActionCollector.wait(chatId, ChatAction.TYPING);
-
-    List<Pidor> pidorsToSelect = new ArrayList<>(pidors);
-    for (Pidor pidor : pidors) {
-      for (int i = 0; i < electionService.getNumVotes(chatId, now, pidor.getTgId()); i++) {
-        pidorsToSelect.add(pidor);
-      }
-    }
-    Pidor pidorOfDay = CollectionUtil.getRandomValue(pidorsToSelect);
+    PidorOfDayService pidorOfDayService =
+        pidorOfDayServiceFactory.getService(PidorOfDayService.Type.ELECTION);
+    Pidor pidorOfDay = pidorOfDayService.findPidorOfDay(chatId);
     botActionCollector.text(chatId, new SimpleText("И ситуация следующая:"));
     botActionCollector.wait(chatId, ChatAction.TYPING);
     fullElectionStatPrinter.printInfo(chatId);
-    botActionCollector.wait(chatId,5, ChatAction.TYPING);
+    botActionCollector.wait(chatId, 5, ChatAction.TYPING);
     saveDailyPidor(pidorOfDay);
     botActionCollector.text(chatId, new RandomText("Начнем выборы!"));
     botActionCollector.wait(chatId, ChatAction.TYPING);

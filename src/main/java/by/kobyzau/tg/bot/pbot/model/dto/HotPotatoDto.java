@@ -5,8 +5,4 @@ public class HotPotatoDto extends SerializableInlineObject {
   public HotPotatoDto() {
     super(SerializableInlineType.HOT_POTATOES);
   }
-
-  public HotPotatoDto(String id) {
-    super(id, SerializableInlineType.HOT_POTATOES);
-  }
 }

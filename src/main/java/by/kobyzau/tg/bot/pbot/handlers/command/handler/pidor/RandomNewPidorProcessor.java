@@ -12,6 +12,8 @@ import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
+import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayServiceFactory;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -29,7 +31,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Primary
-@Component("random")
+@Component
 public class RandomNewPidorProcessor implements NewPidorProcessor {
 
   private final Selection<String> noPidorsMessage;
@@ -37,7 +39,7 @@ public class RandomNewPidorProcessor implements NewPidorProcessor {
   private Selection<PidorFunnyAction> pidorFunnyActions;
 
   @Autowired private DailyPidorRepository dailyPidorRepository;
-  @Autowired private BotService botService;
+  @Autowired private PidorOfDayServiceFactory pidorOfDayServiceFactory;
   @Autowired private PidorService pidorService;
   @Autowired private BotActionCollector botActionCollector;
 
@@ -85,7 +87,7 @@ public class RandomNewPidorProcessor implements NewPidorProcessor {
       return;
     }
     botActionCollector.typing(chatId);
-    Pidor pidorOfTheDay = CollectionUtil.getRandomValue(pidors);
+    Pidor pidorOfTheDay = pidorOfDayServiceFactory.getService(PidorOfDayService.Type.SIMPLE).findPidorOfDay(chatId);
     saveDailyPidor(pidorOfTheDay, message.getFrom().getId());
     LocalDate now = DateUtil.now();
     Optional<DateBasePidorFunnyAction> dateBasePidorFunnyAction =

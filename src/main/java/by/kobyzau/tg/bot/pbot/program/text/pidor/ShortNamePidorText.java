@@ -1,13 +1,13 @@
 package by.kobyzau.tg.bot.pbot.program.text.pidor;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorMark;
 import by.kobyzau.tg.bot.pbot.program.text.Text;
 import by.kobyzau.tg.bot.pbot.program.text.TrimmedText;
 import by.kobyzau.tg.bot.pbot.util.TGUtil;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class ShortNamePidorText implements Text {
 
@@ -26,38 +26,17 @@ public class ShortNamePidorText implements Text {
     if (!nickname.text().isEmpty()) {
       sb.append(" (").append(nickname).append(")");
     }
-    if (isPidorOfYear()) {
-      sb.append(" \uD83D\uDC51");
+    Set<ArtifactType> artifacts =
+        Optional.of(pidor).map(Pidor::getArtifacts).orElseGet(Collections::emptySet);
+    for (ArtifactType artifact : artifacts) {
+      sb.append(" ").append(artifact.getEmoji());
     }
-
-    if (isPidorOfDay()) {
-      sb.append(" \uD83D\uDC13");
-    }
-    if (hasCovid()) {
-      sb.append(" \uD83E\uDDA0");
+    List<PidorMark> pidorMarks =
+        Optional.of(pidor).map(Pidor::getPidorMarks).orElseGet(Collections::emptyList);
+    for (PidorMark pidorMark : pidorMarks) {
+      sb.append(" ").append(pidorMark.getEmoji());
     }
     return sb.toString();
-  }
-
-  private boolean isPidorOfYear() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.PIDOR_OF_YEAR))
-            .isPresent();
-  }
-
-  private boolean isPidorOfDay() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.LAST_PIDOR_OF_DAY))
-            .isPresent();
-  }
-
-  private boolean hasCovid() {
-    return Optional.ofNullable(pidor)
-            .map(Pidor::getPidorMarks)
-            .filter(m -> m.contains(PidorMark.COVID))
-            .isPresent();
   }
 
   @Override

@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GithubServiceTest {
@@ -27,8 +28,7 @@ public class GithubServiceTest {
 
   @Mock private GithubClient githubClient;
 
-  @InjectMocks
-  private GithubService service = new GithubServiceImpl();
+  @InjectMocks private GithubService service = new GithubServiceImpl();
 
   @Before
   public void init() {
@@ -41,6 +41,21 @@ public class GithubServiceTest {
   public void getAppVersion_noResponse() {
     // given
     doReturn(Optional.empty()).when(githubClient).getCommit(USER, REPO, BRANCH);
+
+    // when
+    AppVersionDto appVersion = service.getAppVersion();
+
+    // then
+    assertNotNull(appVersion);
+    assertEquals("-", appVersion.getNumber());
+    assertEquals("-", appVersion.getName());
+    assertEquals("", appVersion.getDesc());
+  }
+
+  @Test
+  public void getAppVersion_onError() {
+    // given
+    doThrow(new RuntimeException("400 Error")).when(githubClient).getCommit(USER, REPO, BRANCH);
 
     // when
     AppVersionDto appVersion = service.getAppVersion();

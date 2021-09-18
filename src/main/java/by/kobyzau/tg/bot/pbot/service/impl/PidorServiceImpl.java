@@ -1,5 +1,8 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorMark;
@@ -15,15 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class PidorServiceImpl implements PidorService {
 
+  @Autowired private UserArtifactService userArtifactService;
   @Autowired private PidorRepository pidorRepository;
   @Autowired private PidorOfYearRepository pidorOfYearRepository;
   @Autowired private DailyPidorRepository dailyPidorRepository;
@@ -75,6 +76,8 @@ public class PidorServiceImpl implements PidorService {
     if (pidor.getTgId() == 562849728 || pidor.getTgId() == 261011580) {
       pidorMarks.add(PidorMark.COVID);
     }
+    Set<ArtifactType> artifacts = getArtifacts(pidor);
+    pidor.setArtifacts(artifacts);
     pidor.setPidorMarks(pidorMarks);
     return pidor;
   }
@@ -99,5 +102,11 @@ public class PidorServiceImpl implements PidorService {
         .map(DailyPidor::getPlayerTgId)
         .filter(id -> id == pidor.getTgId())
         .isPresent();
+  }
+
+  private Set<ArtifactType> getArtifacts(Pidor pidor) {
+    return userArtifactService.getUserArtifacts(pidor.getChatId(), pidor.getTgId()).stream()
+        .map(UserArtifact::getArtifactType)
+        .collect(Collectors.toSet());
   }
 }
