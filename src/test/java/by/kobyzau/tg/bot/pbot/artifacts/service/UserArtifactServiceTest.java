@@ -16,8 +16,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserArtifactServiceTest {
@@ -163,9 +162,21 @@ public class UserArtifactServiceTest {
     LocalDate date = LocalDate.now();
     doReturn(
             Arrays.asList(
-                UserArtifact.builder().id(1).date(date).build(),
-                UserArtifact.builder().id(2).date(date.plusDays(1)).build(),
-                UserArtifact.builder().id(3).date(date.minusDays(1)).build()))
+                UserArtifact.builder()
+                    .artifactType(ArtifactType.PIDOR_MAGNET)
+                    .id(1)
+                    .date(date)
+                    .build(),
+                UserArtifact.builder()
+                    .artifactType(ArtifactType.PIDOR_MAGNET)
+                    .id(2)
+                    .date(date.plusDays(1))
+                    .build(),
+                UserArtifact.builder()
+                    .artifactType(ArtifactType.SECOND_CHANCE)
+                    .id(3)
+                    .date(date.minusDays(1))
+                    .build()))
         .when(userArtifactRepository)
         .getByChatId(CHAT_ID);
 
@@ -174,6 +185,7 @@ public class UserArtifactServiceTest {
 
     // then
     verify(userArtifactRepository).delete(1);
-    verify(userArtifactRepository).delete(3);
+    verify(userArtifactRepository, times(0)).delete(2);
+    verify(userArtifactRepository, times(0)).delete(3);
   }
 }

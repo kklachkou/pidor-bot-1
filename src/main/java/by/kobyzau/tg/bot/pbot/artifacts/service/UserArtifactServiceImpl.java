@@ -55,6 +55,7 @@ public class UserArtifactServiceImpl implements UserArtifactService {
     LocalDate now = DateUtil.now();
     userArtifactRepository.getByChatId(chatId).stream()
         .filter(a -> !a.getDate().isAfter(now))
+        .filter(a -> a.getArtifactType() == ArtifactType.PIDOR_MAGNET)
         .map(UserArtifact::getId)
         .forEach(userArtifactRepository::delete);
   }
