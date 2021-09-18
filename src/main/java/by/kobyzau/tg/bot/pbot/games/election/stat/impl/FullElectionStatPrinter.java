@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.games.election.stat.impl;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.ElectionPidorComparator;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
   @Autowired private ElectionService electionService;
 
   @Autowired private BotActionCollector botActionCollector;
+
+  @Autowired private UserArtifactService userArtifactService;
 
   @Override
   public void printInfo(long chatId) {
@@ -48,13 +51,27 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
         .append(new NewLineText());
     boolean hasWithZero = false;
     for (Pidor pidor : pidors) {
+      boolean hasMagnet =
+          userArtifactService
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .isPresent();
+      if (hasMagnet) {
+        totalVotes++;
+      }
+    }
+    for (Pidor pidor : pidors) {
+      boolean hasMagnet =
+          userArtifactService
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .isPresent();
       int numVotes = electionService.getNumVotes(chatId, now, pidor.getTgId());
-      if (numVotes == 0) {
+      if (numVotes == 0 && !hasMagnet) {
         hasWithZero = true;
         continue;
       }
       textBuilder.append(new NewLineText());
-      double chance = 100 * (numVotes + 1) / ((double) totalVotes + pidors.size());
+      double chance =
+          100 * (numVotes + (hasMagnet ? 2 : 1)) / ((double) totalVotes + pidors.size());
       textBuilder
           .append(new ShortNameLinkedPidorText(pidor))
           .append(

@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.games.election.stat.impl;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.ElectionPidorComparator;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
@@ -25,6 +27,8 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
   @Autowired private ElectionService electionService;
 
   @Autowired private BotActionCollector botActionCollector;
+
+  @Autowired private UserArtifactService userArtifactService;
 
   private static final List<String> NAMES =
       Arrays.asList(
@@ -82,17 +86,35 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
                 new IntText(numToVote - totalVotes)))
         .append(new NewLineText());
     boolean hasWithZero = false;
+    for (Pidor pidor : pidors) {
+      boolean hasMagnet =
+          userArtifactService
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .isPresent();
+      if (hasMagnet) {
+        totalVotes++;
+      }
+    }
     for (int index = 0; index < pidors.size(); index++) {
       Pidor pidor = pidors.get(index);
+      boolean hasMagnet =
+          userArtifactService
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .isPresent();
       int numVotes = electionService.getNumVotes(chatId, now, pidor.getTgId());
-      if (numVotes == 0) {
+      if (numVotes == 0 && !hasMagnet) {
         hasWithZero = true;
         continue;
       }
       textBuilder.append(new NewLineText());
-      double chance = 100 * (numVotes + 1) / ((double) totalVotes + pidors.size());
+      double chance =
+          100 * (numVotes + (hasMagnet ? 2 : 1)) / ((double) totalVotes + pidors.size());
       textBuilder
           .append(new SimpleText(CollectionUtil.getItem(namesByDay, index)))
+          .append(
+              hasMagnet
+                  ? new SimpleText(" " + ArtifactType.PIDOR_MAGNET.getEmoji())
+                  : new EmptyText())
           .append(
               new ParametizedText(
                   " - {0} голосов. Шанс стать пидором - {1}%",
