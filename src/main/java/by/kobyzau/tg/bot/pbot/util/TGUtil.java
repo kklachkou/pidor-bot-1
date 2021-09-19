@@ -12,16 +12,22 @@ import java.util.Set;
 
 public class TGUtil {
   public static String getUsername(User user) {
-    return StringUtil.isBlank(user.getUserName(), "")
-        .trim()
-        .replaceAll("\uD83C\uDDE7\uD83C\uDDFE", "\uD83D\uDCA9");
+    return escapeInput(StringUtil.isBlank(user.getUserName(), "").trim());
   }
 
   public static String getFullName(User user) {
-    return (StringUtil.isBlank(user.getFirstName(), "")
-            + " "
-            + StringUtil.isBlank(user.getLastName(), ""))
-        .trim()
+    return escapeInput(
+        (StringUtil.isBlank(user.getFirstName(), "")
+                + " "
+                + StringUtil.isBlank(user.getLastName(), ""))
+            .trim());
+  }
+
+  public static String escapeInput(String s) {
+    return s.replaceAll("\u2713", "")
+        .replaceAll("\\u2713", "")
+        .replaceAll("\u1160", "")
+        .replaceAll("\\u1160", "")
         .replaceAll("\uD83C\uDDE7\uD83C\uDDFE", "\uD83D\uDCA9");
   }
 
