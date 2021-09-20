@@ -59,7 +59,7 @@ public class FullWithNumLeftElectionStatPrinter implements ElectionStatPrinter {
               .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       if (hasMagnet) {
-        totalVotes++;
+        totalVotes = totalVotes + 3;
       }
     }
     boolean hasWithZero = false;
@@ -75,7 +75,7 @@ public class FullWithNumLeftElectionStatPrinter implements ElectionStatPrinter {
       }
       textBuilder.append(new NewLineText());
       double chance =
-          100 * (numVotes + (hasMagnet ? 2 : 1)) / ((double) totalVotes + pidors.size());
+          100 * (numVotes + (hasMagnet ? 4 : 1)) / ((double) totalVotes + pidors.size());
       textBuilder
           .append(new ShortNameLinkedPidorText(pidor))
           .append(

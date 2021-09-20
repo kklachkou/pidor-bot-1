@@ -202,7 +202,7 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
                 .append(
                     new ParametizedText(
                         " - 4 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (4 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (4 + 1) / ((double) 13))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new ShortNameLinkedPidorText(getPidor(3)))
@@ -210,14 +210,14 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
                     new ParametizedText(
                         " - 2 голосов. Шанс стать пидором - {0}%",
                         new DoubleText(
-                            100 * (2 + 1 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                            100 * (2 + 1 + 3) / ((double) 13))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new ShortNameLinkedPidorText(getPidor(1)))
                 .append(
                     new ParametizedText(
                         " - 1 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (1 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (1 + 1) / ((double) 13))))
                 .append(new NewLineText())
                 .text()));
   }
@@ -261,28 +261,28 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
                 .append(
                     new ParametizedText(
                         " - 4 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (4 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (4 + 1) / ((double) 13))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new ShortNameLinkedPidorText(getPidor(3)))
                 .append(
                     new ParametizedText(
                         " - 2 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (2 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (2 + 1) / ((double) 13))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new ShortNameLinkedPidorText(getPidor(4)))
                 .append(
                     new ParametizedText(
                         " - 0 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (2) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (1 + 3) / ((double) 13))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new SimpleText("У всех остальных"))
                 .append(
                     new ParametizedText(
                         " - 0 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 / ((double) 13))))
                 .append(new NewLineText())
                 .text()));
   }
@@ -326,14 +326,14 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
                 .append(
                     new ParametizedText(
                         " - 0 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 * (1 + 1) / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 * (1 + 3) / ((double) 6))))
                 .append(new NewLineText())
                 .append(new NewLineText())
                 .append(new SimpleText("У всех остальных"))
                 .append(
                     new ParametizedText(
                         " - 0 голосов. Шанс стать пидором - {0}%",
-                        new DoubleText(100 / ((double) totalVotes + pidors.size() + 1))))
+                        new DoubleText(100 / ((double) 6))))
                 .append(new NewLineText())
                 .text()));
   }

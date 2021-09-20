@@ -31,7 +31,7 @@ public class DicePidorOfDayService implements PidorOfDayService {
 
   @Override
   public Pidor findPidorOfDay(long chatId) {
-    log.info("Finding dice pidor in chat {}", chatId);
+    log.debug("Finding dice pidor in chat {}", chatId);
     LocalDate now = DateUtil.now();
     EmojiGame game =
         diceService
@@ -62,6 +62,8 @@ public class DicePidorOfDayService implements PidorOfDayService {
                 a ->
                     a.getUserId() == pidor.getTgId()
                         && a.getArtifactType() == ArtifactType.PIDOR_MAGNET)) {
+          pidorsForSearch.add(pidor);
+          pidorsForSearch.add(pidor);
           pidorsForSearch.add(pidor);
         }
       }

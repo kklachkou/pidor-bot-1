@@ -28,9 +28,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static by.kobyzau.tg.bot.pbot.sender.methods.SendMethod.method;
 
@@ -130,10 +128,11 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
                   .build(),
               true));
     }
-
-    ArtifactType artifactType =
-        collectionHelper.getRandomValue(Arrays.asList(ArtifactType.values()));
-    botActionCollector.wait(chatId, 1,  ChatAction.TYPING);
+    List<ArtifactType> artifactTypeList = new ArrayList<>(Arrays.asList(ArtifactType.values()));
+    artifactTypeList.add(ArtifactType.PIDOR_MAGNET);
+    artifactTypeList.add(ArtifactType.PIDOR_MAGNET);
+    ArtifactType artifactType = collectionHelper.getRandomValue(artifactTypeList);
+    botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     botActionCollector.text(
         chatId,
         new ParametizedText(

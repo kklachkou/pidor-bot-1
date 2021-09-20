@@ -3,7 +3,9 @@ package by.kobyzau.tg.bot.pbot.artifacts.helper;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
 public class BlackBoxHelper {
 
   @Autowired private PidorService pidorService;

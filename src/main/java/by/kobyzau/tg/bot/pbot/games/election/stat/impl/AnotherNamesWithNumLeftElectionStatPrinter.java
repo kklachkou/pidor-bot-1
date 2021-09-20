@@ -92,7 +92,7 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
               .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       if (hasMagnet) {
-        totalVotes++;
+        totalVotes = totalVotes + 3;
       }
     }
     for (int index = 0; index < pidors.size(); index++) {
@@ -108,7 +108,7 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
       }
       textBuilder.append(new NewLineText());
       double chance =
-          100 * (numVotes + (hasMagnet ? 2 : 1)) / ((double) totalVotes + pidors.size());
+          100 * (numVotes + (hasMagnet ? 4 : 1)) / ((double) totalVotes + pidors.size());
       textBuilder
           .append(new SimpleText(CollectionUtil.getItem(namesByDay, index)))
           .append(

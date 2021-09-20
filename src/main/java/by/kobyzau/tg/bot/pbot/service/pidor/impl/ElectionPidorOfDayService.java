@@ -45,6 +45,8 @@ public class ElectionPidorOfDayService implements PidorOfDayService {
                     a.getUserId() == pidor.getTgId()
                         && a.getArtifactType() == ArtifactType.PIDOR_MAGNET)) {
           pidorsForSearch.add(pidor);
+          pidorsForSearch.add(pidor);
+          pidorsForSearch.add(pidor);
         }
       }
     }

@@ -31,8 +31,7 @@ import static org.mockito.Mockito.doReturn;
 @RunWith(MockitoJUnitRunner.class)
 public class ElectionPidorOfDayServiceTest {
 
-  @Rule
-  public RepeatRule repeatRule = new RepeatRule();
+  @Rule public RepeatRule repeatRule = new RepeatRule();
   @Mock private PidorService pidorService;
   @Mock private UserArtifactService userArtifactService;
   @Mock private ElectionService electionService;
@@ -113,10 +112,10 @@ public class ElectionPidorOfDayServiceTest {
       int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
       results.put(pidorOfDay.getTgId(), numWins + 1);
     }
-    assertRange(23, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
-    assertRange(30, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
-    assertRange(23, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
-    assertRange(23, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+    assertRange(20, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(40, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(20, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(20, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
   }
 
   @Test
@@ -173,18 +172,18 @@ public class ElectionPidorOfDayServiceTest {
       int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
       results.put(pidorOfDay.getTgId(), numWins + 1);
     }
-    assertRange(15, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
-    assertRange(31, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
-    assertRange(23, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
-    assertRange(31, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+    assertRange(13, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(40, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(20, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(27, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
   }
 
   @Test
   public void getType_test() {
-    //when
+    // when
     PidorOfDayService.Type type = service.getType();
 
-    //then
+    // then
     Assert.assertEquals(PidorOfDayService.Type.ELECTION, type);
   }
 

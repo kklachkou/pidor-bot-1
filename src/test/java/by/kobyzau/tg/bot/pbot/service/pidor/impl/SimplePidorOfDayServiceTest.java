@@ -102,10 +102,10 @@ public class SimplePidorOfDayServiceTest {
       int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
       results.put(pidorOfDay.getTgId(), numWins + 1);
     }
-    assertRange(20, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
-    assertRange(40, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
-    assertRange(20, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
-    assertRange(20, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+    assertRange(14, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(57, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(14, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(14, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
   }
 
   @Test

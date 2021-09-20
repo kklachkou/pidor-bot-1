@@ -34,7 +34,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -119,12 +118,10 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   public void handleCallback_hasPidor_alreadyHandled() {
     // given
     ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
-    doReturn(artifactType)
-        .when(collectionHelper)
-        .getRandomValue(Arrays.asList(ArtifactType.values()));
+    doReturn(artifactType).when(collectionHelper).getRandomValue(any());
     Pidor pidor = new Pidor();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
-    doReturn(true).when(blackBoxHelper).checkRequest(CHAT_ID,USER_ID, REQUEST_ID);
+    doReturn(true).when(blackBoxHelper).checkRequest(CHAT_ID, USER_ID, REQUEST_ID);
 
     // when
     handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
@@ -142,9 +139,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     int numPerDay = 4;
     int numHandled = 3;
     ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
-    doReturn(artifactType)
-        .when(collectionHelper)
-        .getRandomValue(Arrays.asList(ArtifactType.values()));
+    doReturn(artifactType).when(collectionHelper).getRandomValue(any());
     Pidor pidor = new Pidor();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
     doReturn(false).when(blackBoxHelper).checkRequest(CHAT_ID, USER_ID, REQUEST_ID);
@@ -199,9 +194,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     int numPerDay = 4;
     int numHandled = 4;
     ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
-    doReturn(artifactType)
-        .when(collectionHelper)
-        .getRandomValue(Arrays.asList(ArtifactType.values()));
+    doReturn(artifactType).when(collectionHelper).getRandomValue(any());
     Pidor pidor = new Pidor();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
     doReturn(false).when(blackBoxHelper).checkRequest(CHAT_ID, USER_ID, REQUEST_ID);

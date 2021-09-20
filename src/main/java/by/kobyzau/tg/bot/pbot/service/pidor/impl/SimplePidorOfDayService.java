@@ -27,7 +27,6 @@ public class SimplePidorOfDayService implements PidorOfDayService {
   @Override
   public Pidor findPidorOfDay(long chatId) {
     log.info("Finding simple pidor in chat {}", chatId);
-    LocalDate now = DateUtil.now();
     List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
     List<Pidor> pidors = pidorService.getByChat(chatId);
     List<Pidor> pidorsForSearch = new ArrayList<>(pidors);
@@ -38,6 +37,8 @@ public class SimplePidorOfDayService implements PidorOfDayService {
                 a ->
                     a.getUserId() == pidor.getTgId()
                         && a.getArtifactType() == ArtifactType.PIDOR_MAGNET)) {
+          pidorsForSearch.add(pidor);
+          pidorsForSearch.add(pidor);
           pidorsForSearch.add(pidor);
         }
       }
