@@ -42,17 +42,17 @@ public class TelegramServiceImpl implements TelegramService {
       Integer errorCode = e.getErrorCode();
       if (errorCode != null && errorCode.equals(400)) {
         logger.debug(
-            "Cannot get Chat Member for chat "
+            "Cannot get Chat Member for chat <pre>"
                 + chatId
-                + " and user "
+                + "</pre> and user "
                 + userId
                 + ":\n"
                 + e.getMessage());
       } else {
         logger.error(
-            "Cannot get Chat Member for chat "
+            "Cannot get Chat Member for chat <pre>"
                 + chatId
-                + " and user "
+                + "</pre> and user "
                 + userId
                 + ":\n"
                 + e.getMessage(),
@@ -61,9 +61,9 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.empty();
     } catch (TelegramApiException e) {
       logger.error(
-          "Cannot get Chat Member for chat "
+          "Cannot get Chat Member for chat <pre>"
               + chatId
-              + " and user "
+              + "</pre> and user "
               + userId
               + ":\n"
               + e.getMessage(),
@@ -86,7 +86,7 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.of(
           pidorBot.execute(GetChat.builder().chatId(String.valueOf(chatId)).build()));
     } catch (TelegramApiException e) {
-      logger.debug("Cannot get Chat for chat " + chatId + ":\n" + e.getMessage());
+      logger.debug("Cannot get Chat for chat <pre>" + chatId + "</pre>:\n" + e.getMessage());
       return Optional.empty();
     }
   }
@@ -97,7 +97,7 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.of(
           pidorBot.execute(GetChatMemberCount.builder().chatId(String.valueOf(chatId)).build()));
     } catch (TelegramApiException e) {
-      logger.debug("Cannot get Chat Member Count for chat " + chatId + "\n\n" + e.getMessage());
+      logger.debug("Cannot get Chat Member Count for chat <pre>" + chatId + "</pre>\n\n" + e.getMessage());
       return Optional.empty();
     }
   }
