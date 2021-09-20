@@ -18,18 +18,18 @@ public enum Version {
           .append(
               new ParametizedText(
                   "\t\t{0} {1} {2}: {3}",
-                  new SimpleText(ArtifactType.SILENCE.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
-                  new ItalicText(ArtifactType.SILENCE.getName()),
-                  new SimpleText(ArtifactType.SILENCE.getEmoji()),
-                  new SimpleText(ArtifactType.SILENCE.getDesc())))
-          .append(new NewLineText())
-          .append(
-              new ParametizedText(
-                  "\t\t{0} {1} {2}: {3}",
                   new SimpleText(ArtifactType.RICOCHET.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
                   new ItalicText(ArtifactType.RICOCHET.getName()),
                   new SimpleText(ArtifactType.RICOCHET.getEmoji()),
                   new SimpleText(ArtifactType.RICOCHET.getDesc())))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t\t{0} {1} {2}: {3}",
+                  new SimpleText(ArtifactType.SILENCE.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+                  new ItalicText(ArtifactType.SILENCE.getName()),
+                  new SimpleText(ArtifactType.SILENCE.getEmoji()),
+                  new SimpleText(ArtifactType.SILENCE.getDesc())))
           .append(new NewLineText())
           .append(new NewLineText())
           .append(new SimpleText("Теперь людей с артифактами станет больше!"))
@@ -37,7 +37,7 @@ public enum Version {
           .append(
               new ParametizedText(
                   new SimpleText(
-                      "{0} теперь выпадает каждый день и его может открыть сразу несклько человек!"),
+                      "{0} теперь выпадает каждый день и его может открыть сразу несколько человек!"),
                   new ItalicText("Черный ящик🎁")))
           .append(new NewLineText())
           .append(new NewLineText())
