@@ -14,6 +14,10 @@ public class TelegramLogger implements Logger {
   @Value("${logger.tg.chat}")
   private String backupChat;
 
+
+  @Value("${logger.tg.enabled}")
+  private boolean enabled;
+
   @Autowired private LoggerBot loggerBot;
 
   @Autowired
@@ -81,6 +85,9 @@ public class TelegramLogger implements Logger {
   }
 
   private void sendMessage(String message, int attempt) {
+    if (!enabled) {
+      return;
+    }
     try {
       loggerBot.execute(
           SendMessage.builder()

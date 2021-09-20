@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.command.handler;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
@@ -18,6 +20,7 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -42,6 +45,8 @@ public class ElectionCommandHandler implements CommandHandler {
   @Autowired private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
   @Autowired private ElectionStatPrinter anotherNamesWithNumLeftElectionStatPrinter;
   @Autowired private ChatSettingsService chatSettingsService;
+  @Autowired private UserArtifactService userArtifactService;
+  @Autowired private DateHelper dateHelper;
 
   private final Map<String, LocalDateTime> lastCallsCache = new HashMap<>();
 
@@ -79,7 +84,11 @@ public class ElectionCommandHandler implements CommandHandler {
       botActionCollector.sticker(chatId, StickerType.SAD.getRandom());
       return;
     }
-
+    if (hasSilenceArtifact(chatId, message.getFrom().getId())) {
+      botActionCollector.text(
+              chatId, new SimpleText("\uD83D\uDE49"), message.getMessageId());
+      return;
+    }
     InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
         InlineKeyboardMarkup.builder();
     String requestId = UUID.randomUUID().toString().substring(VOTE.getIdSize());
@@ -113,6 +122,12 @@ public class ElectionCommandHandler implements CommandHandler {
             keyboardMarkupBuilder.build(),
             message.getMessageId()));
   }
+
+  private boolean hasSilenceArtifact(long chatId, long userId) {
+    return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SILENCE).isPresent()
+            && dateHelper.currentTime().getHour() < 12;
+  }
+
 
   @Override
   public Command getCommand() {

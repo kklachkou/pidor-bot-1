@@ -283,7 +283,9 @@ public class FullNamePidorTextTest {
     String result = text.text();
 
     // then
-    assertEquals("@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂", result);
+    assertEquals(
+        "@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1",
+        result);
   }
 
 
@@ -303,7 +305,7 @@ public class FullNamePidorTextTest {
 
     // then
     assertEquals(
-        "@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
+        "@Username (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1 \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
         result);
   }
 

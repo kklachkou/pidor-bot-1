@@ -15,9 +15,9 @@ public interface UserArtifactService {
 
   List<UserArtifact> getUserArtifacts(long chatId, long userId);
 
-  List<UserArtifact> getUserArtifacts(long chatId, LocalDate date);
+  List<UserArtifact> getUserArtifacts(long chatId);
 
-  Optional<UserArtifact> getUserArtifact(long chatId, long userId, ArtifactType artifactType, LocalDate date);
+  Optional<UserArtifact> getUserArtifact(long chatId, long userId, ArtifactType artifactType);
 
-  void clearUserArtifacts(long chatId);
+  void clearUserArtifacts(long chatId, ArtifactType artifactType);
 }

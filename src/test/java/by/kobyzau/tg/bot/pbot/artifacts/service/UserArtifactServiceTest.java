@@ -66,7 +66,7 @@ public class UserArtifactServiceTest {
   }
 
   @Test
-  public void getUserArtifacts_chatAndDate() {
+  public void getUserArtifacts_chat() {
     // given
     LocalDate date = LocalDate.now();
     doReturn(
@@ -78,12 +78,13 @@ public class UserArtifactServiceTest {
         .getByChatId(CHAT_ID);
 
     // when
-    List<UserArtifact> result = service.getUserArtifacts(CHAT_ID, date);
+    List<UserArtifact> result = service.getUserArtifacts(CHAT_ID);
 
     // then
     assertEquals(
         Arrays.asList(
             UserArtifact.builder().id(1).date(date).build(),
+            UserArtifact.builder().id(2).date(date.plusDays(1)).build(),
             UserArtifact.builder().id(3).date(date).build()),
         result);
   }
@@ -136,18 +137,12 @@ public class UserArtifactServiceTest {
                     .userId(userId)
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .date(date)
-                    .build(),
-                UserArtifact.builder()
-                    .id(4)
-                    .userId(userId)
-                    .artifactType(artifactType)
-                    .date(date.plusDays(1))
                     .build()))
         .when(userArtifactRepository)
         .getByChatId(CHAT_ID);
 
     // when
-    Optional<UserArtifact> result = service.getUserArtifact(CHAT_ID, userId, artifactType, date);
+    Optional<UserArtifact> result = service.getUserArtifact(CHAT_ID, userId, artifactType);
 
     // then
     assertTrue(result.isPresent());
@@ -165,27 +160,24 @@ public class UserArtifactServiceTest {
                 UserArtifact.builder()
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .id(1)
-                    .date(date)
                     .build(),
                 UserArtifact.builder()
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .id(2)
-                    .date(date.plusDays(1))
                     .build(),
                 UserArtifact.builder()
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .id(3)
-                    .date(date.minusDays(1))
                     .build()))
         .when(userArtifactRepository)
         .getByChatId(CHAT_ID);
 
     // when
-    service.clearUserArtifacts(CHAT_ID);
+    service.clearUserArtifacts(CHAT_ID, ArtifactType.PIDOR_MAGNET);
 
     // then
     verify(userArtifactRepository).delete(1);
-    verify(userArtifactRepository, times(0)).delete(2);
+    verify(userArtifactRepository).delete(2);
     verify(userArtifactRepository, times(0)).delete(3);
   }
 }

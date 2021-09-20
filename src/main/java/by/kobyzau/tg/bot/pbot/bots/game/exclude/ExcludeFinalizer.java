@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.bots.game.exclude;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
@@ -37,6 +39,7 @@ public class ExcludeFinalizer {
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private BotService botService;
+  @Autowired private UserArtifactService userArtifactService;
 
   @Autowired private List<PidorFunnyAction> allPidorFunnyActions;
 
@@ -52,6 +55,7 @@ public class ExcludeFinalizer {
   }
 
   public void finalize(long chatId) {
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.SILENCE);
     LocalDate now = DateUtil.now();
     if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
       return;

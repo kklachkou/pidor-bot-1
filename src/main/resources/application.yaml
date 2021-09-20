@@ -15,15 +15,16 @@ spring:
 server.port: ${PORT:8084}
 logger:
   tg:
-    chat: ${LOGGER_CHAT}
+    enabled: true
+    chat: ${LOGGER_CHAT:None}
     level: INFO
-    token: ${LOGGER_TOKEN}
+    token: ${LOGGER_TOKEN:None}
 bot:
   feedback:
     username: ${BOT_FEEDBACK_USERNAME:None}
     token: ${BOT_FEEDBACK_TOKEN:None}
   pidor:
-    username: ${BOT_USERNAME}
+    username: ${BOT_USERNAME:None}
     token: ${BOT_TOKEN}
 telegraph:
   token: ${TELEGRAPH_TOKEN:None}

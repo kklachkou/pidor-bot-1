@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
@@ -19,6 +20,7 @@ import by.kobyzau.tg.bot.pbot.tg.action.AnswerCallbackBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.EditMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.CollectionHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -55,12 +57,13 @@ public class ElectionUpdateHandlerTest extends BotActionAbstractTest {
 
   @Mock private ElectionService electionService;
   @Mock private PidorService pidorService;
-  @Mock private Logger logger;
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private ElectionFinalizer electionFinalizer;
   @Mock private ChatSettingsService chatSettingsService;
   @Mock private ElectionStatPrinter fullWithNumLeftElectionStatPrinter;
   @Mock private ElectionStatPrinter anotherNamesWithNumLeftElectionStatPrinter;
+  @Mock private UserArtifactService userArtifactService;
+  @Mock private CollectionHelper collectionHelper;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Before

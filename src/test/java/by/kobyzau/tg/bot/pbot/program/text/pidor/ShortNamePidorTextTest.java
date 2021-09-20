@@ -230,7 +230,9 @@ public class ShortNamePidorTextTest {
     String result = text.text();
 
     // then
-    assertEquals("Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂", result);
+    assertEquals(
+        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1",
+        result);
   }
 
   @Test
@@ -249,7 +251,7 @@ public class ShortNamePidorTextTest {
 
     // then
     assertEquals(
-        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
+        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1 \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
         result);
   }
 }

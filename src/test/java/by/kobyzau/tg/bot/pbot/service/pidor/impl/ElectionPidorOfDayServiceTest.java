@@ -70,7 +70,7 @@ public class ElectionPidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_1);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_2);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_3);
@@ -100,7 +100,7 @@ public class ElectionPidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_1);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_2);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_3);
@@ -130,7 +130,7 @@ public class ElectionPidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(1).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_1);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_2);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_3);
@@ -160,7 +160,7 @@ public class ElectionPidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(1).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_1);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_2);
     doReturn(2).when(electionService).getNumVotes(CHAT_ID, DateUtil.now(), ID_3);

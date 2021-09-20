@@ -67,7 +67,7 @@ public class SimplePidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     Map<Long, Integer> results = new HashMap<>();
 
     // when
@@ -93,7 +93,7 @@ public class SimplePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     Map<Long, Integer> results = new HashMap<>();
 
     // when

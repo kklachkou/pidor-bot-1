@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserArtifactServiceImpl implements UserArtifactService {
+
   private final UserArtifactRepository userArtifactRepository;
 
   @Override
@@ -30,19 +30,16 @@ public class UserArtifactServiceImpl implements UserArtifactService {
 
   @Override
   public Optional<UserArtifact> getUserArtifact(
-      long chatId, long userId, ArtifactType artifactType, LocalDate date) {
+      long chatId, long userId, ArtifactType artifactType) {
     return userArtifactRepository.getByChatId(chatId).stream()
-        .filter(a -> a.getDate().equals(date))
         .filter(a -> a.getUserId() == userId)
         .filter(a -> a.getArtifactType() == artifactType)
         .findFirst();
   }
 
   @Override
-  public List<UserArtifact> getUserArtifacts(long chatId, LocalDate date) {
-    return userArtifactRepository.getByChatId(chatId).stream()
-        .filter(a -> a.getDate().equals(date))
-        .collect(Collectors.toList());
+  public List<UserArtifact> getUserArtifacts(long chatId) {
+    return userArtifactRepository.getByChatId(chatId);
   }
 
   @Override
@@ -51,11 +48,9 @@ public class UserArtifactServiceImpl implements UserArtifactService {
   }
 
   @Override
-  public void clearUserArtifacts(long chatId) {
-    LocalDate now = DateUtil.now();
+  public void clearUserArtifacts(long chatId, ArtifactType artifactType) {
     userArtifactRepository.getByChatId(chatId).stream()
-        .filter(a -> !a.getDate().isAfter(now))
-        .filter(a -> a.getArtifactType() == ArtifactType.PIDOR_MAGNET)
+        .filter(a -> a.getArtifactType() == artifactType)
         .map(UserArtifact::getId)
         .forEach(userArtifactRepository::delete);
   }

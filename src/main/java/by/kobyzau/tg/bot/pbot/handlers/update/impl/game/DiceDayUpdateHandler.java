@@ -81,7 +81,7 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     if (userDice.isPresent()) {
       Optional<UserArtifact> userArtifact =
           userArtifactService.getUserArtifact(
-              chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+              chatId, userId, ArtifactType.SECOND_CHANCE);
       if (!userArtifact.isPresent()) {
         return false;
       }

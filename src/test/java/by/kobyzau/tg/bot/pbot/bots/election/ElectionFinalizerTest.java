@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.bots.election;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.election.ElectionFinalizer;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
@@ -19,6 +21,7 @@ import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
 import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayServiceFactory;
 import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +44,7 @@ public class ElectionFinalizerTest extends BotActionAbstractTest {
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private BotService botService;
   @Mock private ElectionStatPrinter fullElectionStatPrinter;
+  @Mock private UserArtifactService userArtifactService;
 
   @Mock private Selection<PidorFunnyAction> pidorFunnyActions;
   @Mock private PidorFunnyAction pidorFunnyAction;
@@ -55,6 +59,12 @@ public class ElectionFinalizerTest extends BotActionAbstractTest {
     doReturn(electionPidorOfDayService)
         .when(pidorOfDayServiceFactory)
         .getService(PidorOfDayService.Type.ELECTION);
+  }
+
+  @After
+  public void cleanArtifact() {
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.SILENCE);
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.RICOCHET);
   }
 
   @Test

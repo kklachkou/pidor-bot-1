@@ -89,7 +89,7 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
     for (Pidor pidor : pidors) {
       boolean hasMagnet =
           userArtifactService
-              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       if (hasMagnet) {
         totalVotes++;
@@ -99,7 +99,7 @@ public class AnotherNamesWithNumLeftElectionStatPrinter implements ElectionStatP
       Pidor pidor = pidors.get(index);
       boolean hasMagnet =
           userArtifactService
-              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       int numVotes = electionService.getNumVotes(chatId, now, pidor.getTgId());
       if (numVotes == 0 && !hasMagnet) {

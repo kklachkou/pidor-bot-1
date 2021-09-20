@@ -36,7 +36,7 @@ public class ElectionPidorOfDayService implements PidorOfDayService {
         pidorsForSearch.add(pidor);
       }
     }
-    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId, now);
+    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
     if (CollectionUtil.isNotEmpty(userArtifacts)) {
       for (Pidor pidor : pidors) {
         if (userArtifacts.stream()

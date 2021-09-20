@@ -201,7 +201,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     // given
     doReturn(Optional.empty())
         .when(userArtifactService)
-        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE);
     int newDiceValue = 4;
     Update update = new Update();
     update.setMessage(getMessage(newDiceValue, diceEmoji));
@@ -227,7 +227,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     long userArtefactId = 234;
     doReturn(Optional.of(UserArtifact.builder().id(userArtefactId).build()))
         .when(userArtifactService)
-        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE);
     int oldDiceValue = 4;
     int newDiceValue = 5;
     Update update = new Update();
@@ -271,7 +271,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     long userArtefactId = 234;
     doReturn(Optional.of(UserArtifact.builder().id(userArtefactId).build()))
         .when(userArtifactService)
-        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE, DateUtil.now());
+        .getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE);
     int oldDiceValue = 5;
     int newDiceValue = 4;
     Update update = new Update();

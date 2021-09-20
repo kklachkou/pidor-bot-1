@@ -53,7 +53,7 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
     for (Pidor pidor : pidors) {
       boolean hasMagnet =
           userArtifactService
-              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       if (hasMagnet) {
         totalVotes++;
@@ -62,7 +62,7 @@ public class FullElectionStatPrinter implements ElectionStatPrinter {
     for (Pidor pidor : pidors) {
       boolean hasMagnet =
           userArtifactService
-              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET, now)
+              .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
       int numVotes = electionService.getNumVotes(chatId, now, pidor.getTgId());
       if (numVotes == 0 && !hasMagnet) {

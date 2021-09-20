@@ -1,6 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
 import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.helper.BlackBoxHelper;
 import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
@@ -9,6 +10,7 @@ import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.OpenBlackBoxDto;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
+import by.kobyzau.tg.bot.pbot.program.text.ItalicText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
@@ -17,6 +19,7 @@ import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
+import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.helper.CollectionHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +31,11 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -43,6 +48,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private UserArtifactService userArtifactService;
   @Mock private CollectionHelper collectionHelper;
   @Mock private BotSender directPidorBotSender;
+  @Mock private BlackBoxHelper blackBoxHelper;
 
   @InjectMocks private OpenBlackBoxUpdateHandler handler;
 
@@ -51,6 +57,8 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   private static final long USER_ID = 321;
   private static final int MESSAGE_ID = 987;
   private static final String CALLBACK_ID = "callbackId";
+  private static final String REQUEST_ID = "requestId";
+  private static final String NEW_REQUEST_ID = "newRequestId";
 
   @Before
   public void init() {
@@ -63,6 +71,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     update.setCallbackQuery(callbackQuery);
     callbackQuery.setFrom(new User(USER_ID, "User" + USER_ID, false));
     callbackQuery.setMessage(message);
+    doReturn(NEW_REQUEST_ID).when(blackBoxHelper).getRequestId();
   }
 
   @Test
@@ -89,7 +98,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     doReturn(Optional.empty()).when(pidorService).getPidor(CHAT_ID, USER_ID);
 
     // when
-    handler.handleCallback(update, null);
+    handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
 
     // then
     checkNoAnyActions();
@@ -107,7 +116,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   }
 
   @Test
-  public void handleCallback_hasPidor() {
+  public void handleCallback_hasPidor_alreadyHandled() {
     // given
     ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
     doReturn(artifactType)
@@ -115,9 +124,92 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
         .getRandomValue(Arrays.asList(ArtifactType.values()));
     Pidor pidor = new Pidor();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
+    doReturn(true).when(blackBoxHelper).checkRequest(CHAT_ID,USER_ID, REQUEST_ID);
 
     // when
-    handler.handleCallback(update, null);
+    handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
+
+    // then
+    verify(userArtifactService, times(0))
+        .addArtifact(eq(CHAT_ID), eq(USER_ID), eq(artifactType), any(LocalDate.class));
+    verify(directPidorBotSender, times(1)).send(eq(CHAT_ID), any());
+    checkNoAnyActions();
+  }
+
+  @Test
+  public void handleCallback_hasPidor_hasArtifactsLeft() {
+    // given
+    int numPerDay = 4;
+    int numHandled = 3;
+    ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
+    doReturn(artifactType)
+        .when(collectionHelper)
+        .getRandomValue(Arrays.asList(ArtifactType.values()));
+    Pidor pidor = new Pidor();
+    doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
+    doReturn(false).when(blackBoxHelper).checkRequest(CHAT_ID, USER_ID, REQUEST_ID);
+    doReturn(numPerDay).when(blackBoxHelper).getNumArtifactsPerDay(CHAT_ID);
+    doReturn(numHandled).when(blackBoxHelper).getHandledNum(CHAT_ID);
+
+    // when
+    handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
+
+    // then
+    verify(userArtifactService)
+        .addArtifact(eq(CHAT_ID), eq(USER_ID), eq(artifactType), any(LocalDate.class));
+    verify(directPidorBotSender, times(0)).send(anyLong(), any());
+    checkActions(
+        new SimpleActionChecker(
+            new SimpleBotAction<>(
+                CHAT_ID,
+                EditMessageReplyMarkup.builder()
+                    .replyMarkup(
+                        InlineKeyboardMarkup.builder()
+                            .keyboardRow(
+                                Collections.singletonList(
+                                    InlineKeyboardButton.builder()
+                                        .text("Открыть подарок (1)")
+                                        .callbackData(
+                                            StringUtil.serialize(
+                                                new OpenBlackBoxDto(NEW_REQUEST_ID)))
+                                        .build()))
+                            .build())
+                    .chatId(String.valueOf(CHAT_ID))
+                    .messageId(MESSAGE_ID)
+                    .build(),
+                true)),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new TextBotActionChecker(
+            CHAT_ID,
+            new ParametizedText(
+                "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor))),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new TextBotActionChecker(
+            CHAT_ID,
+            new ParametizedText(
+                "А в ящике лежит {0} {1}!\n{2}",
+                new ItalicText(artifactType.getName()),
+                new SimpleText(artifactType.getEmoji()),
+                new SimpleText(artifactType.getDesc()))));
+  }
+
+  @Test
+  public void handleCallback_hasPidor_noArtifactsLeft() {
+    // given
+    int numPerDay = 4;
+    int numHandled = 4;
+    ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
+    doReturn(artifactType)
+        .when(collectionHelper)
+        .getRandomValue(Arrays.asList(ArtifactType.values()));
+    Pidor pidor = new Pidor();
+    doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
+    doReturn(false).when(blackBoxHelper).checkRequest(CHAT_ID, USER_ID, REQUEST_ID);
+    doReturn(numPerDay).when(blackBoxHelper).getNumArtifactsPerDay(CHAT_ID);
+    doReturn(numHandled).when(blackBoxHelper).getHandledNum(CHAT_ID);
+
+    // when
+    handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
 
     // then
     verify(userArtifactService)
@@ -143,7 +235,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
             CHAT_ID,
             new ParametizedText(
                 "А в ящике лежит {0} {1}!\n{2}",
-                new SimpleText(artifactType.getName()),
+                new ItalicText(artifactType.getName()),
                 new SimpleText(artifactType.getEmoji()),
                 new SimpleText(artifactType.getDesc()))));
   }

@@ -1,14 +1,19 @@
 package by.kobyzau.tg.bot.pbot.handlers.update;
 
 import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.exclude.ExcludeFinalizer;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
 import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.ContainsTextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.handlers.update.impl.game.ExcludeGameUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.ExcludeGameUserValue;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.ExcludeGameService;
@@ -16,6 +21,7 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.ChatActionBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,6 +37,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -56,6 +63,9 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private BotService botService;
   @Mock private ExcludeFinalizer excludeFinalizer;
+
+  @Mock private UserArtifactService userArtifactService;
+  @Mock private DateHelper dateHelper;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Mock private Pidor pidor;
@@ -77,6 +87,9 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
         .getExcludeGameUserValues(chatId, DateUtil.now());
     doReturn(true).when(excludeGameService).needToFinalize(chatId);
     doReturn(true).when(excludeGameService).isExcludeGameDay(chatId, DateUtil.now());
+    doReturn(Optional.empty())
+        .when(userArtifactService)
+        .getUserArtifact(eq(chatId), anyLong(), eq(ArtifactType.SILENCE));
   }
 
   @After
@@ -88,12 +101,13 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
   public void handleUpdate_messageNotValid_noMessage() {
     // given
     Update update = new Update();
-    doReturn(Optional.of(mock(DailyPidor.class))).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.of(mock(DailyPidor.class)))
+        .when(dailyPidorRepository)
+        .getByChatAndDate(chatId, DateUtil.now());
     doReturn(Optional.empty())
-            .when(excludeGameService)
-            .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+        .when(excludeGameService)
+        .getExcludeGameUserValue(chatId, userId, DateUtil.now());
     doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
-
 
     // when
     boolean result = handler.handleUpdate(update);
@@ -104,26 +118,29 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
     assertFinalized(false);
     checkNoAnyActions();
   }
- @Test
+
+  @Test
   public void handleUpdate_messageNotValid_chatIsNotValid() {
     // given
-   Update update = new Update();
-   update.setMessage(getMessage(excludeWord));
-   doReturn(Optional.of(mock(DailyPidor.class))).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
-   doReturn(Optional.empty())
-           .when(excludeGameService)
-           .getExcludeGameUserValue(chatId, userId, DateUtil.now());
-   doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
-   doReturn(false).when(botService).isChatValid(new Chat(chatId, "group"));
+    Update update = new Update();
+    update.setMessage(getMessage(excludeWord));
+    doReturn(Optional.of(mock(DailyPidor.class)))
+        .when(dailyPidorRepository)
+        .getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty())
+        .when(excludeGameService)
+        .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+    doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
+    doReturn(false).when(botService).isChatValid(new Chat(chatId, "group"));
 
-   // when
+    // when
     boolean result = handler.handleUpdate(update);
 
     // then
-   assertFalse(result);
-   assertUserValueSaved(false);
-   assertFinalized(false);
-   checkNoAnyActions();
+    assertFalse(result);
+    assertUserValueSaved(false);
+    assertFinalized(false);
+    checkNoAnyActions();
   }
 
   @Test
@@ -217,6 +234,68 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
   }
 
   @Test
+  public void handleUpdate_processed_silence_canSpeak() {
+    // given
+    Update update = new Update();
+    update.setMessage(getMessage(excludeWord));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty())
+        .when(excludeGameService)
+        .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+    doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
+    doReturn(Optional.of(new UserArtifact()))
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SILENCE);
+    doReturn(LocalDateTime.of(2021, 1, 2, 12, 0)).when(dateHelper).currentTime();
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    assertTrue(result);
+    assertUserValueSaved(true);
+    assertFinalized(true);
+    checkActions(
+        new BotTypeBotActionChecker(ChatActionBotAction.class),
+        new ContainsTextBotActionChecker(
+            "сегодня ты не будешь пидором",
+            "поздравляю, сегодня ты натурал",
+            "выдохни, ты успел",
+            "ты пидор! Шутка, ты - красавчик",
+            "я тебя понял",
+            "принято",
+            "ты тип странный, но сегодня ты не будешь пидором дня"),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new ContainsTextBotActionChecker("Кто не успел, тот пидор!"),
+        new BotTypeBotActionChecker(ChatActionBotAction.class));
+  }
+
+  @Test
+  public void handleUpdate_processed_silence_cannotSpeak() {
+    // given
+    Update update = new Update();
+    update.setMessage(getMessage(excludeWord));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty())
+        .when(excludeGameService)
+        .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+    doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
+    doReturn(Optional.of(new UserArtifact()))
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SILENCE);
+    doReturn(LocalDateTime.of(2021, 1, 2, 11, 0)).when(dateHelper).currentTime();
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    assertTrue(result);
+    assertUserValueSaved(false);
+    assertFinalized(false);
+    checkActions(new TextBotActionChecker(chatId, new SimpleText("\uD83D\uDE49")));
+  }
+
+  @Test
   public void handleUpdate_notProcessed_userNotPidor() {
     // given
     Update update = new Update();
@@ -282,30 +361,29 @@ public class ExcludeGameUpdateHandlerTest extends BotActionAbstractTest {
     checkNoAnyActions();
   }
 
-    @Test
-    public void handleUpdate_notGameDay_notProcessed_notFinalized() {
-        // given
-        Update update = new Update();
-        update.setMessage(getMessage(excludeWord));
-        doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
-        doReturn(Optional.empty())
-                .when(excludeGameService)
-                .getExcludeGameUserValue(chatId, userId, DateUtil.now());
-        doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
-        doReturn(false).when(excludeGameService).isExcludeGameDay(chatId, DateUtil.now());
+  @Test
+  public void handleUpdate_notGameDay_notProcessed_notFinalized() {
+    // given
+    Update update = new Update();
+    update.setMessage(getMessage(excludeWord));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty())
+        .when(excludeGameService)
+        .getExcludeGameUserValue(chatId, userId, DateUtil.now());
+    doReturn(Arrays.asList(pidor, mock(Pidor.class))).when(pidorService).getByChat(chatId);
+    doReturn(false).when(excludeGameService).isExcludeGameDay(chatId, DateUtil.now());
 
-        // when
-        boolean result = handler.handleUpdate(update);
+    // when
+    boolean result = handler.handleUpdate(update);
 
-        // then
-        assertFalse(result);
-        assertUserValueSaved(false);
-        assertFinalized(false);
-        checkNoAnyActions();
-    }
+    // then
+    assertFalse(result);
+    assertUserValueSaved(false);
+    assertFinalized(false);
+    checkNoAnyActions();
+  }
 
-
-    private Message getMessage(String text) {
+  private Message getMessage(String text) {
     Message message = new Message();
     message.setChat(new Chat(chatId, "group"));
     message.setText(text);

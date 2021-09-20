@@ -85,7 +85,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     Map<Long, Integer> results = new HashMap<>();
 
@@ -112,7 +112,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     Map<Long, Integer> results = new HashMap<>();
 
@@ -139,7 +139,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.WIN).when(emojiGame).getResult(CHAT_ID, (int) ID_3);
     Map<Long, Integer> results = new HashMap<>();
@@ -167,7 +167,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.WIN).when(emojiGame).getResult(CHAT_ID, (int) ID_2);
     Map<Long, Integer> results = new HashMap<>();
@@ -195,7 +195,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.WIN).when(emojiGame).getResult(CHAT_ID, (int) ID_3);
     Map<Long, Integer> results = new HashMap<>();
@@ -223,7 +223,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.SECOND_CHANCE)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.NONE).when(emojiGame).getResult(CHAT_ID, (int) ID_3);
     Map<Long, Integer> results = new HashMap<>();
@@ -251,7 +251,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.NONE).when(emojiGame).getResult(CHAT_ID, (int) ID_2);
     Map<Long, Integer> results = new HashMap<>();
@@ -279,7 +279,7 @@ public class DicePidorOfDayServiceTest {
                     .artifactType(ArtifactType.PIDOR_MAGNET)
                     .build()))
         .when(userArtifactService)
-        .getUserArtifacts(CHAT_ID, DateUtil.now());
+        .getUserArtifacts(CHAT_ID);
     doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
     doReturn(EmojiGameResult.NONE).when(emojiGame).getResult(CHAT_ID, (int) ID_3);
     Map<Long, Integer> results = new HashMap<>();

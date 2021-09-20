@@ -99,11 +99,12 @@ public class HelpCommandHandler implements CommandHandler {
 
   private Text buildArtefactsMessage() {
     return new SimpleText(
-        Arrays.asList(ArtifactType.values()).stream()
+        Arrays.stream(ArtifactType.values())
             .map(
                 a ->
                     new ParametizedText(
-                        "\t\t▫ {0} {1}: {2}",
+                        "\t\t{0} {1} {2}: {3}",
+                        new SimpleText(a.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
                         new ItalicText(a.getName()),
                         new SimpleText(a.getEmoji()),
                         new SimpleText(a.getDesc())))

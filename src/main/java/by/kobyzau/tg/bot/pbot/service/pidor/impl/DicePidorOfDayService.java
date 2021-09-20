@@ -39,7 +39,7 @@ public class DicePidorOfDayService implements PidorOfDayService {
             .orElseThrow(
                 () -> new IllegalStateException("Cannot find dice game for chat " + chatId));
     List<Pidor> pidors = pidorService.getByChat(chatId);
-    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId, now);
+    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
     List<Pidor> pidorsForSearch = new ArrayList<>();
     for (Pidor pidor : pidors) {
       int userDice = getUserDice(pidor);

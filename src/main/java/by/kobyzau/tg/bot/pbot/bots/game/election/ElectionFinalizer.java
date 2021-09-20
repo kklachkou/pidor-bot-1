@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.bots.game.election;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
@@ -38,6 +40,7 @@ public class ElectionFinalizer {
   @Autowired private BotService botService;
   @Autowired private ElectionStatPrinter fullElectionStatPrinter;
   @Autowired private List<PidorFunnyAction> allPidorFunnyActions;
+  @Autowired private UserArtifactService userArtifactService;
 
   private Selection<PidorFunnyAction> pidorFunnyActions;
 
@@ -51,6 +54,8 @@ public class ElectionFinalizer {
   }
 
   public void finalize(long chatId) {
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.SILENCE);
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.RICOCHET);
     LocalDate now = DateUtil.now();
     if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
       return;

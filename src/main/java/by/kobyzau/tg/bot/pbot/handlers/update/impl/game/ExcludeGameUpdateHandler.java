@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.game;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.exclude.ExcludeFinalizer;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
@@ -20,9 +22,9 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -42,6 +44,8 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
   @Autowired private PidorService pidorService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private BotService botService;
+  @Autowired private UserArtifactService userArtifactService;
+  @Autowired private DateHelper dateHelper;
   @Autowired private ExcludeFinalizer excludeFinalizer;
 
   @Autowired
@@ -82,6 +86,12 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       return false;
     }
     long userId = update.getMessage().getFrom().getId();
+
+    if (hasSilenceArtifact(chatId, userId)) {
+      botActionCollector.text(
+          chatId, new SimpleText("\uD83D\uDE49"), update.getMessage().getMessageId());
+      return true;
+    }
     Pidor pidor = pidorService.getPidor(chatId, userId).orElseThrow(IllegalStateException::new);
     botActionCollector.typing(update.getMessage().getChatId());
     Optional<ExcludeGameUserValue> userValue =
@@ -96,6 +106,11 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
       processExcludeWord(pidor, update.getMessage());
     }
     return true;
+  }
+
+  private boolean hasSilenceArtifact(long chatId, long userId) {
+    return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SILENCE).isPresent()
+        && dateHelper.currentTime().getHour() < 12;
   }
 
   private void processExcludeWord(Pidor pidor, Message message) {
@@ -161,5 +176,4 @@ public class ExcludeGameUpdateHandler implements UpdateHandler {
     return botService.isChatValid(message.getChat())
         && pidorService.getPidor(message.getChatId(), message.getFrom().getId()).isPresent();
   }
-
 }

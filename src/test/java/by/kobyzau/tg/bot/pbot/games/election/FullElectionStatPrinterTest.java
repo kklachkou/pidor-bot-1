@@ -48,7 +48,7 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
   public void init() {
     doReturn(Optional.empty())
         .when(userArtifactService)
-        .getUserArtifact(eq(chatId), anyLong(), eq(ArtifactType.PIDOR_MAGNET), any());
+        .getUserArtifact(eq(chatId), anyLong(), eq(ArtifactType.PIDOR_MAGNET));
   }
 
   @Test
@@ -182,7 +182,7 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
     doReturn(pidors.size()).when(electionService).getNumToVote(chatId);
     doReturn(Optional.of(new UserArtifact()))
         .when(userArtifactService)
-        .getUserArtifact(chatId, 3, ArtifactType.PIDOR_MAGNET, now);
+        .getUserArtifact(chatId, 3, ArtifactType.PIDOR_MAGNET);
 
     // when
     printer.printInfo(chatId);
@@ -242,7 +242,7 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
     doReturn(pidors.size()).when(electionService).getNumToVote(chatId);
     doReturn(Optional.of(new UserArtifact()))
         .when(userArtifactService)
-        .getUserArtifact(chatId, 4, ArtifactType.PIDOR_MAGNET, now);
+        .getUserArtifact(chatId, 4, ArtifactType.PIDOR_MAGNET);
 
     // when
     printer.printInfo(chatId);
@@ -307,7 +307,7 @@ public class FullElectionStatPrinterTest extends BotActionAbstractTest {
     doReturn(pidors.size()).when(electionService).getNumToVote(chatId);
     doReturn(Optional.of(new UserArtifact()))
         .when(userArtifactService)
-        .getUserArtifact(chatId, 2, ArtifactType.PIDOR_MAGNET, now);
+        .getUserArtifact(chatId, 2, ArtifactType.PIDOR_MAGNET);
 
     // when
     printer.printInfo(chatId);
