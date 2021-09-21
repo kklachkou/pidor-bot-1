@@ -8,5 +8,6 @@ public enum StatType {
   FEEDBACK,
   ROW_COUNT,
   CHAT_DETAILS,
-  QUESTIONNAIRE
+  QUESTIONNAIRE,
+  DEAD_DATA
 }
