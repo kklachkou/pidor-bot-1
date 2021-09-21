@@ -1,17 +1,24 @@
 package by.kobyzau.tg.bot.pbot.util;
 
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
+import by.kobyzau.tg.bot.pbot.model.Pidor;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class PidorUtilTest {
+
+  @Test
+  public void anonymousNames_duplication() {
+    // when
+    Set<String> set = new HashSet<>(PidorUtil.ANONYMOUS_NAMES);
+
+    // then
+    assertEquals(set.size(), PidorUtil.ANONYMOUS_NAMES.size());
+  }
 
   @Test
   public void getTopPidorTgId_emptyList_throwError() {
@@ -93,6 +100,44 @@ public class PidorUtilTest {
 
     // then
     assertEquals("PidorAmongUsLoggerBot", result);
+  }
+
+  @Test
+  public void getAnonymousNames_compareDiffDays() {
+    // given
+    LocalDate date1 = LocalDate.of(2021, 5, 2);
+    LocalDate date2 = LocalDate.of(2021, 5, 3);
+    List<Pidor> pidors =
+        Arrays.asList(
+            Pidor.builder().id(1).build(),
+            Pidor.builder().id(2).build(),
+            Pidor.builder().id(3).build());
+
+    // when
+    Map<Long, String> map1 = PidorUtil.getAnonymousNames(pidors, date1);
+    Map<Long, String> map2 = PidorUtil.getAnonymousNames(pidors, date2);
+
+    // then
+    assertNotEquals(map1, map2);
+  }
+
+  @Test
+  public void getAnonymousNames_anonymous() {
+    // given
+    LocalDate date = LocalDate.of(2021, 5, 2);
+    List<Pidor> pidors =
+        Arrays.asList(
+            Pidor.builder().id(1).build(),
+            Pidor.builder().id(2).build(),
+            Pidor.builder().id(3).build());
+
+    // when
+    Map<Long, String> map = PidorUtil.getAnonymousNames(pidors, date);
+
+    // then
+    assertEquals(
+        Arrays.asList("Капинат Шмарвел", "Невероятный пихалк", "Птенчик"),
+        new ArrayList<>(map.values()));
   }
 
   private DailyPidor getDailyPidor(long tgId, LocalDate localDate) {

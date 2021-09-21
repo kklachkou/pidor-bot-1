@@ -21,14 +21,15 @@ import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SendMessageBotAction;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 @Component
 public class ExcludeFinalizer {
@@ -72,15 +73,25 @@ public class ExcludeFinalizer {
     List<Pidor> notPlayedPidors =
         pidorService.getByChat(chatId).stream()
             .filter(p -> !playedIds.contains(p.getTgId()))
+            .filter(
+                p ->
+                    !userArtifactService
+                        .getUserArtifact(chatId, p.getTgId(), ArtifactType.ANTI_PIDOR)
+                        .isPresent())
             .collect(Collectors.toList());
     if (notPlayedPidors.isEmpty()) {
       botActionCollector.text(
-          chatId,
-          new SimpleText(
-              "Хмм, странно, какой-то пидор сбежал с чата..."
-                  + "Ну ладно, так как все успели произнести ключевую фразу, просто выберу случайного пидора"));
+          chatId, new SimpleText("Хмм, в этот раз придется выбрать пидора случайно..."));
       botActionCollector.wait(chatId, ChatAction.TYPING);
-      processLastPidor(CollectionUtil.getRandomValue(pidorService.getByChat(chatId)));
+      processLastPidor(
+          CollectionUtil.getRandomValue(
+              pidorService.getByChat(chatId).stream()
+                  .filter(
+                      p ->
+                          !userArtifactService
+                              .getUserArtifact(chatId, p.getTgId(), ArtifactType.ANTI_PIDOR)
+                              .isPresent())
+                  .collect(Collectors.toList())));
     } else {
       botActionCollector.text(
           chatId,

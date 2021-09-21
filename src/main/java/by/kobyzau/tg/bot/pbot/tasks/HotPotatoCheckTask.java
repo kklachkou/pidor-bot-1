@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.tasks;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.command.handler.pidor.PidorFunnyAction;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
@@ -39,6 +41,8 @@ public class HotPotatoCheckTask implements Task {
 
   @Autowired private Logger logger;
   @Autowired private PidorRepository pidorRepository;
+
+  @Autowired private UserArtifactService userArtifactService;
 
   @Autowired private DailyPidorRepository dailyPidorRepository;
 
@@ -87,6 +91,8 @@ public class HotPotatoCheckTask implements Task {
     }
     if (currentTime.isAfter(lastTakerDeadline.get())) {
       saveDailyPidor(lastTaker.get());
+      userArtifactService.clearUserArtifacts(chatId, ArtifactType.PIDOR_MAGNET);
+      userArtifactService.clearUserArtifacts(chatId, ArtifactType.HELL_FIRE);
       botActionCollector.text(
           chatId,
           new ParametizedText(

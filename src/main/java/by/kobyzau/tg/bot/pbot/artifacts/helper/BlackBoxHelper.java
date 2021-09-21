@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.artifacts.helper;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -28,6 +30,9 @@ public class BlackBoxHelper {
     if (numPidors <= 2) {
       return 1;
     }
+    if (numPidors > 10) {
+      return 5;
+    }
     return numPidors / 2;
   }
 
@@ -35,6 +40,20 @@ public class BlackBoxHelper {
     return UUID.randomUUID()
         .toString()
         .substring(SerializableInlineType.OPEN_BLACK_BOX.getIdSize());
+  }
+
+  public List<ArtifactType> getArtifactsForBox(long chatId) {
+    List<ArtifactType> artifactTypeList = new ArrayList<>(Arrays.asList(ArtifactType.values()));
+    artifactTypeList.add(ArtifactType.PIDOR_MAGNET);
+    boolean hasAntiPidor =
+        pidorService.getByChat(chatId).stream()
+            .map(Pidor::getArtifacts)
+            .flatMap(Collection::stream)
+            .anyMatch(a -> a == ArtifactType.ANTI_PIDOR);
+    if (hasAntiPidor) {
+      artifactTypeList.remove(ArtifactType.ANTI_PIDOR);
+    }
+    return artifactTypeList;
   }
 
   public boolean checkRequest(long chatId, long userId, String requestId) {

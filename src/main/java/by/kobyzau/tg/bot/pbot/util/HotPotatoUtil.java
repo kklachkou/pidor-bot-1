@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class HotPotatoUtil {
 
   private static final int END_HOUR = 19;
+  public static final int DEFAULT_DIVIDER = 2;
+
   private final Selection<String> potatoesTakerMessage =
       new ConsistentSelection<>(
           "{0} - держатель <b>горячей картошечки\uD83E\uDD54</b>\nЧерез {1} он сгорит",
@@ -24,13 +26,13 @@ public class HotPotatoUtil {
     return potatoesTakerMessage.next();
   }
 
-  public LocalDateTime getDeadline(LocalDateTime fromTime) {
+  public LocalDateTime getDeadline(LocalDateTime fromTime, int divider) {
     int hour = fromTime.getHour();
     int minute = fromTime.getMinute();
     if (hour >= END_HOUR) {
       return fromTime;
     }
-    int minutesLeft = hour * 60 + minute + (END_HOUR * 60 - hour * 60 - minute) / 2;
+    int minutesLeft = hour * 60 + minute + (END_HOUR * 60 - hour * 60 - minute) /  divider;
     int deadlineHour = minutesLeft / 60;
     int deadlineMinute = minutesLeft - 60 * deadlineHour;
     return LocalDateTime.of(

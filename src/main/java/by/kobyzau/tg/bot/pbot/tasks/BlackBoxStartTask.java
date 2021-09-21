@@ -48,6 +48,7 @@ public class BlackBoxStartTask implements Task {
 
   private void sendBlackBox(long chatId) {
     userArtifactService.clearUserArtifacts(chatId, ArtifactType.PIDOR_MAGNET);
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.ANTI_PIDOR);
     botActionCollector.text(
         chatId,
         new SimpleText(

@@ -1,5 +1,8 @@
 package by.kobyzau.tg.bot.pbot.service;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.HotPotatoTaker;
@@ -8,24 +11,22 @@ import by.kobyzau.tg.bot.pbot.repository.potato.PotatoTakerRepository;
 import by.kobyzau.tg.bot.pbot.service.impl.HotPotatoesServiceImpl;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.HotPotatoUtil;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HotPotatoesServiceTest {
@@ -33,6 +34,7 @@ public class HotPotatoesServiceTest {
   @Mock private PotatoTakerRepository potatoTakerRepository;
   @Mock private PidorService pidorService;
 
+  @Mock private UserArtifactService userArtifactService;
   @Mock private CalendarSchedule calendarSchedule;
   @Mock private HotPotatoUtil hotPotatoUtil;
   @InjectMocks private HotPotatoesService service = new HotPotatoesServiceImpl();
@@ -162,11 +164,33 @@ public class HotPotatoesServiceTest {
   }
 
   @Test
-  public void setNewTaker_test() {
+  public void setNewTaker_noArtifacts() {
     // given
     Pidor pidor = new Pidor(USER_ID, CHAT_ID, "FullName");
     LocalDateTime time = DateUtil.currentTime();
-    doReturn(time).when(hotPotatoUtil).getDeadline(any());
+    doReturn(Optional.empty())
+        .when(userArtifactService)
+        .getUserArtifact(CHAT_ID, USER_ID, ArtifactType.HELL_FIRE);
+    doReturn(time).when(hotPotatoUtil).getDeadline(any(), eq(HotPotatoUtil.DEFAULT_DIVIDER));
+
+    // when
+    LocalDateTime deadline = service.setNewTaker(pidor);
+
+    // then
+    assertEquals(time, deadline);
+    verify(potatoTakerRepository, times(1))
+        .create(new HotPotatoTaker(USER_ID, CHAT_ID, DateUtil.now(), time));
+  }
+
+  @Test
+  public void setNewTaker_hellFireArtifact() {
+    // given
+    Pidor pidor = new Pidor(USER_ID, CHAT_ID, "FullName");
+    LocalDateTime time = DateUtil.currentTime();
+    doReturn(Optional.of(new UserArtifact()))
+        .when(userArtifactService)
+        .getUserArtifact(CHAT_ID, USER_ID, ArtifactType.HELL_FIRE);
+    doReturn(time).when(hotPotatoUtil).getDeadline(any(), eq(HotPotatoUtil.DEFAULT_DIVIDER + 1));
 
     // when
     LocalDateTime deadline = service.setNewTaker(pidor);

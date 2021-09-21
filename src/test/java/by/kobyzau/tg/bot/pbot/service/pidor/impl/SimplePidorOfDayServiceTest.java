@@ -9,7 +9,6 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
 import by.kobyzau.tg.bot.pbot.test.repeat.RepeatRule;
 import by.kobyzau.tg.bot.pbot.test.repeat.RepeatTest;
-import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,6 +75,8 @@ public class SimplePidorOfDayServiceTest {
       int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
       results.put(pidorOfDay.getTgId(), numWins + 1);
     }
+
+    // then
     assertRange(25, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
     assertRange(25, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
     assertRange(25, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
@@ -102,6 +103,8 @@ public class SimplePidorOfDayServiceTest {
       int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
       results.put(pidorOfDay.getTgId(), numWins + 1);
     }
+
+    // then
     assertRange(14, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
     assertRange(57, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
     assertRange(14, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
@@ -109,11 +112,116 @@ public class SimplePidorOfDayServiceTest {
   }
 
   @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_antiPidorArtifact() {
+    // given
+    doReturn(
+            Collections.singletonList(
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.ANTI_PIDOR).build()))
+        .when(userArtifactService)
+        .getUserArtifacts(CHAT_ID);
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+
+    // then
+    assertRange(33, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_antiPidorAndMagnetArtifact_matched() {
+    // given
+    doReturn(
+            Arrays.asList(
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.PIDOR_MAGNET).build(),
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.ANTI_PIDOR).build()))
+        .when(userArtifactService)
+        .getUserArtifacts(CHAT_ID);
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+
+    // then
+    assertRange(33, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_antiPidorAndMagnetArtifact_notMatched() {
+    // given
+    doReturn(
+            Arrays.asList(
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.PIDOR_MAGNET).build(),
+                UserArtifact.builder().userId(ID_3).artifactType(ArtifactType.ANTI_PIDOR).build()))
+        .when(userArtifactService)
+        .getUserArtifacts(CHAT_ID);
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+
+    // then
+    assertRange(17, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(67, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(17, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_allAntiPidors() {
+    // given
+    doReturn(
+            Arrays.asList(
+                UserArtifact.builder().userId(ID_1).artifactType(ArtifactType.ANTI_PIDOR).build(),
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.ANTI_PIDOR).build(),
+                UserArtifact.builder().userId(ID_3).artifactType(ArtifactType.ANTI_PIDOR).build(),
+                UserArtifact.builder().userId(ID_4).artifactType(ArtifactType.ANTI_PIDOR).build()))
+        .when(userArtifactService)
+        .getUserArtifacts(CHAT_ID);
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+
+    // then
+    assertRange(25, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(25, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(25, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(25, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
   public void getType_test() {
-    //when
+    // when
     PidorOfDayService.Type type = service.getType();
 
-    //then
+    // then
     Assert.assertEquals(PidorOfDayService.Type.SIMPLE, type);
   }
 

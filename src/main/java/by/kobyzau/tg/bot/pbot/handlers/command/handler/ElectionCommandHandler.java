@@ -19,6 +19,7 @@ import by.kobyzau.tg.bot.pbot.tg.action.ReplyKeyboardBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.PidorUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,10 +86,10 @@ public class ElectionCommandHandler implements CommandHandler {
       return;
     }
     if (hasSilenceArtifact(chatId, message.getFrom().getId())) {
-      botActionCollector.text(
-              chatId, new SimpleText("\uD83D\uDE49"), message.getMessageId());
+      botActionCollector.text(chatId, new SimpleText("\uD83D\uDE49"), message.getMessageId());
       return;
     }
+    Map<Long, String> anonymousNames = PidorUtil.getAnonymousNames(pidors, DateUtil.now());
     InlineKeyboardMarkup.InlineKeyboardMarkupBuilder keyboardMarkupBuilder =
         InlineKeyboardMarkup.builder();
     String requestId = UUID.randomUUID().toString().substring(VOTE.getIdSize());
@@ -99,7 +100,11 @@ public class ElectionCommandHandler implements CommandHandler {
         .map(
             p ->
                 InlineKeyboardButton.builder()
-                    .text("- " + new ShortNamePidorText(p))
+                    .text(
+                        "- "
+                            + (hasBlindnessArtifact(chatId, message.getFrom().getId())
+                                ? new SimpleText(anonymousNames.getOrDefault(p.getId(), "Аноним"))
+                                : new ShortNamePidorText(p)))
                     .callbackData(
                         StringUtil.serialize(
                             new VoteInlineMessageInlineDto(requestId, p.getTgId())))
@@ -125,9 +130,12 @@ public class ElectionCommandHandler implements CommandHandler {
 
   private boolean hasSilenceArtifact(long chatId, long userId) {
     return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SILENCE).isPresent()
-            && dateHelper.currentTime().getHour() < 12;
+        && dateHelper.currentTime().getHour() < 12;
   }
 
+  private boolean hasBlindnessArtifact(long chatId, long userId) {
+    return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.BLINDNESS).isPresent();
+  }
 
   @Override
   public Command getCommand() {

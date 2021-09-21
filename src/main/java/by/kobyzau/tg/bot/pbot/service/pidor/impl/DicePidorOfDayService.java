@@ -12,7 +12,6 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class DicePidorOfDayService implements PidorOfDayService {
 
@@ -31,7 +29,6 @@ public class DicePidorOfDayService implements PidorOfDayService {
 
   @Override
   public Pidor findPidorOfDay(long chatId) {
-    log.debug("Finding dice pidor in chat {}", chatId);
     LocalDate now = DateUtil.now();
     EmojiGame game =
         diceService
@@ -42,6 +39,15 @@ public class DicePidorOfDayService implements PidorOfDayService {
     List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
     List<Pidor> pidorsForSearch = new ArrayList<>();
     for (Pidor pidor : pidors) {
+      boolean hasAntiPidor =
+          userArtifacts.stream()
+              .anyMatch(
+                  a ->
+                      a.getUserId() == pidor.getTgId()
+                          && a.getArtifactType() == ArtifactType.ANTI_PIDOR);
+      if (hasAntiPidor) {
+        continue;
+      }
       int userDice = getUserDice(pidor);
       EmojiGameResult gameResult = game.getResult(chatId, userDice);
       switch (gameResult) {
@@ -54,6 +60,9 @@ public class DicePidorOfDayService implements PidorOfDayService {
           pidorsForSearch.add(pidor);
           break;
       }
+    }
+    if (pidorsForSearch.isEmpty()) {
+      pidorsForSearch.addAll(pidors);
     }
     if (CollectionUtil.isNotEmpty(userArtifacts)) {
       for (Pidor pidor : pidorsForSearch.stream().distinct().collect(Collectors.toList())) {

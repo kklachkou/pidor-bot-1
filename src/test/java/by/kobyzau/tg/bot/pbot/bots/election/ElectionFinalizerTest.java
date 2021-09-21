@@ -65,6 +65,7 @@ public class ElectionFinalizerTest extends BotActionAbstractTest {
   public void cleanArtifact() {
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.SILENCE);
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.RICOCHET);
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.BLINDNESS);
   }
 
   @Test

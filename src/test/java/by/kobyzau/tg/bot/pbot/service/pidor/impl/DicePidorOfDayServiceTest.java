@@ -103,7 +103,82 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   @RepeatTest(times = 3)
-  public void findPidorOfDay_sameResult_withArtifact() {
+  public void findPidorOfDay_sameResult_antiPidorArtifact() {
+    // given
+    doReturn(
+            Collections.singletonList(
+                UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.ANTI_PIDOR).build()))
+        .when(userArtifactService)
+        .getUserArtifacts(CHAT_ID);
+    doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+    assertRange(33, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_sameResult_magnetAndAniPidorArtifact_matched() {
+    // given
+    doReturn(
+            Arrays.asList(
+                    UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.PIDOR_MAGNET).build(),
+                    UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.ANTI_PIDOR).build()))
+            .when(userArtifactService)
+            .getUserArtifacts(CHAT_ID);
+    doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+    assertRange(33, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(33, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_sameResult_magnetAndAniPidorArtifact_notMatched() {
+    // given
+    doReturn(
+            Arrays.asList(
+                    UserArtifact.builder().userId(ID_2).artifactType(ArtifactType.PIDOR_MAGNET).build(),
+                    UserArtifact.builder().userId(ID_3).artifactType(ArtifactType.ANTI_PIDOR).build()))
+            .when(userArtifactService)
+            .getUserArtifacts(CHAT_ID);
+    doReturn(EmojiGameResult.LOSE).when(emojiGame).getResult(eq(CHAT_ID), anyInt());
+    Map<Long, Integer> results = new HashMap<>();
+
+    // when
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+      Pidor pidorOfDay = service.findPidorOfDay(CHAT_ID);
+      int numWins = results.getOrDefault(pidorOfDay.getTgId(), 0);
+      results.put(pidorOfDay.getTgId(), numWins + 1);
+    }
+    assertRange(17, 100 * results.getOrDefault(ID_1, 0) / NUM_ITERATIONS);
+    assertRange(67, 100 * results.getOrDefault(ID_2, 0) / NUM_ITERATIONS);
+    assertRange(0, 100 * results.getOrDefault(ID_3, 0) / NUM_ITERATIONS);
+    assertRange(17, 100 * results.getOrDefault(ID_4, 0) / NUM_ITERATIONS);
+  }
+
+  @Test
+  @RepeatTest(times = 3)
+  public void findPidorOfDay_sameResult_magnetArtifact() {
     // given
     doReturn(
             Collections.singletonList(
@@ -158,7 +233,7 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   @RepeatTest(times = 3)
-  public void findPidorOfDay_hasWinner_withArtifact_matched() {
+  public void findPidorOfDay_hasWinner_magnetArtifact_matched() {
     // given
     doReturn(
             Collections.singletonList(
@@ -186,7 +261,7 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   @RepeatTest(times = 3)
-  public void findPidorOfDay_hasWinner_withArtifact_notMatched() {
+  public void findPidorOfDay_hasWinner_magnetArtifact_notMatched() {
     // given
     doReturn(
             Collections.singletonList(
@@ -242,7 +317,7 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   @RepeatTest(times = 3)
-  public void findPidorOfDay_hasNone_withArtifact_matched() {
+  public void findPidorOfDay_hasNone_magnetArtifact_matched() {
     // given
     doReturn(
             Collections.singletonList(
@@ -270,7 +345,7 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   @RepeatTest(times = 3)
-  public void findPidorOfDay_hasNone_withArtifact_notMatched() {
+  public void findPidorOfDay_hasNone_magnetArtifact_notMatched() {
     // given
     doReturn(
             Collections.singletonList(
@@ -298,10 +373,10 @@ public class DicePidorOfDayServiceTest {
 
   @Test
   public void getType_test() {
-    //when
+    // when
     PidorOfDayService.Type type = service.getType();
 
-    //then
+    // then
     Assert.assertEquals(PidorOfDayService.Type.DICE, type);
   }
 

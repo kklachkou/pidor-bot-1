@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.handlers.update.impl.callback;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.CallbackUpdateHandler;
@@ -32,15 +34,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> {
 
+  @Autowired private UserArtifactService userArtifactService;
   @Autowired private DailyPidorRepository dailyPidorRepository;
   @Autowired private HotPotatoesService hotPotatoesService;
   @Autowired private PidorService pidorService;
@@ -80,11 +79,27 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
     }
     Optional<Pidor> lastTaker = hotPotatoesService.getLastTaker(DateUtil.now(), chatId);
     if (lastTaker.isPresent() && Objects.equals(user.getId(), lastTaker.get().getTgId())) {
-      List<Pidor> pidors =
-          pidorService.getByChat(chatId).stream()
-              .filter(p -> p.getTgId() != lastTaker.get().getTgId())
-              .collect(Collectors.toList());
-      if (CollectionUtil.isEmpty(pidors)) {
+      List<Pidor> pidors = pidorService.getByChat(chatId);
+      List<Pidor> pidorsForSearch = new ArrayList<>();
+      for (Pidor pidor : pidors) {
+        if (pidor.getId() == lastTaker.get().getId()) {
+          continue;
+        }
+        if (userArtifactService
+            .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.ANTI_PIDOR)
+            .isPresent()) {
+          continue;
+        }
+        if (userArtifactService
+            .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
+            .isPresent()) {
+          pidorsForSearch.add(pidor);
+          pidorsForSearch.add(pidor);
+        }
+        pidorsForSearch.add(pidor);
+      }
+
+      if (CollectionUtil.isEmpty(pidorsForSearch)) {
         botActionCollector.add(
             new AnswerCallbackBotAction(
                 chatId,
@@ -92,7 +107,7 @@ public class HotPotatoUpdateHandler extends CallbackUpdateHandler<HotPotatoDto> 
                 new SimpleText("Не вижу других пидоров")));
         return;
       }
-      Pidor newTaker = CollectionUtil.getRandomValue(pidors);
+      Pidor newTaker = CollectionUtil.getRandomValue(pidorsForSearch);
       LocalDateTime newDeadline = hotPotatoesService.setNewTaker(newTaker);
       botActionCollector.add(
           new SimpleBotAction<>(

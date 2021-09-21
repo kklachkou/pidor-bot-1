@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import static by.kobyzau.tg.bot.pbot.util.HotPotatoUtil.DEFAULT_DIVIDER;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
@@ -39,9 +40,9 @@ public class HotPotatoUtilDeadlineTest {
   }
 
   @Test
-  public void getDeadline_test() {
+  public void getDeadline_divider2() {
     // when
-    LocalDateTime result = hotPotatoUtil.getDeadline(currentTime);
+    LocalDateTime result = hotPotatoUtil.getDeadline(currentTime, DEFAULT_DIVIDER);
 
     // then
     assertEquals("From " + currentTime, expectedDeadline, result);

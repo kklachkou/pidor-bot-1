@@ -231,7 +231,7 @@ public class ShortNamePidorTextTest {
 
     // then
     assertEquals(
-        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1",
+        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDE48 \uD83D\uDEE1 \uD83D\uDC8A \uD83D\uDD25",
         result);
   }
 
@@ -251,7 +251,7 @@ public class ShortNamePidorTextTest {
 
     // then
     assertEquals(
-        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDEE1 \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
+        "Bob Jones (Nickname) \uD83E\uDDF2 \uD83E\uDDD9\uD83C\uDFFB\u200D♂ \uD83D\uDE4A \uD83D\uDE48 \uD83D\uDEE1 \uD83D\uDC8A \uD83D\uDD25 \uD83D\uDC51 \uD83D\uDC13 \uD83E\uDDA0",
         result);
   }
 }

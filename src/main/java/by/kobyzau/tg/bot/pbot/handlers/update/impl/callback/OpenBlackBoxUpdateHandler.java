@@ -128,9 +128,7 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
                   .build(),
               true));
     }
-    List<ArtifactType> artifactTypeList = new ArrayList<>(Arrays.asList(ArtifactType.values()));
-    artifactTypeList.add(ArtifactType.PIDOR_MAGNET);
-    artifactTypeList.add(ArtifactType.PIDOR_MAGNET);
+    List<ArtifactType> artifactTypeList = blackBoxHelper.getArtifactsForBox(chatId);
     ArtifactType artifactType = collectionHelper.getRandomValue(artifactTypeList);
     botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     botActionCollector.text(

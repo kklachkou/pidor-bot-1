@@ -52,4 +52,4 @@ task:
   futureAction.cron: 0 30 20 * * ?
   updateUsername.cron: 0 0 1 * * ?
   backup.cron: 0 0 20 * * ?
-  hotPotatoCheckTask.delay: 55000
+  hotPotatoCheckTask.delay: 45000

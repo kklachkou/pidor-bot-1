@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class ElectionPidorOfDayService implements PidorOfDayService {
 
@@ -27,23 +27,47 @@ public class ElectionPidorOfDayService implements PidorOfDayService {
 
   @Override
   public Pidor findPidorOfDay(long chatId) {
-    log.info("Finding election pidor in chat {}", chatId);
     LocalDate now = DateUtil.now();
     List<Pidor> pidors = pidorService.getByChat(chatId);
-    List<Pidor> pidorsForSearch = new ArrayList<>(pidors);
+    List<Pidor> pidorsForSearch = new ArrayList<>();
+    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
     for (Pidor pidor : pidors) {
+      boolean hasAntiPidor =
+          userArtifacts.stream()
+              .anyMatch(
+                  a ->
+                      a.getUserId() == pidor.getTgId()
+                          && a.getArtifactType() == ArtifactType.ANTI_PIDOR);
+      if (hasAntiPidor) {
+        continue;
+      }
+      pidorsForSearch.add(pidor);
       for (int i = 0; i < electionService.getNumVotes(chatId, now, pidor.getTgId()); i++) {
         pidorsForSearch.add(pidor);
       }
     }
-    List<UserArtifact> userArtifacts = userArtifactService.getUserArtifacts(chatId);
+    if (pidorsForSearch.isEmpty()) {
+      pidorsForSearch.addAll(pidors);
+    }
+
     if (CollectionUtil.isNotEmpty(userArtifacts)) {
-      for (Pidor pidor : pidors) {
-        if (userArtifacts.stream()
-            .anyMatch(
-                a ->
-                    a.getUserId() == pidor.getTgId()
-                        && a.getArtifactType() == ArtifactType.PIDOR_MAGNET)) {
+      for (Pidor pidor : pidorsForSearch.stream().distinct().collect(Collectors.toList())) {
+        boolean hasAntiPidor =
+            userArtifacts.stream()
+                .anyMatch(
+                    a ->
+                        a.getUserId() == pidor.getTgId()
+                            && a.getArtifactType() == ArtifactType.ANTI_PIDOR);
+        if (hasAntiPidor) {
+          continue;
+        }
+        boolean hasMagnet =
+            userArtifacts.stream()
+                .anyMatch(
+                    a ->
+                        a.getUserId() == pidor.getTgId()
+                            && a.getArtifactType() == ArtifactType.PIDOR_MAGNET);
+        if (hasMagnet) {
           pidorsForSearch.add(pidor);
           pidorsForSearch.add(pidor);
           pidorsForSearch.add(pidor);

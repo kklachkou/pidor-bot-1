@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.service.impl;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.CalendarSchedule;
 import by.kobyzau.tg.bot.pbot.handlers.update.schedule.ScheduledItem;
 import by.kobyzau.tg.bot.pbot.model.HotPotatoTaker;
@@ -9,12 +11,15 @@ import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.HotPotatoUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
+import static by.kobyzau.tg.bot.pbot.util.HotPotatoUtil.DEFAULT_DIVIDER;
 
 @Service
 public class HotPotatoesServiceImpl implements HotPotatoesService {
@@ -23,6 +28,7 @@ public class HotPotatoesServiceImpl implements HotPotatoesService {
 
   @Autowired private CalendarSchedule calendarSchedule;
   @Autowired private HotPotatoUtil hotPotatoUtil;
+  @Autowired private UserArtifactService userArtifactService;
 
   @Override
   public boolean isHotPotatoesDay(long chatId, LocalDate localDate) {
@@ -45,7 +51,15 @@ public class HotPotatoesServiceImpl implements HotPotatoesService {
 
   @Override
   public LocalDateTime setNewTaker(Pidor pidor) {
-    LocalDateTime deadline = hotPotatoUtil.getDeadline(DateUtil.currentTime());
+    boolean hasHellFire =
+        userArtifactService
+            .getUserArtifact(pidor.getChatId(), pidor.getTgId(), ArtifactType.HELL_FIRE)
+            .isPresent();
+
+    LocalDateTime deadline =
+        hotPotatoUtil.getDeadline(
+            DateUtil.currentTime(), hasHellFire ? (DEFAULT_DIVIDER + 1) : DEFAULT_DIVIDER);
+
     HotPotatoTaker potatoTaker = new HotPotatoTaker();
     potatoTaker.setChatId(pidor.getChatId());
     potatoTaker.setDate(DateUtil.now());

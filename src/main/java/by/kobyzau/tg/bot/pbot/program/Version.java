@@ -8,6 +8,42 @@ import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import java.time.LocalDate;
 
 public enum Version {
+  VERSION_12_2(
+      LocalDate.of(2021, 9, 21),
+      new TextBuilder(new BoldText("Ещё больше артефактов!"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("Новые виды артефактов:"))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t\t{0} {1} {2}: {3}",
+                  new SimpleText(
+                      ArtifactType.ANTI_PIDOR.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+                  new ItalicText(ArtifactType.ANTI_PIDOR.getName()),
+                  new SimpleText(ArtifactType.ANTI_PIDOR.getEmoji()),
+                  new SimpleText(ArtifactType.ANTI_PIDOR.getDesc())))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t\t{0} {1} {2}: {3}",
+                  new SimpleText(
+                      ArtifactType.HELL_FIRE.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+                  new ItalicText(ArtifactType.HELL_FIRE.getName()),
+                  new SimpleText(ArtifactType.HELL_FIRE.getEmoji()),
+                  new SimpleText(ArtifactType.HELL_FIRE.getDesc())))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t\t{0} {1} {2}: {3}",
+                  new SimpleText(
+                      ArtifactType.BLINDNESS.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+                  new ItalicText(ArtifactType.BLINDNESS.getName()),
+                  new SimpleText(ArtifactType.BLINDNESS.getEmoji()),
+                  new SimpleText(ArtifactType.BLINDNESS.getDesc())))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("Информацию об артефактах можно узнать по команде /help"))),
   VERSION_12_1(
       LocalDate.of(2021, 9, 21),
       new TextBuilder(new BoldText("Больше артефактов!"))

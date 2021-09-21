@@ -1,17 +1,55 @@
 package by.kobyzau.tg.bot.pbot.util;
 
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class PidorUtil {
+
+  public static final List<String> ANONYMOUS_NAMES =
+      Arrays.asList(
+          "Арнольд",
+          "Бешенный бык",
+          "Вульгарный енот",
+          "Четкий Поцык",
+          "Леопардо",
+          "Невероятный пихалк",
+          "Капинат Шмарвел",
+          "Нетрезвый человек",
+          "Монах в розовом",
+          "Леу",
+          "Кислый Билл",
+          "Отчаянный домохозяец",
+          "Красивый мужчина",
+          "Солнышко",
+          "Пчелка",
+          "Черный Том",
+          "Белый Том",
+          "Дикий пёс",
+          "Печенько",
+          "Говнюк",
+          "Дитчайший петух",
+          "Свободный голубь",
+          "Птенчик",
+          "Адский наездник",
+          "Аноним",
+          "ЛОХнесское чудовище",
+          "Человек-говнюк",
+          "Ласточка",
+          "Молодчик",
+          "Украинец",
+          "Белорус",
+          "Русский",
+          "Поляк",
+          "Чех",
+          "Британец",
+          "Анонимус",
+          "Не святой отец",
+          "Всевидящий видящий",
+          "Просто Тод");
 
   public static Optional<Long> getTopPidorTgId(List<DailyPidor> dailyPidors) {
     if (CollectionUtil.isEmpty(dailyPidors)) {
@@ -43,5 +81,17 @@ public class PidorUtil {
         .filter(d -> winners.contains(d.getPlayerTgId()))
         .findFirst()
         .map(DailyPidor::getPlayerTgId);
+  }
+
+  public static Map<Long, String> getAnonymousNames(List<Pidor> pidors, LocalDate date) {
+    List<String> randomListByDay = CollectionUtil.getRandomListByDay(ANONYMOUS_NAMES, date);
+    Map<Long, String> map = new HashMap<>();
+    List<Long> ids = pidors.stream().map(Pidor::getId).sorted().collect(Collectors.toList());
+    for (int i = 0; i < ids.size(); i++) {
+      long id = ids.get(i);
+      String name = CollectionUtil.getItem(randomListByDay, i);
+      map.put(id, name);
+    }
+    return map;
   }
 }

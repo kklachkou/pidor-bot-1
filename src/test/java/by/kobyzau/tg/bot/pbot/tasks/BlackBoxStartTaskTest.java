@@ -56,5 +56,6 @@ public class BlackBoxStartTaskTest extends BotActionAbstractTest {
                 "Это <b>черный ящик</b>!" + "\nВнутри лежит артефакт, бонус или анти-бонус")),
         new SimpleStickerActionChecker(CHAT_ID, StickerType.GIFT));
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.PIDOR_MAGNET);
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.ANTI_PIDOR);
   }
 }

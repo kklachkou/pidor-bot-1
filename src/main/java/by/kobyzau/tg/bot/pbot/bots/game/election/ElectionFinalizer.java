@@ -56,6 +56,7 @@ public class ElectionFinalizer {
   public void finalize(long chatId) {
     userArtifactService.clearUserArtifacts(chatId, ArtifactType.SILENCE);
     userArtifactService.clearUserArtifacts(chatId, ArtifactType.RICOCHET);
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.BLINDNESS);
     LocalDate now = DateUtil.now();
     if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
       return;
