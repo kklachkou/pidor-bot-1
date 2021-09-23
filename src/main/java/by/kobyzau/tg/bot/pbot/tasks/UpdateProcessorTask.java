@@ -5,12 +5,14 @@ import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.printer.UpdatePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Component("updateProcessorTask")
@@ -20,6 +22,9 @@ public class UpdateProcessorTask implements Task {
 
   @Autowired private List<UpdateHandler> updateHandlers;
   @Autowired private Logger logger;
+  @Autowired
+  @Qualifier("cachedExecutor")
+  private Executor executor;
 
   @PostConstruct
   public void init() {
@@ -33,7 +38,8 @@ public class UpdateProcessorTask implements Task {
   public void processTask() {
     Update object = updateCollector.poll();
     while (object != null) {
-      process(object);
+      Update updateToHandle = object;
+      executor.execute(() -> process(updateToHandle));
       object = updateCollector.poll();
     }
   }

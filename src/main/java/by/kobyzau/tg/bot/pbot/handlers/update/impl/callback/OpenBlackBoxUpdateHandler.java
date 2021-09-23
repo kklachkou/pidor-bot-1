@@ -130,13 +130,11 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
     }
     List<ArtifactType> artifactTypeList = blackBoxHelper.getArtifactsForBox(chatId);
     ArtifactType artifactType = collectionHelper.getRandomValue(artifactTypeList);
-    botActionCollector.wait(chatId, 1, ChatAction.TYPING);
     botActionCollector.text(
         chatId,
         new ParametizedText(
             "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor.get())));
     userArtifactService.addArtifact(chatId, userId, artifactType, DateUtil.now().plusDays(1));
-    botActionCollector.wait(chatId, ChatAction.TYPING);
     botActionCollector.text(
         chatId,
         new ParametizedText(

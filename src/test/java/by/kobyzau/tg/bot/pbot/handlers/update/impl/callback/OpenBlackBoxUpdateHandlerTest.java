@@ -4,7 +4,6 @@ import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.artifacts.helper.BlackBoxHelper;
 import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
-import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.SimpleActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
@@ -18,7 +17,6 @@ import by.kobyzau.tg.bot.pbot.sender.BotSender;
 import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
-import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.helper.CollectionHelper;
 import org.junit.Before;
@@ -43,21 +41,19 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
 
-  @Mock private PidorService pidorService;
-  @Mock private UserArtifactService userArtifactService;
-  @Mock private CollectionHelper collectionHelper;
-  @Mock private BotSender directPidorBotSender;
-  @Mock private BlackBoxHelper blackBoxHelper;
-
-  @InjectMocks private OpenBlackBoxUpdateHandler handler;
-
-  private Update update;
   private static final long CHAT_ID = 123;
   private static final long USER_ID = 321;
   private static final int MESSAGE_ID = 987;
   private static final String CALLBACK_ID = "callbackId";
   private static final String REQUEST_ID = "requestId";
   private static final String NEW_REQUEST_ID = "newRequestId";
+  @Mock private PidorService pidorService;
+  @Mock private UserArtifactService userArtifactService;
+  @Mock private CollectionHelper collectionHelper;
+  @Mock private BotSender directPidorBotSender;
+  @Mock private BlackBoxHelper blackBoxHelper;
+  @InjectMocks private OpenBlackBoxUpdateHandler handler;
+  private Update update;
 
   @Before
   public void init() {
@@ -173,12 +169,10 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
                     .messageId(MESSAGE_ID)
                     .build(),
                 true)),
-        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
                 "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor))),
-        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
@@ -218,12 +212,10 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
                     .messageId(MESSAGE_ID)
                     .build(),
                 true)),
-        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
                 "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor))),
-        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(

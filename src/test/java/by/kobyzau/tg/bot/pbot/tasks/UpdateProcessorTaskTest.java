@@ -1,5 +1,6 @@
 package by.kobyzau.tg.bot.pbot.tasks;
 
+import by.kobyzau.tg.bot.pbot.RuntimeExecutor;
 import by.kobyzau.tg.bot.pbot.collectors.ReceiveUpdateCollector;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
@@ -9,11 +10,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
+import java.util.concurrent.Executor;
 
 import static by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage.COMMAND;
 import static by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage.SYSTEM;
@@ -34,6 +37,8 @@ public class UpdateProcessorTaskTest {
   @Mock private UpdateHandler handler3;
 
   @Mock private Logger logger;
+  @Spy
+  private Executor executor = new RuntimeExecutor();
 
   private final Update update = new Update();
 
