@@ -38,14 +38,14 @@ public class HotPotatoesServiceImpl implements HotPotatoesService {
   @Override
   public Optional<Pidor> getLastTaker(LocalDate localDate, long chatId) {
     return potatoTakerRepository.getByChatAndDate(chatId, localDate).stream()
-        .max(Comparator.comparing(HotPotatoTaker::getDeadline).thenComparing(HotPotatoTaker::getId))
+        .max(Comparator.comparing(HotPotatoTaker::getId))
         .flatMap(t -> pidorService.getPidor(t.getChatId(), t.getPlayerTgId()));
   }
 
   @Override
   public Optional<LocalDateTime> getLastTakerDeadline(LocalDate localDate, long chatId) {
     return potatoTakerRepository.getByChatAndDate(chatId, localDate).stream()
-        .max(Comparator.comparing(HotPotatoTaker::getDeadline).thenComparing(HotPotatoTaker::getId))
+        .max(Comparator.comparing(HotPotatoTaker::getId))
         .map(HotPotatoTaker::getDeadline);
   }
 
