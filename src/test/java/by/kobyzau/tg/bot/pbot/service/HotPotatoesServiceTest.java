@@ -107,7 +107,7 @@ public class HotPotatoesServiceTest {
             Arrays.asList(
                 taker(100, 0, date, 10),
                 taker(8, 0, date, 15),
-                taker(10, USER_ID, date, 15),
+                taker(101, USER_ID, date, 15),
                 taker(9, 0, date, 15),
                 taker(0, 0, date, 13)))
         .when(potatoTakerRepository)
@@ -146,7 +146,7 @@ public class HotPotatoesServiceTest {
             Arrays.asList(
                 taker(100, 0, date, 10),
                 taker(8, 0, date, 15),
-                taker(10, USER_ID, date, 15),
+                taker(101, USER_ID, date, 15),
                 taker(9, 0, date, 15),
                 taker(90, 0, date, 11),
                 taker(0, 0, date, 13)))

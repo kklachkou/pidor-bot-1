@@ -11,6 +11,7 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNameLinkedPidorText;
 import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.DateService;
+import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +29,31 @@ public class PidorCleanupChatHandler implements CleanupHandler {
   @Autowired private Logger logger;
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private PidorRepository pidorRepository;
+  @Autowired private PidorService pidorService;
   @Autowired private DateService dateService;
   @Autowired private TelegramService telegramService;
 
   @Override
   public void cleanup() {
     List<Long> chatIds =
-        pidorRepository.getAll().stream()
-            .map(Pidor::getChatId)
-            .distinct()
-            .collect(Collectors.toList());
+        pidorRepository.getChatIdsWithPidors().stream().distinct().collect(Collectors.toList());
     for (long chatId : chatIds) {
+      cleanEmptyChats(chatId);
       pidorRepository.getByChat(chatId).forEach(this::notifyPidor);
       pidorRepository.getByChat(chatId).forEach(this::handlePidor);
+    }
+  }
+
+  private void cleanEmptyChats(long chatId) {
+    int activeNum = pidorService.getByChat(chatId).size();
+    if (activeNum == 0) {
+      String chatName =
+          telegramService
+              .getChat(chatId)
+              .map(c -> chatId + ": " + c.getTitle())
+              .orElse(String.valueOf(chatId));
+      logger.warn(new ParametizedText("Deleting empty chat {1}", new SimpleText(chatName)).text());
+      pidorRepository.getByChat(chatId).stream().map(Pidor::getId).forEach(pidorRepository::delete);
     }
   }
 

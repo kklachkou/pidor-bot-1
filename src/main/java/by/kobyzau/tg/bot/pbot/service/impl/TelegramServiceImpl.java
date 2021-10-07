@@ -40,7 +40,7 @@ public class TelegramServiceImpl implements TelegramService {
               GetChatMember.builder().chatId(String.valueOf(chatId)).userId(userId).build()));
     } catch (TelegramApiRequestException e) {
       Integer errorCode = e.getErrorCode();
-      if (errorCode != null && errorCode.equals(400)) {
+      if (errorCode != null && (errorCode.equals(400) || errorCode.equals(403))) {
         logger.debug(
             "Cannot get Chat Member for chat <pre>"
                 + chatId
@@ -97,7 +97,8 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.of(
           pidorBot.execute(GetChatMemberCount.builder().chatId(String.valueOf(chatId)).build()));
     } catch (TelegramApiException e) {
-      logger.debug("Cannot get Chat Member Count for chat <pre>" + chatId + "</pre>\n\n" + e.getMessage());
+      logger.debug(
+          "Cannot get Chat Member Count for chat <pre>" + chatId + "</pre>\n\n" + e.getMessage());
       return Optional.empty();
     }
   }
