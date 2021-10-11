@@ -132,7 +132,7 @@ public class SendMessagesToChatHandler implements Runnable {
       return false;
     }
     long currentTime = System.currentTimeMillis();
-    boolean inLastSecond = executionTime.stream().anyMatch(l -> l > (currentTime - 1000));
+    boolean inLastSecond = executionTime.stream().anyMatch(l -> l > (currentTime - 1010));
     if (inLastSecond) {
       return true;
     }

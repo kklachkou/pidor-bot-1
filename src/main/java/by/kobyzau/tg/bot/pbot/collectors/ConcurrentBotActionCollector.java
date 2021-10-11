@@ -4,20 +4,23 @@ import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.tasks.bot.SendMessagesToChatHandler;
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Component
 @Profile("!integration-test")
 public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
 
-  private final Object lock = new Object();
+  private final Lock lock = new ReentrantLock();
   @Autowired private Bot bot;
   @Autowired private Logger logger;
 
@@ -37,7 +40,8 @@ public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
   }
 
   private SendMessagesToChatHandler getHandler(long chatId) {
-    synchronized (lock) {
+    lock.lock();
+    try {
       SendMessagesToChatHandler handler = handlers.get(chatId);
       if (handler == null
           || !handler.applyState(SendMessagesToChatHandler.BotHandlerState.WORKING)) {
@@ -47,6 +51,8 @@ public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
         handlers.put(chatId, handler);
       }
       return handler;
+    } finally {
+      lock.unlock();
     }
   }
 }
