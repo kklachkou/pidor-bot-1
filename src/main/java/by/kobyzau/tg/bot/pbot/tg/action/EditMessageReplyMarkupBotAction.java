@@ -30,7 +30,21 @@ public class EditMessageReplyMarkupBotAction implements BotAction<Boolean> {
   }
 
   @Override
+  public boolean hasLimit() {
+    return true;
+  }
+
+  @Override
   public long getChatId() {
     return chatId;
+  }
+
+  @Override
+  public String toString() {
+    return "EditMessageReplyMarkupBotAction{" +
+            "chatId=" + chatId +
+            ", messageId=" + messageId +
+            ", replyKeyboard=" + replyKeyboard +
+            '}';
   }
 }

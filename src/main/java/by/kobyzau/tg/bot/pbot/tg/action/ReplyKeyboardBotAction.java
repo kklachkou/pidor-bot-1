@@ -37,6 +37,11 @@ public class ReplyKeyboardBotAction implements BotAction<Message> {
   }
 
   @Override
+  public boolean hasLimit() {
+    return true;
+  }
+
+  @Override
   public long getChatId() {
     return chatId;
   }

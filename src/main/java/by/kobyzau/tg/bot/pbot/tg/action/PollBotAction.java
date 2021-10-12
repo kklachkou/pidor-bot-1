@@ -32,6 +32,11 @@ public class PollBotAction implements BotAction<Message> {
   }
 
   @Override
+  public boolean hasLimit() {
+    return true;
+  }
+
+  @Override
   public long getChatId() {
     return StringUtil.parseLong(sendPoll.getChatId(), 0);
   }

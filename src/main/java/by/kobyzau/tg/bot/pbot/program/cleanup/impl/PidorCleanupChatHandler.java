@@ -52,7 +52,7 @@ public class PidorCleanupChatHandler implements CleanupHandler {
               .getChat(chatId)
               .map(c -> chatId + ": " + c.getTitle())
               .orElse(String.valueOf(chatId));
-      logger.warn(new ParametizedText("Deleting empty chat {1}", new SimpleText(chatName)).text());
+      logger.warn(new ParametizedText("Deleting empty chat {0}", new SimpleText(chatName)).text());
       pidorRepository.getByChat(chatId).stream().map(Pidor::getId).forEach(pidorRepository::delete);
     }
   }

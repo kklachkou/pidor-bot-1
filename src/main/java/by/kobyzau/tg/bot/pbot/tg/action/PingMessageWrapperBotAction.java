@@ -41,6 +41,11 @@ public class PingMessageWrapperBotAction implements BotAction<Message> {
   }
 
   @Override
+  public boolean hasLimit() {
+    return true;
+  }
+
+  @Override
   public long getChatId() {
     return botAction.getChatId();
   }

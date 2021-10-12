@@ -26,6 +26,11 @@ public class UnpinBotAction implements BotAction<Boolean> {
   }
 
   @Override
+  public boolean hasLimit() {
+    return true;
+  }
+
+  @Override
   public String toString() {
     return "UnpinBotAction{" + "chatId=" + chatId + ", messageId=" + messageId + '}';
   }

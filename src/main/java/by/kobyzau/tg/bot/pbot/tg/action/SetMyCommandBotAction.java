@@ -21,4 +21,11 @@ public class SetMyCommandBotAction implements BotAction<Boolean> {
   public long getChatId() {
     return 0;
   }
+
+  @Override
+  public String toString() {
+    return "SetMyCommandBotAction{" +
+            "setMyCommands=" + setMyCommands +
+            '}';
+  }
 }

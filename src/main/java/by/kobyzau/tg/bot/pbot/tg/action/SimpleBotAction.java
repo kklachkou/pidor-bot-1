@@ -1,12 +1,12 @@
 package by.kobyzau.tg.bot.pbot.tg.action;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
-import java.io.Serializable;
-
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.Serializable;
 
 @ToString
 @EqualsAndHashCode

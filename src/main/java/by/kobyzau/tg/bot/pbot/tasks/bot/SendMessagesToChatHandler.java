@@ -2,6 +2,7 @@ package by.kobyzau.tg.bot.pbot.tasks.bot;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
+import by.kobyzau.tg.bot.pbot.sender.RateChecker;
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
 import by.kobyzau.tg.bot.pbot.util.ThreadUtil;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
@@ -16,22 +17,20 @@ public class SendMessagesToChatHandler implements Runnable {
 
   private final Lock lock = new ReentrantLock();
   private static final int THREAD_LIVE_IN_PENDING = 3;
-  private static final int LIMIT_PER_MINUTE = 20;
   private final AtomicInteger numIterationsWithPending = new AtomicInteger(0);
   private volatile BotHandlerState state;
   private final Logger logger;
-  private final boolean isAdmin;
   private final Bot bot;
   private final long chatId;
+  private final RateChecker rateChecker;
   private final Queue<BotAction<?>> queue = new ConcurrentLinkedQueue<>();
-  private final Queue<Long> executionTime = new ConcurrentLinkedQueue<>();
 
-  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId, boolean isAdmin) {
+  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId, RateChecker rateChecker) {
     this.logger = logger;
     this.bot = bot;
     this.chatId = chatId;
     this.state = BotHandlerState.PENDING;
-    this.isAdmin = isAdmin;
+    this.rateChecker = rateChecker;
   }
 
   @Override
@@ -53,7 +52,7 @@ public class SendMessagesToChatHandler implements Runnable {
 
   private void send(BotAction<?> botAction) {
     if (botAction.hasLimit()) {
-      while (isExceedTimeLimit()) {
+      while (!canSendMessage()) {
         ThreadUtil.sleep(300);
       }
     }
@@ -64,9 +63,6 @@ public class SendMessagesToChatHandler implements Runnable {
       logger.error("Cannot send message:\n\n " + botAction + "\n\n" + tgEx.getApiResponse(), tgEx);
     } catch (Exception e) {
       logger.error("Cannot send message:\n\n " + botAction, e);
-    }
-    if (botAction.hasLimit()) {
-      executionTime.add(System.currentTimeMillis());
     }
   }
 
@@ -127,17 +123,8 @@ public class SendMessagesToChatHandler implements Runnable {
     return false;
   }
 
-  private boolean isExceedTimeLimit() {
-    if (isAdmin) {
-      return false;
-    }
-    long currentTime = System.currentTimeMillis();
-    boolean inLastSecond = executionTime.stream().anyMatch(l -> l > (currentTime - 1010));
-    if (inLastSecond) {
-      return true;
-    }
-    return executionTime.stream().filter(l -> l > (currentTime - 1010 * 60)).count()
-        >= LIMIT_PER_MINUTE;
+  private boolean canSendMessage() {
+    return rateChecker.canSendMessage(chatId);
   }
 
   public enum BotHandlerState {

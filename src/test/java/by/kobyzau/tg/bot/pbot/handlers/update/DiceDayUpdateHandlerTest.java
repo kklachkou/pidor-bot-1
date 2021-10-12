@@ -6,7 +6,11 @@ import by.kobyzau.tg.bot.pbot.artifacts.entity.UserArtifact;
 import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.dice.DiceFinalizer;
-import by.kobyzau.tg.bot.pbot.checker.*;
+import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
+import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.ContainsTextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.RandomTextBotActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.handlers.update.impl.game.DiceDayUpdateHandler;
 import by.kobyzau.tg.bot.pbot.model.DailyPidor;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
@@ -20,6 +24,7 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SendStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,14 +35,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Dice;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
@@ -56,6 +69,7 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private DailyPidorRepository dailyPidorRepository;
   @Mock private DiceFinalizer diceFinalizer;
   @Mock private BotService botService;
+  @Mock private DateHelper dateHelper;
   @Spy private Executor executor = new RuntimeExecutor();
 
   @Mock private Pidor pidor;
@@ -68,6 +82,10 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
     doReturn(Optional.of(emojiGame)).when(diceService).getGame(chatId, DateUtil.now());
     doReturn(true).when(diceService).needToFinalize(chatId);
     doReturn(diceEmoji).when(emojiGame).getEmoji();
+    doReturn(LocalDateTime.of(2021, 1, 2, 3, 4)).when(dateHelper).currentTime();
+    doReturn(Optional.empty())
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SILENCE);
   }
 
   @After
@@ -389,6 +407,65 @@ public class DiceDayUpdateHandlerTest extends BotActionAbstractTest {
             "Отлично!"),
         new BotTypeBotActionChecker(WaitBotAction.class),
         new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
+  }
+
+  @Test
+  public void handleUpdate_processed_hasSilence_morning() {
+    // given
+    int newDiceValue = 4;
+    Update update = new Update();
+    update.setMessage(getMessage(newDiceValue, diceEmoji));
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
+    doReturn(false).when(diceService).needToFinalize(chatId);
+    doReturn(Optional.of(new UserArtifact()))
+        .when(userArtifactService)
+        .getUserArtifact(chatId, userId, ArtifactType.SILENCE);
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    assertTrue(result);
+    assertFinalized(false);
+    assertDiceNotSaved();
+    checkActions(new ContainsTextBotActionChecker("\uD83D\uDE49"));
+  }
+
+  @Test
+  public void handleUpdate_processed_hasSilence_evening() {
+    // given
+    int newDiceValue = 4;
+    Update update = new Update();
+    update.setMessage(getMessage(newDiceValue, diceEmoji));
+    doReturn(true).when(botService).isChatValid(new Chat(chatId, "group"));
+    doReturn(Optional.empty()).when(dailyPidorRepository).getByChatAndDate(chatId, DateUtil.now());
+    doReturn(Optional.empty()).when(diceService).getUserDice(chatId, userId, DateUtil.now());
+    doReturn(false).when(diceService).needToFinalize(chatId);
+    doReturn(Optional.of(new UserArtifact()))
+            .when(userArtifactService)
+            .getUserArtifact(chatId, userId, ArtifactType.SILENCE);
+    doReturn(LocalDateTime.of(2021, 1, 2, 13, 4)).when(dateHelper).currentTime();
+
+    // when
+    boolean result = handler.handleUpdate(update);
+
+    // then
+    assertTrue(result);
+    assertFinalized(false);
+    assertDiceSaved(newDiceValue);
+    checkActions(
+            new BotTypeBotActionChecker(WaitBotAction.class),
+            new RandomTextBotActionChecker(
+                    "Окей, твоё очко задействовано!",
+                    "Я тебя понял!",
+                    "Спасибо!",
+                    "Вижу!",
+                    "Неплохо!",
+                    "Отлично!"),
+            new BotTypeBotActionChecker(WaitBotAction.class),
+            new ContainsTextBotActionChecker("Актуальный список кандидатов на пидора дня:"));
   }
 
   private Message getMessage(int diceValue, String diceEmoji) {

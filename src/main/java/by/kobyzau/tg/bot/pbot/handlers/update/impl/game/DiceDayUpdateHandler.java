@@ -11,7 +11,11 @@ import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandler;
 import by.kobyzau.tg.bot.pbot.handlers.update.UpdateHandlerStage;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.PidorDice;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.RandomText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.repository.dailypidor.DailyPidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
@@ -20,6 +24,7 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.helper.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -42,6 +47,7 @@ public class DiceDayUpdateHandler implements UpdateHandler {
   @Autowired private DiceFinalizer diceFinalizer;
   @Autowired private BotService botService;
   @Autowired private UserArtifactService userArtifactService;
+  @Autowired private DateHelper dateHelper;
 
   @Autowired
   @Qualifier("cachedExecutor")
@@ -77,11 +83,14 @@ public class DiceDayUpdateHandler implements UpdateHandler {
     long userId = message.get().getFrom().getId();
     Optional<PidorDice> userDice = diceService.getUserDice(chatId, userId, now);
 
+    if (hasSilenceArtifact(chatId, userId)) {
+      botActionCollector.text(chatId, new SimpleText("\uD83D\uDE49"), message.get().getMessageId());
+      return true;
+    }
     int newDiceUserValue = message.get().getDice().getValue();
     if (userDice.isPresent()) {
       Optional<UserArtifact> userArtifact =
-          userArtifactService.getUserArtifact(
-              chatId, userId, ArtifactType.SECOND_CHANCE);
+          userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SECOND_CHANCE);
       if (!userArtifact.isPresent()) {
         return false;
       }
@@ -168,6 +177,11 @@ public class DiceDayUpdateHandler implements UpdateHandler {
       }
     }
     botActionCollector.text(chatId, textBuilder);
+  }
+
+  private boolean hasSilenceArtifact(long chatId, long userId) {
+    return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SILENCE).isPresent()
+        && dateHelper.currentTime().getHour() < 12;
   }
 
   private int getUserValue(Pidor pidor) {

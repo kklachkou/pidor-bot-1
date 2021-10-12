@@ -18,7 +18,7 @@ public enum ArtifactType {
       "\uD83E\uDDD9\uD83C\uDFFB\u200D♂",
       "Позволяет кинуть кубик 2й раз. Он заставит всех забыть твой худший бросок",
       true),
-  // Cleans on election, exclude finalize
+  // Cleans on election, exclude, dice finalize
   SILENCE(
       "Немота",
       "\uD83D\uDE4A",

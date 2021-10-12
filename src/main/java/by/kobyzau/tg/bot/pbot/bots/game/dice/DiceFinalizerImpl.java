@@ -1,5 +1,7 @@
 package by.kobyzau.tg.bot.pbot.bots.game.dice;
 
+import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
+import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGame;
 import by.kobyzau.tg.bot.pbot.bots.game.EmojiGameResult;
 import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
@@ -41,6 +43,8 @@ public class DiceFinalizerImpl implements DiceFinalizer {
 
   @Autowired private DailyPidorRepository dailyPidorRepository;
 
+  @Autowired private UserArtifactService userArtifactService;
+
   @Autowired private List<PidorFunnyAction> pidorFunnyActions;
   @Autowired private BotService botService;
 
@@ -50,6 +54,7 @@ public class DiceFinalizerImpl implements DiceFinalizer {
     if (dailyPidorRepository.getByChatAndDate(chatId, now).isPresent()) {
       return;
     }
+    userArtifactService.clearUserArtifacts(chatId, ArtifactType.SILENCE);
     EmojiGame game =
         diceService
             .getGame(chatId, now)

@@ -13,6 +13,7 @@ import by.kobyzau.tg.bot.pbot.program.text.ItalicText;
 import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
+import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.sender.BotSender;
 import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
@@ -27,7 +28,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -36,7 +41,12 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
@@ -176,7 +186,8 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
-                "А в ящике лежит {0} {1}!\n{2}",
+                "{0} - А в ящике лежит {1} {2}!\n{3}",
+                new ShortNamePidorText(pidor),
                 new ItalicText(artifactType.getName()),
                 new SimpleText(artifactType.getEmoji()),
                 new SimpleText(artifactType.getDesc()))));
@@ -219,7 +230,8 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
-                "А в ящике лежит {0} {1}!\n{2}",
+                "{0} - А в ящике лежит {1} {2}!\n{3}",
+                new ShortNamePidorText(pidor),
                 new ItalicText(artifactType.getName()),
                 new SimpleText(artifactType.getEmoji()),
                 new SimpleText(artifactType.getDesc()))));

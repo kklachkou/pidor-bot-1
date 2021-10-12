@@ -17,9 +17,6 @@ import java.util.concurrent.ThreadFactory;
 @PropertySource(value = {"/application.yaml"})
 public class AppConfig {
 
-  @Value("${app.threadNum.sendMessages}")
-  private int sendMessagesThreadNum;
-
   @Value("${app.threadNum.tasks}")
   private int tasksThreadNum;
 
@@ -60,7 +57,6 @@ public class AppConfig {
             .setNameFormat("my-send-messages-thread-%d")
             .setPriority(Thread.MAX_PRIORITY)
             .build();
-    return new LoggerExecutor(
-        Executors.newFixedThreadPool(sendMessagesThreadNum, threadFactory), logger);
+    return new LoggerExecutor(Executors.newCachedThreadPool(threadFactory), logger);
   }
 }

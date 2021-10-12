@@ -2,6 +2,7 @@ package by.kobyzau.tg.bot.pbot.collectors;
 
 import by.kobyzau.tg.bot.pbot.bots.Bot;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
+import by.kobyzau.tg.bot.pbot.sender.RateChecker;
 import by.kobyzau.tg.bot.pbot.tasks.bot.SendMessagesToChatHandler;
 import by.kobyzau.tg.bot.pbot.tg.action.BotAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
   private final Lock lock = new ReentrantLock();
   @Autowired private Bot bot;
   @Autowired private Logger logger;
+  @Autowired private RateChecker rateChecker;
 
   @Autowired
   @Qualifier("sendMessagesExecutor")
@@ -46,7 +48,7 @@ public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
       if (handler == null
           || !handler.applyState(SendMessagesToChatHandler.BotHandlerState.WORKING)) {
         logger.debug("\uD83D\uDEE0 Creating new handler for chat " + chatId);
-        handler = new SendMessagesToChatHandler(logger, bot, chatId, chatId == adminUserId);
+        handler = new SendMessagesToChatHandler(logger, bot, chatId, rateChecker);
         executor.execute(handler);
         handlers.put(chatId, handler);
       }

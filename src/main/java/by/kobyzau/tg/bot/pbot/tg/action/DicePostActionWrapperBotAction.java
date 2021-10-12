@@ -32,4 +32,12 @@ public class DicePostActionWrapperBotAction implements BotAction<Message> {
   public long getChatId() {
     return diceAction.getChatId();
   }
+
+  @Override
+  public String toString() {
+    return "DicePostActionWrapperBotAction{" +
+            "diceAction=" + diceAction +
+            ", dicePostAction=" + dicePostAction +
+            '}';
+  }
 }
