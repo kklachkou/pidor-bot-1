@@ -5,11 +5,13 @@ import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.artifacts.helper.BlackBoxHelper;
 import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
+import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.SimpleStickerActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
+import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,10 +52,12 @@ public class BlackBoxStartTaskTest extends BotActionAbstractTest {
 
     // then
     checkActions(
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new SimpleText(
                 "Это <b>черный ящик</b>!" + "\nВнутри лежит артефакт, бонус или анти-бонус")),
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new SimpleStickerActionChecker(CHAT_ID, StickerType.GIFT));
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.PIDOR_MAGNET);
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.ANTI_PIDOR);

@@ -15,6 +15,7 @@ import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.BotService;
 import by.kobyzau.tg.bot.pbot.service.HotPotatoesService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
+import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.HotPotatoUtil;
@@ -88,6 +89,7 @@ public class HotPotatoCheckTask implements Task {
                   "{0} в мгновении от пройгрыша..",
                   "Ух, сейчас у {0} догорит картошечка..."),
               new ShortNameLinkedPidorText(lastTaker.get())));
+      botActionCollector.sticker(chatId, StickerType.ALMOST_DEAD.getRandom());
     }
     if (currentTime.isAfter(lastTakerDeadline.get())) {
       saveDailyPidor(lastTaker.get());
@@ -103,6 +105,7 @@ public class HotPotatoCheckTask implements Task {
                   "Горячая картошечка подпалила чей-то пукан!",
                   "Картошечка сгорела!",
                   "Горячая картошечка сгорела в чьих-то руках!",
+                  "Чуствую запах хрустящего зада!",
                   "Прах сгоревшей картошечки укажет кто сегодня пидор...")));
       botActionCollector.wait(chatId, 5, ChatAction.TYPING);
       botService.unpinLastBotMessage(chatId);

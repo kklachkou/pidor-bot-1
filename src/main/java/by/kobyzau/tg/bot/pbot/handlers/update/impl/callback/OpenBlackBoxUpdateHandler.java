@@ -15,7 +15,6 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.sender.BotSender;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
-import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
@@ -29,9 +28,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.*;
-
-import static by.kobyzau.tg.bot.pbot.sender.methods.SendMethod.method;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBoxDto> {
@@ -39,7 +38,6 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
   @Autowired private PidorService pidorService;
   @Autowired private UserArtifactService userArtifactService;
   @Autowired private BotActionCollector botActionCollector;
-  @Autowired private BotSender directPidorBotSender;
   @Autowired private CollectionHelper collectionHelper;
   @Autowired private BlackBoxHelper blackBoxHelper;
 
@@ -61,37 +59,42 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
     long chatId = callbackQuery.getMessage().getChatId();
     Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
     if (!pidor.isPresent()) {
-      directPidorBotSender.send(
-          chatId,
-          method(
+      botActionCollector.add(
+          new SimpleBotAction<>(
+              chatId,
               AnswerCallbackQuery.builder()
                   .text("Вы не зарегистрированы в игре")
                   .callbackQueryId(callbackQuery.getId())
                   .showAlert(true)
                   .cacheTime(5)
-                  .build()));
+                  .build(),
+              true));
       return;
     }
     if (blackBoxHelper.isUserOpenedBox(chatId, userId)) {
-      directPidorBotSender.send(
-          chatId,
-          method(
+      botActionCollector.add(
+          new SimpleBotAction<>(
+              chatId,
               AnswerCallbackQuery.builder()
                   .text("Ты сегодня уже получал артефакт")
                   .callbackQueryId(callbackQuery.getId())
                   .showAlert(true)
-                  .build()));
+                  .cacheTime(30)
+                  .build(),
+              true));
       return;
     }
     if (blackBoxHelper.checkRequest(chatId, userId, dto.getId())) {
-      directPidorBotSender.send(
-          chatId,
-          method(
+      botActionCollector.add(
+          new SimpleBotAction<>(
+              chatId,
               AnswerCallbackQuery.builder()
                   .text("Кто-то открыл ящик раньше тебя, попробуй повторить")
                   .callbackQueryId(callbackQuery.getId())
                   .showAlert(true)
-                  .build()));
+                  .cacheTime(5)
+                  .build(),
+              true));
       return;
     }
     int numArtifactsPerDay = blackBoxHelper.getNumArtifactsPerDay(chatId);

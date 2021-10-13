@@ -4,6 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum QuestionnaireType {
+  LOCATION(
+      "Страна",
+      "Из какой ты страны?",
+      true,
+      "Беларусь",
+      "Россия",
+      "Украина",
+      "Польша",
+      "Литва",
+      "Другая (ЕС)",
+      "Вообще другая"),
   BEST_GAMES_EMOJI(
       "Игры ⚽\uD83C\uDFC0\uD83C\uDFB2\uD83C\uDFB3\ud83c\udfaf",
       "Оцените игры-эмоджи (кубик, футбол,...)",

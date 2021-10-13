@@ -9,6 +9,7 @@ import by.kobyzau.tg.bot.pbot.model.dto.SerializableInlineType;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
+import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleStickerBotAction;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
@@ -47,12 +48,14 @@ public class BlackBoxStartTask implements Task {
   }
 
   private void sendBlackBox(long chatId) {
+    botActionCollector.wait(chatId, ChatAction.TYPING);
     userArtifactService.clearUserArtifacts(chatId, ArtifactType.PIDOR_MAGNET);
     userArtifactService.clearUserArtifacts(chatId, ArtifactType.ANTI_PIDOR);
     botActionCollector.text(
         chatId,
         new SimpleText(
             "Это <b>черный ящик</b>!" + "\nВнутри лежит артефакт, бонус или анти-бонус"));
+    botActionCollector.wait(chatId, ChatAction.TYPING);
     int numArtifacts = blackBoxHelper.getNumArtifactsPerDay(chatId);
     String requestId =
         UUID.randomUUID().toString().substring(SerializableInlineType.OPEN_BLACK_BOX.getIdSize());

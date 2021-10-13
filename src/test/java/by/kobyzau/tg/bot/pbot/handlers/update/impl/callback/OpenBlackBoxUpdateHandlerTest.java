@@ -14,8 +14,6 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.sender.BotSender;
-import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
@@ -42,7 +40,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
@@ -60,7 +57,6 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private PidorService pidorService;
   @Mock private UserArtifactService userArtifactService;
   @Mock private CollectionHelper collectionHelper;
-  @Mock private BotSender directPidorBotSender;
   @Mock private BlackBoxHelper blackBoxHelper;
   @InjectMocks private OpenBlackBoxUpdateHandler handler;
   private Update update;
@@ -106,18 +102,18 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
 
     // then
-    checkNoAnyActions();
-    verify(userArtifactService, times(0)).addArtifact(eq(CHAT_ID), eq(USER_ID), any(), any());
-    verify(directPidorBotSender)
-        .send(
-            CHAT_ID,
-            SendMethod.method(
+    checkActions(
+        new SimpleActionChecker(
+            new SimpleBotAction<>(
+                CHAT_ID,
                 AnswerCallbackQuery.builder()
                     .text("Вы не зарегистрированы в игре")
                     .showAlert(true)
                     .callbackQueryId(CALLBACK_ID)
                     .cacheTime(5)
-                    .build()));
+                    .build(),
+                true)));
+    verify(userArtifactService, times(0)).addArtifact(eq(CHAT_ID), eq(USER_ID), any(), any());
   }
 
   @Test
@@ -135,8 +131,17 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     // then
     verify(userArtifactService, times(0))
         .addArtifact(eq(CHAT_ID), eq(USER_ID), eq(artifactType), any(LocalDate.class));
-    verify(directPidorBotSender, times(1)).send(eq(CHAT_ID), any());
-    checkNoAnyActions();
+    checkActions(
+        new SimpleActionChecker(
+            new SimpleBotAction<>(
+                CHAT_ID,
+                AnswerCallbackQuery.builder()
+                    .text("Кто-то открыл ящик раньше тебя, попробуй повторить")
+                    .callbackQueryId(CALLBACK_ID)
+                    .showAlert(true)
+                    .cacheTime(5)
+                    .build(),
+                true)));
   }
 
   @Test
@@ -158,7 +163,6 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     // then
     verify(userArtifactService)
         .addArtifact(eq(CHAT_ID), eq(USER_ID), eq(artifactType), any(LocalDate.class));
-    verify(directPidorBotSender, times(0)).send(anyLong(), any());
     checkActions(
         new SimpleActionChecker(
             new SimpleBotAction<>(
@@ -212,7 +216,6 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     // then
     verify(userArtifactService)
         .addArtifact(eq(CHAT_ID), eq(USER_ID), eq(artifactType), any(LocalDate.class));
-    verify(directPidorBotSender, times(0)).send(anyLong(), any());
     checkActions(
         new SimpleActionChecker(
             new SimpleBotAction<>(
