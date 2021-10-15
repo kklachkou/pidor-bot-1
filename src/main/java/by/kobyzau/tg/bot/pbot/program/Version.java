@@ -2,30 +2,33 @@ package by.kobyzau.tg.bot.pbot.program;
 
 import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.handlers.command.Command;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.BoldText;
+import by.kobyzau.tg.bot.pbot.program.text.ItalicText;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.Text;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 
 import java.time.LocalDate;
 
 public enum Version {
   VERSION_12_4(
-          LocalDate.of(2021, 10, 15),
-          new TextBuilder(new BoldText("И ещё больше артефактов!"))
-                  .append(new NewLineText())
-                  .append(new NewLineText())
-                  .append(new SimpleText("Новый артефакт:"))
-                  .append(new NewLineText())
-                  .append(
-                          new ParametizedText(
-                                  "\t\t{0} {1} {2}: {3}",
-                                  new SimpleText(
-                                          ArtifactType.SUPER_VOTE.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
-                                  new ItalicText(ArtifactType.SUPER_VOTE.getName()),
-                                  new SimpleText(ArtifactType.SUPER_VOTE.getEmoji()),
-                                  new SimpleText(ArtifactType.SUPER_VOTE.getDesc())))
-                  .append(new NewLineText())
-                  .append(new NewLineText())
-                  .append(new SimpleText("Теперь выборы как в жизни!"))),
+      LocalDate.of(2021, 10, 15),
+      new TextBuilder(new BoldText("И ещё больше артефактов!"))
+          .append(new NewLineText())
+          .append(new NewLineText())
+          .append(new SimpleText("Новый артефакт:"))
+          .append(new NewLineText())
+          .append(
+              new ParametizedText(
+                  "\t\t{0} {1} {2}: {3}",
+                  new SimpleText(
+                      ArtifactType.SUPER_VOTE.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+                  new ItalicText(ArtifactType.SUPER_VOTE.getName()),
+                  new SimpleText(ArtifactType.SUPER_VOTE.getEmoji()),
+                  new SimpleText(ArtifactType.SUPER_VOTE.getDesc())))),
   VERSION_12_2(
       LocalDate.of(2021, 9, 21),
       new TextBuilder(new BoldText("Ещё больше артефактов!"))
