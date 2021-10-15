@@ -14,8 +14,12 @@ public class ElectionPidorComparator implements Comparator<Pidor> {
 
   @Override
   public int compare(Pidor p1, Pidor p2) {
-    int numP1 = electionService.getNumVotes(p1.getChatId(), DateUtil.now(), p1.getTgId());
-    int numP2 = electionService.getNumVotes(p2.getChatId(), DateUtil.now(), p2.getTgId());
+    int numP1 =
+        electionService.getNumVotes(p1.getChatId(), DateUtil.now(), p1.getTgId())
+            + electionService.getNumSuperVotes(p1.getChatId(), DateUtil.now(), p1.getTgId());
+    int numP2 =
+        electionService.getNumVotes(p2.getChatId(), DateUtil.now(), p2.getTgId())
+            + electionService.getNumSuperVotes(p2.getChatId(), DateUtil.now(), p2.getTgId());
     int compareVotes = Integer.compare(numP2, numP1);
     if (compareVotes != 0) {
       return compareVotes;

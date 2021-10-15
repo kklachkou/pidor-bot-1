@@ -49,6 +49,7 @@ public class BlackBoxHelperTest {
             RICOCHET,
             ANTI_PIDOR,
             HELL_FIRE,
+            SUPER_VOTE,
             PIDOR_MAGNET),
         artifactsForBox);
   }
@@ -76,6 +77,7 @@ public class BlackBoxHelperTest {
             BLINDNESS,
             RICOCHET,
             HELL_FIRE,
+            SUPER_VOTE,
             PIDOR_MAGNET),
         artifactsForBox);
   }

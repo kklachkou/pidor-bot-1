@@ -15,6 +15,10 @@ public interface ElectionService {
 
   int getNumVotes(long chatId, LocalDate date, long userId);
 
+  int getNumSuperVotes(long chatId, LocalDate date, long userId);
+
   void saveVote(long chatId, long calledUserId, long targetUserId);
+
+  void saveSuperVote(long chatId, long calledUserId, long targetUserId);
 
 }

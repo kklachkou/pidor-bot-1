@@ -13,17 +13,21 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
-import by.kobyzau.tg.bot.pbot.sender.BotSender;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
+import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
+import by.kobyzau.tg.bot.pbot.tg.action.SimpleStickerBotAction;
+import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
 import by.kobyzau.tg.bot.pbot.util.StringUtil;
 import by.kobyzau.tg.bot.pbot.util.helper.CollectionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -100,13 +104,43 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
     int numArtifactsPerDay = blackBoxHelper.getNumArtifactsPerDay(chatId);
     int handledNum = blackBoxHelper.getHandledNum(chatId);
     int artifactsLeft = numArtifactsPerDay - handledNum;
-
+    botActionCollector.add(
+        new SimpleBotAction<>(
+            chatId,
+            EditMessageReplyMarkup.builder()
+                .replyMarkup(InlineKeyboardMarkup.builder().clearKeyboard().build())
+                .chatId(String.valueOf(chatId))
+                .messageId(callbackQuery.getMessage().getMessageId())
+                .build(),
+            true));
+    List<ArtifactType> artifactTypeList = blackBoxHelper.getArtifactsForBox(chatId);
+    ArtifactType artifactType = collectionHelper.getRandomValue(artifactTypeList);
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    botActionCollector.text(
+        chatId,
+        new ParametizedText(
+            "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor.get())));
+    userArtifactService.addArtifact(chatId, userId, artifactType, DateUtil.now().plusDays(1));
+    botActionCollector.wait(chatId, ChatAction.TYPING);
+    botActionCollector.text(
+        chatId,
+        new ParametizedText(
+            "{0} - А в ящике лежит {1} {2} {3}!\n{4}",
+            new ShortNamePidorText(pidor.get()),
+            new ItalicText(artifactType.getName()),
+            new SimpleText(artifactType.getEmoji()),
+            new SimpleText(artifactType.isBonus() ? "\uD83D\uDC4D" : "\uD83D\uDC4E"),
+            new SimpleText(artifactType.getDesc())));
     if (artifactsLeft > 0) {
+      botActionCollector.wait(chatId, ChatAction.TYPING);
       String requestId = blackBoxHelper.getRequestId();
       botActionCollector.add(
-          new SimpleBotAction<>(
+          new SimpleStickerBotAction(
               chatId,
-              EditMessageReplyMarkup.builder()
+              SendSticker.builder()
+                  .chatId(String.valueOf(chatId))
+                  .sticker(new InputFile(StickerType.GIFT.getRandom()))
+                  .disableNotification(DateUtil.sleepTime())
                   .replyMarkup(
                       InlineKeyboardMarkup.builder()
                           .keyboardRow(
@@ -117,35 +151,7 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
                                           StringUtil.serialize(new OpenBlackBoxDto(requestId)))
                                       .build()))
                           .build())
-                  .chatId(String.valueOf(chatId))
-                  .messageId(callbackQuery.getMessage().getMessageId())
-                  .build(),
-              true));
-    } else {
-      botActionCollector.add(
-          new SimpleBotAction<>(
-              chatId,
-              EditMessageReplyMarkup.builder()
-                  .replyMarkup(InlineKeyboardMarkup.builder().clearKeyboard().build())
-                  .chatId(String.valueOf(chatId))
-                  .messageId(callbackQuery.getMessage().getMessageId())
-                  .build(),
-              true));
+                  .build()));
     }
-    List<ArtifactType> artifactTypeList = blackBoxHelper.getArtifactsForBox(chatId);
-    ArtifactType artifactType = collectionHelper.getRandomValue(artifactTypeList);
-    botActionCollector.text(
-        chatId,
-        new ParametizedText(
-            "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor.get())));
-    userArtifactService.addArtifact(chatId, userId, artifactType, DateUtil.now().plusDays(1));
-    botActionCollector.text(
-        chatId,
-        new ParametizedText(
-            "{0} - А в ящике лежит {1} {2}!\n{3}",
-            new ShortNamePidorText(pidor.get()),
-            new ItalicText(artifactType.getName()),
-            new SimpleText(artifactType.getEmoji()),
-            new SimpleText(artifactType.getDesc())));
   }
 }

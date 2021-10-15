@@ -31,7 +31,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ElectionFinalizerTest extends BotActionAbstractTest {
@@ -66,6 +70,7 @@ public class ElectionFinalizerTest extends BotActionAbstractTest {
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.SILENCE);
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.RICOCHET);
     verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.BLINDNESS);
+    verify(userArtifactService).clearUserArtifacts(CHAT_ID, ArtifactType.SUPER_VOTE);
   }
 
   @Test

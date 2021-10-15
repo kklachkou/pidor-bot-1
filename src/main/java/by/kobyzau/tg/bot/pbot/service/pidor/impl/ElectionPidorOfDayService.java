@@ -9,7 +9,6 @@ import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.pidor.PidorOfDayService;
 import by.kobyzau.tg.bot.pbot.util.CollectionUtil;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +42,9 @@ public class ElectionPidorOfDayService implements PidorOfDayService {
       }
       pidorsForSearch.add(pidor);
       for (int i = 0; i < electionService.getNumVotes(chatId, now, pidor.getTgId()); i++) {
+        pidorsForSearch.add(pidor);
+      }
+      for (int i = 0; i < electionService.getNumSuperVotes(chatId, now, pidor.getTgId()); i++) {
         pidorsForSearch.add(pidor);
       }
     }

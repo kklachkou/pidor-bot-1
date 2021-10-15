@@ -28,4 +28,9 @@ public class SetMyCommandBotAction implements BotAction<Boolean> {
             "setMyCommands=" + setMyCommands +
             '}';
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

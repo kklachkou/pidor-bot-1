@@ -43,4 +43,9 @@ public class WaitBotAction implements BotAction<Boolean> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + seconds + "-" + waitChatAction;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return false;
+  }
 }

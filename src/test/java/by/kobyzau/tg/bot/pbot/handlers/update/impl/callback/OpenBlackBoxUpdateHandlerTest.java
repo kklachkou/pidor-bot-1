@@ -4,7 +4,9 @@ import by.kobyzau.tg.bot.pbot.artifacts.ArtifactType;
 import by.kobyzau.tg.bot.pbot.artifacts.helper.BlackBoxHelper;
 import by.kobyzau.tg.bot.pbot.artifacts.service.UserArtifactService;
 import by.kobyzau.tg.bot.pbot.checker.BotActionAbstractTest;
+import by.kobyzau.tg.bot.pbot.checker.BotTypeBotActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.SimpleActionChecker;
+import by.kobyzau.tg.bot.pbot.checker.SimpleStickerActionChecker;
 import by.kobyzau.tg.bot.pbot.checker.TextBotActionChecker;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.model.dto.OpenBlackBoxDto;
@@ -16,7 +18,8 @@ import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
-import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
+import by.kobyzau.tg.bot.pbot.tg.sticker.StickerType;
 import by.kobyzau.tg.bot.pbot.util.helper.CollectionHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,10 +35,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -149,7 +150,7 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     // given
     int numPerDay = 4;
     int numHandled = 3;
-    ArtifactType artifactType = ArtifactType.PIDOR_MAGNET;
+    ArtifactType artifactType = ArtifactType.ANTI_PIDOR;
     doReturn(artifactType).when(collectionHelper).getRandomValue(any());
     Pidor pidor = new Pidor();
     doReturn(Optional.of(pidor)).when(pidorService).getPidor(CHAT_ID, USER_ID);
@@ -168,33 +169,27 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
             new SimpleBotAction<>(
                 CHAT_ID,
                 EditMessageReplyMarkup.builder()
-                    .replyMarkup(
-                        InlineKeyboardMarkup.builder()
-                            .keyboardRow(
-                                Collections.singletonList(
-                                    InlineKeyboardButton.builder()
-                                        .text("Открыть подарок (1)")
-                                        .callbackData(
-                                            StringUtil.serialize(
-                                                new OpenBlackBoxDto(NEW_REQUEST_ID)))
-                                        .build()))
-                            .build())
+                    .replyMarkup(InlineKeyboardMarkup.builder().clearKeyboard().build())
                     .chatId(String.valueOf(CHAT_ID))
                     .messageId(MESSAGE_ID)
                     .build(),
                 true)),
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
                 "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor))),
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
-                "{0} - А в ящике лежит {1} {2}!\n{3}",
+                "{0} - А в ящике лежит {1} {2} \uD83D\uDC4D!\n{3}",
                 new ShortNamePidorText(pidor),
                 new ItalicText(artifactType.getName()),
                 new SimpleText(artifactType.getEmoji()),
-                new SimpleText(artifactType.getDesc()))));
+                new SimpleText(artifactType.getDesc()))),
+        new BotTypeBotActionChecker(WaitBotAction.class),
+        new SimpleStickerActionChecker(CHAT_ID, StickerType.GIFT));
   }
 
   @Test
@@ -226,14 +221,16 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
                     .messageId(MESSAGE_ID)
                     .build(),
                 true)),
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
                 "{0} взял яйца в кулак и открыл чёрный ящик", new FullNamePidorText(pidor))),
+        new BotTypeBotActionChecker(WaitBotAction.class),
         new TextBotActionChecker(
             CHAT_ID,
             new ParametizedText(
-                "{0} - А в ящике лежит {1} {2}!\n{3}",
+                "{0} - А в ящике лежит {1} {2} \uD83D\uDC4E!\n{3}",
                 new ShortNamePidorText(pidor),
                 new ItalicText(artifactType.getName()),
                 new SimpleText(artifactType.getEmoji()),

@@ -16,7 +16,7 @@ public enum ArtifactType {
   SECOND_CHANCE(
       "Боевой Пидор-маг",
       "\uD83E\uDDD9\uD83C\uDFFB\u200D♂",
-      "Позволяет кинуть кубик 2й раз. Он заставит всех забыть твой худший бросок",
+      "Позволяет кинуть emoji 2й раз. Он заставит всех забыть твой худший бросок",
       true),
   // Cleans on election, exclude, dice finalize
   SILENCE(
@@ -40,7 +40,13 @@ public enum ArtifactType {
       "Лекарство от пидороства существует! С этой таблеткой ты гарантированно не будешь пидором!",
       true),
   // Cleans on potato end
-  HELL_FIRE("Адское пламя", "\uD83D\uDD25", "Горячая картошечка сгорает намного быстрее", false);
+  HELL_FIRE("Адское пламя", "\uD83D\uDD25", "Горячая картошечка сгорает намного быстрее", false),
+  // After election
+  SUPER_VOTE(
+      "Вброс",
+      "\uD83C\uDDF7\uD83C\uDDFA",
+      "Ты бросаешь целую пачку биллютеней в день пидор-выборов. Один твой голос стоит 5-х. Совсем как в жизни!",
+      true);
 
   private final String name;
   private final String emoji;

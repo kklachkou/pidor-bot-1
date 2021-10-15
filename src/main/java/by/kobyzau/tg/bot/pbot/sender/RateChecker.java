@@ -51,18 +51,18 @@ public class RateChecker {
     boolean isExceedBotLimit =
         executions.values().stream()
                 .flatMap(Collection::stream)
-                .filter(l -> l >= (currentTime - 1100))
+                .filter(l -> l >= (currentTime - 1200))
                 .count()
             >= BOT_LIMIT_PER_SECOND;
     if (isExceedBotLimit) {
       return true;
     }
     List<Long> chatExecutions = executions.getOrDefault(chatId, Collections.emptyList());
-    boolean inLastSecond = chatExecutions.stream().anyMatch(l -> l >= (currentTime - 1100));
+    boolean inLastSecond = chatExecutions.stream().anyMatch(l -> l >= (currentTime - 1500));
     if (inLastSecond) {
       return true;
     }
-    return chatExecutions.stream().filter(l -> l >= (currentTime - 1010 * 60)).count()
+    return chatExecutions.stream().filter(l -> l >= (currentTime - 1050 * 60)).count()
         >= CHAT_LIMIT_PER_MINUTE;
   }
 

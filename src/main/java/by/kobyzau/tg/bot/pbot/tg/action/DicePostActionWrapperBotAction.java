@@ -40,4 +40,9 @@ public class DicePostActionWrapperBotAction implements BotAction<Message> {
             ", dicePostAction=" + dicePostAction +
             '}';
   }
+
+  @Override
+  public boolean hasLimit() {
+    return true;
+  }
 }

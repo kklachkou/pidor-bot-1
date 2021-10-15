@@ -33,4 +33,9 @@ public class ChatActionBotAction implements BotAction<Boolean> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + chatAction;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return false;
+  }
 }

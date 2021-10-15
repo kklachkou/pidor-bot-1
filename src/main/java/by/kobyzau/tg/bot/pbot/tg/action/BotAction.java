@@ -9,7 +9,5 @@ public interface BotAction<T> {
 
   long getChatId();
 
-  default boolean hasLimit() {
-    return false;
-  }
+  boolean hasLimit();
 }

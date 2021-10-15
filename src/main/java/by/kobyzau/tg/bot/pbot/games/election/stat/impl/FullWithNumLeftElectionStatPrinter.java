@@ -6,7 +6,13 @@ import by.kobyzau.tg.bot.pbot.collectors.BotActionCollector;
 import by.kobyzau.tg.bot.pbot.games.election.ElectionPidorComparator;
 import by.kobyzau.tg.bot.pbot.games.election.stat.ElectionStatPrinter;
 import by.kobyzau.tg.bot.pbot.model.Pidor;
-import by.kobyzau.tg.bot.pbot.program.text.*;
+import by.kobyzau.tg.bot.pbot.program.text.DoubleText;
+import by.kobyzau.tg.bot.pbot.program.text.IntText;
+import by.kobyzau.tg.bot.pbot.program.text.NewLineText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
+import by.kobyzau.tg.bot.pbot.program.text.RandomText;
+import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
+import by.kobyzau.tg.bot.pbot.program.text.TextBuilder;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNameLinkedPidorText;
 import by.kobyzau.tg.bot.pbot.service.ElectionService;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
@@ -58,6 +64,8 @@ public class FullWithNumLeftElectionStatPrinter implements ElectionStatPrinter {
           userArtifactService
               .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
+      int numSuperVotes = electionService.getNumSuperVotes(chatId, now, pidor.getTgId());
+      totalVotes += numSuperVotes;
       if (hasMagnet) {
         totalVotes = totalVotes + 3;
       }
@@ -68,7 +76,9 @@ public class FullWithNumLeftElectionStatPrinter implements ElectionStatPrinter {
           userArtifactService
               .getUserArtifact(chatId, pidor.getTgId(), ArtifactType.PIDOR_MAGNET)
               .isPresent();
-      int numVotes = electionService.getNumVotes(chatId, now, pidor.getTgId());
+      int numVotes =
+          electionService.getNumVotes(chatId, now, pidor.getTgId())
+              + electionService.getNumSuperVotes(chatId, now, pidor.getTgId());
       if (numVotes == 0 && !hasMagnet) {
         hasWithZero = true;
         continue;

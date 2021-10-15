@@ -15,10 +15,6 @@ public class SimpleBotAction<T extends Serializable> implements BotAction<T> {
   private final BotApiMethod<T> botApiMethod;
   private final boolean hasLimit;
 
-  public SimpleBotAction(long chatId, BotApiMethod<T> botApiMethod) {
-    this(chatId, botApiMethod, false);
-  }
-
   public SimpleBotAction(long chatId, BotApiMethod<T> botApiMethod, boolean hasLimit) {
     this.botApiMethod = botApiMethod;
     this.chatId = chatId;

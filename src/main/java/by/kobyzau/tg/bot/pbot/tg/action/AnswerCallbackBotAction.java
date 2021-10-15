@@ -42,4 +42,9 @@ public class AnswerCallbackBotAction implements BotAction<Boolean> {
   public String toString() {
     return this.getClass().getSimpleName() + ": " + chatId + "-" + callbackId + " - " + text;
   }
+
+  @Override
+  public boolean hasLimit() {
+    return false;
+  }
 }

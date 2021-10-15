@@ -37,7 +37,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import static by.kobyzau.tg.bot.pbot.sender.methods.SendMethod.method;
@@ -156,7 +160,13 @@ public class ElectionUpdateHandler implements UpdateHandler {
                     .cacheTime(10)
                     .build()));
       } else {
-        electionService.saveVote(chatId, calledPidor.get().getTgId(), targetPidor.get().getTgId());
+        if (hasSuperVote(chatId, calledPidor.get().getTgId())) {
+          electionService.saveSuperVote(
+              chatId, calledPidor.get().getTgId(), targetPidor.get().getTgId());
+        } else {
+          electionService.saveVote(
+              chatId, calledPidor.get().getTgId(), targetPidor.get().getTgId());
+        }
         directPidorBotSender.send(
             chatId,
             method(
@@ -195,6 +205,10 @@ public class ElectionUpdateHandler implements UpdateHandler {
             .getUserArtifact(chatId, targetUserId, ArtifactType.RICOCHET)
             .isPresent()
         && collectionHelper.getRandomValue(Arrays.asList(true, false));
+  }
+
+  private boolean hasSuperVote(long chatId, long userId) {
+    return userArtifactService.getUserArtifact(chatId, userId, ArtifactType.SUPER_VOTE).isPresent();
   }
 
   private boolean needToFinalize(long chatId) {

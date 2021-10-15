@@ -65,6 +65,17 @@ public class ElectionServiceImpl implements ElectionService {
   }
 
   @Override
+  public int getNumSuperVotes(long chatId, LocalDate date, long userId) {
+    return (int)
+        dailyDataRepository.getByChatAndDate(chatId, date).stream()
+            .filter(d -> d.getType() == CustomDailyUserData.Type.SUPER_ELECTION_VOTE)
+            .map(CustomDailyUserData::getData)
+            .map(id -> StringUtil.parseLong(id, 0))
+            .filter(id -> id == userId)
+            .count();
+  }
+
+  @Override
   public void saveVote(long chatId, long calledUserId, long targetUserId) {
     CustomDailyUserData data = new CustomDailyUserData();
     data.setPlayerTgId(calledUserId);
@@ -73,5 +84,25 @@ public class ElectionServiceImpl implements ElectionService {
     data.setType(CustomDailyUserData.Type.ELECTION_VOTE);
     data.setData(String.valueOf(targetUserId));
     dailyDataRepository.create(data);
+  }
+
+  @Override
+  public void saveSuperVote(long chatId, long calledUserId, long targetUserId) {
+    CustomDailyUserData data = new CustomDailyUserData();
+    data.setPlayerTgId(calledUserId);
+    data.setChatId(chatId);
+    data.setLocalDate(DateUtil.now());
+    data.setType(CustomDailyUserData.Type.ELECTION_VOTE);
+    data.setData(String.valueOf(targetUserId));
+    dailyDataRepository.create(data);
+    for (int i = 0; i < 4; i++) {
+      CustomDailyUserData superVote = new CustomDailyUserData();
+      superVote.setPlayerTgId(calledUserId);
+      superVote.setChatId(chatId);
+      superVote.setLocalDate(DateUtil.now());
+      superVote.setType(CustomDailyUserData.Type.SUPER_ELECTION_VOTE);
+      superVote.setData(String.valueOf(targetUserId));
+      dailyDataRepository.create(superVote);
+    }
   }
 }
