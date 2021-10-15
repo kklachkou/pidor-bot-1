@@ -73,9 +73,6 @@ public class PidorServiceImpl implements PidorService {
     if (isLastPidorOfDay(pidor)) {
       pidorMarks.add(PidorMark.LAST_PIDOR_OF_DAY);
     }
-    if (pidor.getTgId() == 562849728 || pidor.getTgId() == 261011580 || pidor.getTgId() == 306519117) {
-      pidorMarks.add(PidorMark.COVID);
-    }
     Set<ArtifactType> artifacts = getArtifacts(pidor);
     pidor.setArtifacts(artifacts);
     pidor.setPidorMarks(pidorMarks);
