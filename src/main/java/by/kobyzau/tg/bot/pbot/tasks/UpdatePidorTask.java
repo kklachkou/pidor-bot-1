@@ -60,7 +60,7 @@ public class UpdatePidorTask implements Task {
                   new FullNamePidorText(pidor),
                   new LongText(pidor.getChatId()))
               .text());
-      // pidorService.deletePidor(pidor.getChatId(), pidor.getTgId());
+      pidorService.deletePidor(pidor.getChatId(), pidor.getTgId());
     }
   }
 
