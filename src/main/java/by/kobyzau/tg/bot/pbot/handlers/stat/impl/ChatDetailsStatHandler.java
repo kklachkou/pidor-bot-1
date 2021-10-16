@@ -147,19 +147,11 @@ public class ChatDetailsStatHandler implements StatHandler {
                   new NodeElement(
                       "b", emptyMap(), singletonList(new NodeText("Людей-контактов: "))),
                   hasContacts
-                      ? new NodeElement(
-                          "a",
-                          Collections.singletonMap(
-                              "href",
-                              telegraphService
-                                  .getPage(STATISTIC.getLinkedId("CONTACTS", chatStat.chatId))
-                                  .getUrl()),
-                          Collections.singletonList(
-                              new NodeText(
-                                  String.valueOf(
-                                      chatStat.getContacts().values().stream()
-                                          .filter(c -> c.size() > 0)
-                                          .count()))))
+                      ? new NodeText(
+                          String.valueOf(
+                              chatStat.getContacts().values().stream()
+                                  .filter(c -> c.size() > 0)
+                                  .count()))
                       : new NodeText("0"),
                   new NodeElement("br", emptyMap(), emptyList()))));
     }
