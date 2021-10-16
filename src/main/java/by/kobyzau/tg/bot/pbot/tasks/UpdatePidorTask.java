@@ -2,6 +2,8 @@ package by.kobyzau.tg.bot.pbot.tasks;
 
 import by.kobyzau.tg.bot.pbot.model.Pidor;
 import by.kobyzau.tg.bot.pbot.program.logger.Logger;
+import by.kobyzau.tg.bot.pbot.program.text.LongText;
+import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
@@ -44,14 +46,20 @@ public class UpdatePidorTask implements Task {
   }
 
   private void updatePidor(Pidor pidor) {
-    ThreadUtil.sleep(500);
+    ThreadUtil.sleep(200);
     Optional<User> telegramUser = getTelegramUser(pidor);
     if (telegramUser.isPresent()) {
       pidor.setFullName(TGUtil.getFullName(telegramUser.get()));
       pidor.setUsername(telegramUser.get().getUserName());
       pidorService.updatePidor(pidor);
     } else {
-      logger.info("Deleting pidor " + new FullNamePidorText(pidor));
+      logger.info(
+          new ParametizedText(
+                  "Deleting pidor {0} {1} from chat {2}",
+                  new LongText(pidor.getTgId()),
+                  new FullNamePidorText(pidor),
+                  new LongText(pidor.getChatId()))
+              .text());
       // pidorService.deletePidor(pidor.getChatId(), pidor.getTgId());
     }
   }
