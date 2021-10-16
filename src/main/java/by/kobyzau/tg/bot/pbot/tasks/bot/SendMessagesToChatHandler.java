@@ -23,14 +23,16 @@ public class SendMessagesToChatHandler implements Runnable {
   private final Bot bot;
   private final long chatId;
   private final RateChecker rateChecker;
+  private final boolean isPrivateChat;
   private final Queue<BotAction<?>> queue = new ConcurrentLinkedQueue<>();
 
-  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId, RateChecker rateChecker) {
+  public SendMessagesToChatHandler(Logger logger, Bot bot, long chatId, RateChecker rateChecker, boolean isPrivateChat) {
     this.logger = logger;
     this.bot = bot;
     this.chatId = chatId;
     this.state = BotHandlerState.PENDING;
     this.rateChecker = rateChecker;
+    this.isPrivateChat = isPrivateChat;
   }
 
   @Override

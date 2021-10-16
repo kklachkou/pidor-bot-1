@@ -18,7 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,13 +33,10 @@ public class PidorServiceImpl implements PidorService {
   @Autowired private PidorOfYearRepository pidorOfYearRepository;
   @Autowired private DailyPidorRepository dailyPidorRepository;
 
-  @Autowired private TelegramService telegramService;
-
   @Override
   public Optional<Pidor> getPidor(long chatId, long userId) {
     return pidorRepository
         .getByChatAndPlayerTgId(chatId, userId)
-        .filter(p -> TGUtil.isChatMember(telegramService.getChatMember(chatId, p.getTgId())))
         .map(this::setPidorMarks);
   }
 
@@ -59,10 +60,22 @@ public class PidorServiceImpl implements PidorService {
   @Override
   public List<Pidor> getByChat(long chatId) {
     return pidorRepository.getByChat(chatId).stream()
-        .filter(p -> TGUtil.isChatMember(telegramService.getChatMember(chatId, p.getTgId())))
         .sorted(Comparator.comparing(Pidor::getFullName))
         .map(this::setPidorMarks)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Long> getChatIds() {
+    return pidorRepository.getChatIdsWithPidors();
+  }
+
+  @Override
+  public void deletePidor(long chatId, long userId) {
+    pidorRepository
+        .getByChatAndPlayerTgId(chatId, userId)
+        .map(Pidor::getId)
+        .ifPresent(pidorRepository::delete);
   }
 
   private Pidor setPidorMarks(Pidor pidor) {

@@ -20,6 +20,9 @@ public class AppConfig {
   @Value("${app.threadNum.tasks}")
   private int tasksThreadNum;
 
+  @Value("${app.threadNum.updatePidor}")
+  private int updatePidorThreadNum;
+
   @Autowired private Logger logger;
 
   @Bean("taskExecutor")
@@ -27,6 +30,13 @@ public class AppConfig {
     ThreadFactory threadFactory =
         new ThreadFactoryBuilder().setNameFormat("my-fixed-thread-%d").build();
     return new LoggerExecutor(Executors.newFixedThreadPool(tasksThreadNum, threadFactory), logger);
+  }
+
+  @Bean("updatePidorExecutor")
+  public Executor getUpdatePidorExecutor() {
+    ThreadFactory threadFactory =
+        new ThreadFactoryBuilder().setNameFormat("update-pidor-%d").build();
+    return new LoggerExecutor(Executors.newFixedThreadPool(updatePidorThreadNum, threadFactory), logger);
   }
 
   @Bean("asyncPidorBotSenderExecutor")

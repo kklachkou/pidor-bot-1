@@ -14,8 +14,6 @@ public interface TelegramService {
 
   List<Long> getChatIds();
 
-  void deleteMessage(long chatId, int messageId);
-
   Optional<Chat> getChat(long chatId);
 
   Optional<Integer> getChatMemberCount(long chatId);

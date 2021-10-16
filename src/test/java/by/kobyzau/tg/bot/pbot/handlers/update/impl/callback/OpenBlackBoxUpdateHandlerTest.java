@@ -16,6 +16,8 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
+import by.kobyzau.tg.bot.pbot.sender.BotSender;
+import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
 import by.kobyzau.tg.bot.pbot.tg.action.WaitBotAction;
@@ -59,6 +61,8 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
   @Mock private UserArtifactService userArtifactService;
   @Mock private CollectionHelper collectionHelper;
   @Mock private BlackBoxHelper blackBoxHelper;
+
+  @Mock private BotSender directPidorBotSender;
   @InjectMocks private OpenBlackBoxUpdateHandler handler;
   private Update update;
 
@@ -103,17 +107,17 @@ public class OpenBlackBoxUpdateHandlerTest extends BotActionAbstractTest {
     handler.handleCallback(update, new OpenBlackBoxDto(REQUEST_ID));
 
     // then
-    checkActions(
-        new SimpleActionChecker(
-            new SimpleBotAction<>(
-                CHAT_ID,
+    checkNoAnyActions();
+    verify(directPidorBotSender)
+        .send(
+            CHAT_ID,
+            SendMethod.method(
                 AnswerCallbackQuery.builder()
                     .text("Вы не зарегистрированы в игре")
                     .showAlert(true)
                     .callbackQueryId(CALLBACK_ID)
                     .cacheTime(5)
-                    .build(),
-                true)));
+                    .build()));
     verify(userArtifactService, times(0)).addArtifact(eq(CHAT_ID), eq(USER_ID), any(), any());
   }
 

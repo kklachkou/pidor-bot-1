@@ -15,4 +15,8 @@ public interface PidorService {
   void updatePidor(Pidor pidor);
 
   List<Pidor> getByChat(long chatId);
+
+  List<Long> getChatIds();
+
+  void deletePidor(long chatId, long userId);
 }

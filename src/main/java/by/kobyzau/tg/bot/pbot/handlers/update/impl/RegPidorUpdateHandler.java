@@ -63,15 +63,15 @@ public class RegPidorUpdateHandler implements UpdateHandler {
       return false;
     }
     Boolean bot = user.getIsBot();
-    if (bot != null && bot) {
-      return false;
-    }
-    Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.getId());
-    if (!chatMember.isPresent() || !TGUtil.isChatMember(chatMember)) {
+    if (bot) {
       return false;
     }
     Optional<Pidor> existingPidor = pidorService.getPidor(chatId, user.getId());
     if (existingPidor.isPresent()) {
+      return false;
+    }
+    Optional<ChatMember> chatMember = telegramService.getChatMember(chatId, user.getId());
+    if (!chatMember.isPresent() || !TGUtil.isChatMember(chatMember)) {
       return false;
     }
     botActionCollector.typing(chatId);

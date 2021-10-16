@@ -17,7 +17,7 @@ public class ProdScheduleAppConfig {
 
   @Autowired private Task pingHeroku;
 
-  @Autowired private Task updateUsernameTask;
+  @Autowired private Task updatePidorTask;
   @Autowired private Task backupTask;
   @Autowired private Task cleanupChatTask;
   @Autowired private Task systemCheckTask;
@@ -43,8 +43,8 @@ public class ProdScheduleAppConfig {
         });
   }
 
-  @Scheduled(cron = "${task.updateUsername.cron}", zone = "GMT+3.00")
-  public void updateUsernameTask() {
-    executor.execute(updateUsernameTask::processTask);
+  @Scheduled(cron = "${task.updatePidorTask.cron}", zone = "GMT+3.00")
+  public void updatePidorTask() {
+    executor.execute(updatePidorTask::processTask);
   }
 }

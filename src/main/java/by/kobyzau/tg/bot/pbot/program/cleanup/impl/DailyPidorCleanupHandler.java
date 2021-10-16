@@ -33,8 +33,8 @@ public class DailyPidorCleanupHandler implements CleanupHandler {
             .getChat(chatId)
             .map(c -> chatId + ": " + c.getTitle())
             .orElse(String.valueOf(chatId));
-    LocalDate removeStartDate = DateUtil.now().minusMonths(1);
-    LocalDate notifyStartDate = DateUtil.now().minusMonths(1).plusDays(2);
+    LocalDate removeStartDate = DateUtil.now().minusWeeks(2);
+    LocalDate notifyStartDate = DateUtil.now().minusWeeks(2).plusDays(2);
     LocalDate maxDate =
         dailyPidors.stream()
             .map(DailyPidor::getLocalDate)

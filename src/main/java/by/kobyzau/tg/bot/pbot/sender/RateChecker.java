@@ -22,10 +22,14 @@ public class RateChecker {
   private final Lock lock = new ReentrantLock();
 
   public boolean canSendMessage(long chatId) {
+    return canSendMessage(chatId, false);
+  }
+
+  public boolean canSendMessage(long chatId, boolean isPrivateChat) {
     lock.lock();
     try {
       cleanOldExecutions(chatId);
-      if (!isExceedTimeLimit(chatId)) {
+      if (!isExceedTimeLimit(chatId, isPrivateChat)) {
         logTime(chatId);
         return true;
       }
@@ -46,7 +50,7 @@ public class RateChecker {
     executions.put(chatId, newChatExecutions);
   }
 
-  private boolean isExceedTimeLimit(long chatId) {
+  private boolean isExceedTimeLimit(long chatId, boolean isPrivateChat) {
     long currentTime = System.currentTimeMillis();
     boolean isExceedBotLimit =
         executions.values().stream()
@@ -58,9 +62,11 @@ public class RateChecker {
       return true;
     }
     List<Long> chatExecutions = executions.getOrDefault(chatId, Collections.emptyList());
-    boolean inLastSecond = chatExecutions.stream().anyMatch(l -> l >= (currentTime - 1500));
-    if (inLastSecond) {
-      return true;
+    if (!isPrivateChat) {
+      boolean inLastSecond = chatExecutions.stream().anyMatch(l -> l >= (currentTime - 1000));
+      if (inLastSecond) {
+        return true;
+      }
     }
     return chatExecutions.stream().filter(l -> l >= (currentTime - 1050 * 60)).count()
         >= CHAT_LIMIT_PER_MINUTE;

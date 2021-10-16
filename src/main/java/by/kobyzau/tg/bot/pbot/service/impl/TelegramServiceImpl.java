@@ -113,15 +113,4 @@ public class TelegramServiceImpl implements TelegramService {
       return Optional.empty();
     }
   }
-
-  @Override
-  public void deleteMessage(long chatId, int messageId) {
-    try {
-      pidorBot.execute(
-          DeleteMessage.builder().chatId(String.valueOf(chatId)).messageId(messageId).build());
-    } catch (Exception e) {
-      logger.debug(
-          "Cannot delete message " + messageId + " from chat " + chatId + "\n\n" + e.getMessage());
-    }
-  }
 }

@@ -10,11 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
 public class TestCommandHandler implements CommandHandler {
 
-  @Autowired private Task blackBoxStartTask;
+  @Autowired private Task updatePidorTask;
 
   @Override
   public void processCommand(Message message, String text) {
-    blackBoxStartTask.processTask();
+    updatePidorTask.processTask();
   }
 
   @Override

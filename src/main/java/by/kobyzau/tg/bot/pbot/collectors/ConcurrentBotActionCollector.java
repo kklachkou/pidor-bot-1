@@ -48,7 +48,8 @@ public class ConcurrentBotActionCollector extends AbstractBotActionCollector {
       if (handler == null
           || !handler.applyState(SendMessagesToChatHandler.BotHandlerState.WORKING)) {
         logger.debug("\uD83D\uDEE0 Creating new handler for chat " + chatId);
-        handler = new SendMessagesToChatHandler(logger, bot, chatId, rateChecker);
+        handler =
+            new SendMessagesToChatHandler(logger, bot, chatId, rateChecker, chatId == adminUserId);
         executor.execute(handler);
         handlers.put(chatId, handler);
       }

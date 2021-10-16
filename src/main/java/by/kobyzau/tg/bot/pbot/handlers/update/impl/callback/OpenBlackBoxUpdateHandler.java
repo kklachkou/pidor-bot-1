@@ -13,6 +13,8 @@ import by.kobyzau.tg.bot.pbot.program.text.ParametizedText;
 import by.kobyzau.tg.bot.pbot.program.text.SimpleText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.FullNamePidorText;
 import by.kobyzau.tg.bot.pbot.program.text.pidor.ShortNamePidorText;
+import by.kobyzau.tg.bot.pbot.sender.BotSender;
+import by.kobyzau.tg.bot.pbot.sender.methods.SendMethod;
 import by.kobyzau.tg.bot.pbot.service.PidorService;
 import by.kobyzau.tg.bot.pbot.tg.ChatAction;
 import by.kobyzau.tg.bot.pbot.tg.action.SimpleBotAction;
@@ -44,6 +46,7 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private CollectionHelper collectionHelper;
   @Autowired private BlackBoxHelper blackBoxHelper;
+  @Autowired private BotSender directPidorBotSender;
 
   @Override
   protected Class<OpenBlackBoxDto> getDtoType() {
@@ -63,16 +66,15 @@ public class OpenBlackBoxUpdateHandler extends CallbackUpdateHandler<OpenBlackBo
     long chatId = callbackQuery.getMessage().getChatId();
     Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
     if (!pidor.isPresent()) {
-      botActionCollector.add(
-          new SimpleBotAction<>(
-              chatId,
+      directPidorBotSender.send(
+          chatId,
+          SendMethod.method(
               AnswerCallbackQuery.builder()
                   .text("Вы не зарегистрированы в игре")
                   .callbackQueryId(callbackQuery.getId())
                   .showAlert(true)
                   .cacheTime(5)
-                  .build(),
-              true));
+                  .build()));
       return;
     }
     if (blackBoxHelper.isUserOpenedBox(chatId, userId)) {

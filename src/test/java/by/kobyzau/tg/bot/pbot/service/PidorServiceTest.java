@@ -73,38 +73,6 @@ public class PidorServiceTest {
   }
 
   @Test
-  public void getPidor_noChatMember_empty() {
-    // given
-    doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
-        .when(pidorRepository)
-        .getByChatAndPlayerTgId(chatId, userId);
-    doReturn(Optional.empty()).when(telegramService).getChatMember(chatId, userId);
-
-    // when
-    Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
-
-    // then
-    assertFalse(pidor.isPresent());
-  }
-
-  @Test
-  public void getPidor_kicked_empty() {
-    // given
-    doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))
-        .when(pidorRepository)
-        .getByChatAndPlayerTgId(chatId, userId);
-    ChatMember chatMember = mock(ChatMember.class);
-    doReturn("kicked").when(chatMember).getStatus();
-    doReturn(Optional.of(chatMember)).when(telegramService).getChatMember(chatId, userId);
-
-    // when
-    Optional<Pidor> pidor = pidorService.getPidor(chatId, userId);
-
-    // then
-    assertFalse(pidor.isPresent());
-  }
-
-  @Test
   public void getPidor_simplePidor() {
     // given
     doReturn(Optional.of(new Pidor(userId, chatId, "Pidor " + userId)))

@@ -26,7 +26,6 @@ public class ChatsStatHandler implements StatHandler {
   @Autowired private BotActionCollector botActionCollector;
   @Autowired private TelegramService telegramService;
   @Autowired private PidorService pidorService;
-  @Autowired private BotService botService;
 
   @Override
   public void printStat(long chatId) {
