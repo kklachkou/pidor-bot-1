@@ -16,6 +16,14 @@ import by.kobyzau.tg.bot.pbot.repository.pidor.PidorRepository;
 import by.kobyzau.tg.bot.pbot.service.TelegramService;
 import by.kobyzau.tg.bot.pbot.telegraph.TelegraphService;
 import by.kobyzau.tg.bot.pbot.util.DateUtil;
+import by.kobyzau.tg.bot.pbot.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegraph.api.objects.Node;
+import org.telegram.telegraph.api.objects.NodeElement;
+import org.telegram.telegraph.api.objects.NodeText;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegraph.api.objects.Node;
-import org.telegram.telegraph.api.objects.NodeElement;
-import org.telegram.telegraph.api.objects.NodeText;
 
 import static by.kobyzau.tg.bot.pbot.telegraph.TelegraphType.STATISTIC;
 import static java.util.Collections.emptyList;
@@ -122,7 +124,7 @@ public class ChatDetailsStatHandler implements StatHandler {
                       "b", emptyMap(), singletonList(new NodeText("Чат " + chatStat.getChatId()))),
                   new NodeElement("br", emptyMap(), emptyList()),
                   new NodeElement("b", emptyMap(), singletonList(new NodeText("Имя: "))),
-                  new NodeText(chatStat.name),
+                  new NodeText(StringUtil.escapeAllSpecialChars(chatStat.name)),
                   new NodeElement("br", emptyMap(), emptyList()),
                   new NodeElement(
                       "b", emptyMap(), singletonList(new NodeText("Колличество людей: "))),
@@ -184,20 +186,24 @@ public class ChatDetailsStatHandler implements StatHandler {
           pidorRepository
               .getByChatAndPlayerTgId(chatStat.getChatId(), pidorId)
               .map(Pidor::getFullName)
+              .map(StringUtil::escapeAllSpecialChars)
               .orElse("-");
       content.add(new NodeElement("br", emptyMap(), emptyList()));
       content.add(
           new NodeText(
               name
                   + ": "
-                  + linkedChats.stream().map(this::getChatName).collect(Collectors.joining(", "))));
+                  + linkedChats.stream()
+                      .map(this::getChatName)
+                      .map(StringUtil::escapeAllSpecialChars)
+                      .collect(Collectors.joining(", "))));
     }
     logger.debug("Contact Content for " + linkedId + " is " + content);
     telegraphService.createPageIfNotExist(linkedId);
     try {
       telegraphService.updatePage(
           linkedId,
-          "Контакты для чата " + getChatName(chatStat.chatId),
+          "Контакты для чата " + StringUtil.escapeAllSpecialChars(getChatName(chatStat.chatId)),
           singletonList(new NodeElement("p", emptyMap(), content)));
     } catch (Exception e) {
       logger.error("Cannot create contact page for chat " + chatStat.chatId, e);

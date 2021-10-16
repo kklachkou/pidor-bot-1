@@ -5,6 +5,7 @@ import java.util.List;
 import org.telegram.telegraph.api.objects.Node;
 
 public interface TelegraphService {
+
     TelegraphPage getPage(String linkedId);
 
     void createPageIfNotExist(String linkedId);

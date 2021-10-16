@@ -19,6 +19,18 @@ public class StringUtilTest {
   }
 
   @Test
+  public void escapeAllSpecialChars_withSpecialChars() {
+    //given
+    String original = "abc .123\uD83D\uDE4A@#+";
+
+    //when
+    String result = StringUtil.escapeAllSpecialChars(original);
+
+    //then
+    assertEquals("abc .123.....", result);
+  }
+
+  @Test
   public void parseInt_empty() {
     // given
     String s = "";

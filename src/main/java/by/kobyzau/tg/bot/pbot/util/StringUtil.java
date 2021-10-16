@@ -3,9 +3,30 @@ package by.kobyzau.tg.bot.pbot.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class StringUtil {
+
+  private static final Pattern SIMPLE_CHAR = Pattern.compile("[a-zA-Zа-яА-Я0-9 ]");
+
+  public static String escapeAllSpecialChars(String text) {
+    if (isBlank(text)) {
+      return "";
+    }
+    List<char[]> chars = Arrays.asList(text.toCharArray());
+    StringBuilder sb = new StringBuilder();
+    for (char c : text.toCharArray()) {
+      if (SIMPLE_CHAR.matcher(String.valueOf(c)).matches()) {
+        sb.append(c);
+      } else {
+        sb.append(".");
+      }
+    }
+    return sb.toString();
+  }
 
   public static int parseInt(String s, int def) {
     try {
