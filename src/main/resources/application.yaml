@@ -50,6 +50,6 @@ task:
   notifyPidorOfTheMonthTask.cron: 0 0 18 * * ?
   pidorOfYear.cron: 0 0 19 31 12 ?
   futureAction.cron: 0 30 20 * * ?
-  updatePidorTask.cron: 0 0 1 * * ?
+  updatePidorTask.cron: 0 10 19 * * ?
   backup.cron: 0 0 20 * * ?
   hotPotatoCheckTask.delay: 45000
